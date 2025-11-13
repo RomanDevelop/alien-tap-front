@@ -38,20 +38,26 @@ dependencies:
   # Архитектурные зависимости
   mwwm: ^2.0.0 # Основной архитектурный фреймворк MWWM
   rxdart: ^0.28.0 # Реактивное программирование
-  provider: ^6.1.2 # Dependency injection для глобального состояния
   get_it: ^7.7.0 # Service locator
   equatable: ^2.0.5 # Сравнение объектов
-
-  # UI зависимости
-  flutter_screenutil: ^5.9.0 # Responsive sizing
-  flutter_svg: ^2.0.10+1 # SVG иконки
 
   # Networking и хранение данных
   dio: ^5.4.3+1 # HTTP клиент
   get_storage: ^2.1.1 # Локальное хранилище
+  js: ^0.7.1 # JavaScript interop
 
-  # Логирование (используем logger вместо surf_logger, так как он более доступен)
+  # UI зависимости
+  flutter_screenutil: ^5.9.0 # Responsive sizing
+  flutter_svg: ^2.0.10+1 # SVG иконки
+  flutter_hooks: ^0.20.5 # Hooks для Flutter
+  intl: ^0.19.0 # Интернационализация
+  go_router: ^14.2.0 # Навигация с guard
+
+  # Логирование
   logger: ^2.3.0 # Логирование
+
+  # Утилиты
+  collection: ^1.18.0 # Коллекции
 
 dev_dependencies:
   flutter_test:

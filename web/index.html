@@ -33,6 +33,45 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script>
+    // Initialize Telegram.WebApp structure BEFORE loading telegram-web-app.js
+    window.Telegram = window.Telegram || {};
+    window.Telegram.WebApp = window.Telegram.WebApp || {};
+    console.log('🔧 Pre-initialized Telegram.WebApp structure');
+  </script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="telegram.js"></script>
+  <script>
+    // Ensure mock is ready before Flutter loads
+    console.log('✅ All scripts loaded, mock should be ready');
+    console.log('🔍 Final check - window.Telegram.WebApp.initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
+    
+    // Force create mock if it doesn't exist
+    if (!window.Telegram.WebApp.initDataUnsafe) {
+      console.warn('⚠️ Mock not found, calling ensureTelegramMock()...');
+      if (typeof window.ensureTelegramMock === 'function') {
+        window.ensureTelegramMock();
+        console.log('✅ ensureTelegramMock() called from index.html');
+      } else {
+        console.error('❌ ensureTelegramMock() function not found!');
+      }
+    }
+    
+    if (window.Telegram.WebApp.initDataUnsafe) {
+      console.log('✅ Mock exists:', {
+        hash: window.Telegram.WebApp.initDataUnsafe.hash,
+        hashType: typeof window.Telegram.WebApp.initDataUnsafe.hash,
+        hashLength: window.Telegram.WebApp.initDataUnsafe.hash?.length
+      });
+      // Test getInitDataProperty
+      if (window.Telegram.WebApp.getInitDataProperty) {
+        console.log('🧪 Final test getInitDataProperty("hash"):', window.Telegram.WebApp.getInitDataProperty('hash'));
+      }
+    } else {
+      console.error('❌ CRITICAL: Mock was not created even after ensureTelegramMock()!');
+      console.error('💡 Check telegram.js for errors');
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

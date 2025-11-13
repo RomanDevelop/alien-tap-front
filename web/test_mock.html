@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Telegram Mock</title>
+</head>
+<body>
+  <h1>Telegram Mock Test</h1>
+  <div id="output"></div>
+  
+  <script>
+    const output = document.getElementById('output');
+    
+    function log(message) {
+      console.log(message);
+      const p = document.createElement('p');
+      p.textContent = message;
+      output.appendChild(p);
+    }
+    
+    log('🔍 Starting test...');
+    
+    // Step 1: Initialize structure
+    window.Telegram = window.Telegram || {};
+    window.Telegram.WebApp = window.Telegram.WebApp || {};
+    log('✅ Step 1: Telegram.WebApp structure initialized');
+    
+    // Step 2: Load telegram-web-app.js
+    const script1 = document.createElement('script');
+    script1.src = 'https://telegram.org/js/telegram-web-app.js';
+    script1.onload = function() {
+      log('✅ Step 2: telegram-web-app.js loaded');
+      
+      // Step 3: Load telegram.js
+      const script2 = document.createElement('script');
+      script2.src = 'telegram.js';
+      script2.onload = function() {
+        log('✅ Step 3: telegram.js loaded');
+        
+        // Step 4: Check mock
+        setTimeout(() => {
+          log('🔍 Step 4: Checking mock...');
+          
+          if (window.Telegram && window.Telegram.WebApp) {
+            log('✅ Telegram.WebApp exists');
+            
+            if (window.Telegram.WebApp.initDataUnsafe) {
+              const mock = window.Telegram.WebApp.initDataUnsafe;
+              log('✅ initDataUnsafe exists');
+              log(`📋 hash: ${mock.hash}`);
+              log(`📋 hash type: ${typeof mock.hash}`);
+              log(`📋 hash length: ${mock.hash?.length || 0}`);
+              log(`📋 auth_date: ${mock.auth_date}`);
+              log(`📋 user: ${JSON.stringify(mock.user)}`);
+              
+              // Test getInitDataProperty
+              if (window.Telegram.WebApp.getInitDataProperty) {
+                const hash = window.Telegram.WebApp.getInitDataProperty('hash');
+                log(`🧪 getInitDataProperty('hash'): ${hash}`);
+              } else {
+                log('❌ getInitDataProperty function not found');
+              }
+              
+              // Test ensureTelegramMock
+              if (typeof window.ensureTelegramMock === 'function') {
+                log('✅ ensureTelegramMock function exists');
+                const result = window.ensureTelegramMock();
+                log(`🧪 ensureTelegramMock() returned: ${result ? 'object' : 'null'}`);
+              } else {
+                log('❌ ensureTelegramMock function not found');
+              }
+            } else {
+              log('❌ initDataUnsafe is null/undefined');
+              log('💡 Trying to call ensureTelegramMock()...');
+              if (typeof window.ensureTelegramMock === 'function') {
+                window.ensureTelegramMock();
+                if (window.Telegram.WebApp.initDataUnsafe) {
+                  log('✅ Mock created after ensureTelegramMock()');
+                } else {
+                  log('❌ Mock still not created after ensureTelegramMock()');
+                }
+              }
+            }
+          } else {
+            log('❌ Telegram.WebApp does not exist');
+          }
+        }, 500);
+      };
+      script2.onerror = function() {
+        log('❌ Failed to load telegram.js');
+      };
+      document.head.appendChild(script2);
+    };
+    script1.onerror = function() {
+      log('❌ Failed to load telegram-web-app.js');
+    };
+    document.head.appendChild(script1);
+  </script>
+</body>
+</html>
+
