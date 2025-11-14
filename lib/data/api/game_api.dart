@@ -25,7 +25,17 @@ class GameApi {
   final GetStorage _storage = GetStorage();
   final Logger _logger = Logger();
 
-  GameApi(String baseUrl) : _dio = Dio(BaseOptions(baseUrl: baseUrl, headers: {'Content-Type': 'application/json'})) {
+  GameApi(String baseUrl)
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            // Убираем предупреждение ngrok (для локального тестирования)
+            'ngrok-skip-browser-warning': 'true',
+          },
+        ),
+      ) {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
