@@ -532,12 +532,13 @@ class GameApi {
             try {
               // parseInitDataUser returns JSON string, parse it in Dart
               print('   - parsedUserJson type: ${parsedUserJson.runtimeType}');
-              print('   - parsedUserJson value: ${parsedUserJson.toString().substring(0, parsedUserJson.toString().length > 100 ? 100 : parsedUserJson.toString().length)}...');
               
               // parseInitDataUser returns String (JSON), parse it
               final jsonString = parsedUserJson;
-              print('   - Parsing JSON string (length: ${jsonString.length})...');
+              print('   - parsedUserJson is String (length: ${jsonString.length})');
               print('   - JSON preview: ${jsonString.length > 100 ? jsonString.substring(0, 100) + "..." : jsonString}');
+              
+              print('   - Parsing JSON string...');
               final userMap = jsonDecode(jsonString) as Map<String, dynamic>;
               userObj = userMap;
               userObtained = true;
@@ -573,13 +574,18 @@ class GameApi {
             if (kDebugMode) {
               _logger.d('✅ Got user via parsing initData string');
               try {
-                final userMapForLog = userObj as Map<String, dynamic>;
-                final userId = userMapForLog['id'];
-                final username = userMapForLog['username'];
-                final firstName = userMapForLog['first_name'];
-                _logger.d('   - Parsed user.id: $userId');
-                _logger.d('   - Parsed user.username: $username');
-                _logger.d('   - Parsed user.first_name: $firstName');
+                // userObj is now a Map<String, dynamic> from jsonDecode
+                if (userObj is Map<String, dynamic>) {
+                  final userMapForLog = userObj;
+                  final userId = userMapForLog['id'];
+                  final username = userMapForLog['username'];
+                  final firstName = userMapForLog['first_name'];
+                  _logger.d('   - Parsed user.id: $userId');
+                  _logger.d('   - Parsed user.username: $username');
+                  _logger.d('   - Parsed user.first_name: $firstName');
+                } else {
+                  _logger.w('   - userObj is not a Map, type: ${userObj.runtimeType}');
+                }
               } catch (e) {
                 _logger.w('   - Could not access parsed user properties: $e');
               }
