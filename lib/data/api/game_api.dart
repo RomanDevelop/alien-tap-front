@@ -350,9 +350,25 @@ class GameApi {
         }
 
         if (userObj != null) {
-          userObtained = true;
-          if (kDebugMode) {
-            _logger.d('✅ Got user via getInitDataProperty');
+          // Validate that user object has required fields (especially id)
+          try {
+            final userId = (userObj as dynamic).id;
+            if (userId != null) {
+              userObtained = true;
+              if (kDebugMode) {
+                _logger.d('✅ Got user via getInitDataProperty');
+              }
+            } else {
+              if (kDebugMode) {
+                _logger.w('⚠️ getInitDataProperty("user") returned object without id, trying other methods...');
+              }
+              userObj = null; // Reset to try other methods
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              _logger.w('⚠️ getInitDataProperty("user") returned invalid object: $e, trying other methods...');
+            }
+            userObj = null; // Reset to try other methods
           }
         } else {
           if (kDebugMode) {
@@ -386,9 +402,25 @@ class GameApi {
             }
 
             if (userObj != null) {
-              userObtained = true;
-              if (kDebugMode) {
-                _logger.d('✅ Got user via direct access');
+              // Validate that user object has required fields (especially id)
+              try {
+                final userId = (userObj as dynamic).id;
+                if (userId != null) {
+                  userObtained = true;
+                  if (kDebugMode) {
+                    _logger.d('✅ Got user via direct access');
+                  }
+                } else {
+                  if (kDebugMode) {
+                    _logger.w('⚠️ Direct access returned object without id, trying parseInitDataUser...');
+                  }
+                  userObj = null; // Reset to try method 3
+                }
+              } catch (e) {
+                if (kDebugMode) {
+                  _logger.w('⚠️ Direct access returned invalid object: $e, trying parseInitDataUser...');
+                }
+                userObj = null; // Reset to try method 3
               }
             } else {
               if (kDebugMode) {
@@ -408,7 +440,9 @@ class GameApi {
       }
 
       // Method 3: Try parsing initData string (alternative way - works in Telegram Web)
-      if (!userObtained && userObj == null) {
+      // IMPORTANT: This method works in Telegram Web where initDataUnsafe.user might be null
+      // but initData string contains the user data
+      if (!userObtained) {
         if (kDebugMode) {
           _logger.d('🔍 Attempting to get user via parsing initData string...');
         }

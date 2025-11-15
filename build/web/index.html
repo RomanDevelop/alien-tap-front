@@ -41,6 +41,28 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="telegram.js"></script>
   <script>
+    // Immediate check of URL and Telegram WebApp availability
+    console.log('🔍 Initial URL check:');
+    console.log('   - Full URL:', window.location.href);
+    console.log('   - Hash:', window.location.hash);
+    console.log('   - Search:', window.location.search);
+    
+    // Check if tgWebAppData is in hash
+    if (window.location.hash && window.location.hash.includes('tgWebAppData')) {
+      console.log('✅ Found tgWebAppData in URL hash!');
+      const hash = window.location.hash;
+      const tgWebAppDataIndex = hash.indexOf('tgWebAppData=');
+      if (tgWebAppDataIndex !== -1) {
+        const tgWebAppDataValue = hash.substring(tgWebAppDataIndex + 'tgWebAppData='.length);
+        const nextParamIndex = tgWebAppDataValue.indexOf('&tgWebApp');
+        const extracted = nextParamIndex !== -1 
+          ? tgWebAppDataValue.substring(0, nextParamIndex)
+          : tgWebAppDataValue;
+        console.log('   - Extracted length:', extracted.length);
+        console.log('   - Preview:', extracted.substring(0, 150) + '...');
+      }
+    }
+    
     // Verify Telegram WebApp is available and run diagnostics
     if (window.Telegram && window.Telegram.WebApp) {
       if (window.Telegram.WebApp.initDataUnsafe) {
@@ -53,9 +75,35 @@
       // Run diagnostics if available (helps debug user data issues)
       if (window.Telegram.WebApp.diagnose && typeof window.Telegram.WebApp.diagnose === 'function') {
         try {
+          console.log('🔍 Running Telegram WebApp diagnostics...');
           window.Telegram.WebApp.diagnose();
         } catch (e) {
           console.warn('Could not run diagnostics:', e);
+        }
+      }
+      
+      // Try to get initData immediately
+      if (window.Telegram.WebApp.getInitData && typeof window.Telegram.WebApp.getInitData === 'function') {
+        try {
+          const initData = window.Telegram.WebApp.getInitData();
+          if (initData) {
+            console.log('✅ getInitData() returned data, length:', initData.length);
+            console.log('   - Preview:', initData.substring(0, 150) + '...');
+            
+            // Try to parse user immediately
+            if (window.Telegram.WebApp.parseInitDataUser) {
+              const user = window.Telegram.WebApp.parseInitDataUser();
+              if (user) {
+                console.log('✅ User parsed successfully:', user);
+              } else {
+                console.warn('⚠️ User could not be parsed from initData');
+              }
+            }
+          } else {
+            console.warn('⚠️ getInitData() returned null');
+          }
+        } catch (e) {
+          console.warn('⚠️ Error calling getInitData():', e);
         }
       }
     } else {
