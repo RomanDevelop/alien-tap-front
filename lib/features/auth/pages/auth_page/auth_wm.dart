@@ -41,27 +41,48 @@ class AuthWidgetModel extends WidgetModel {
   }
 
   Future<void> authenticate() async {
-    if (_isLoading.value == true) return;
+    if (_isLoading.value == true) {
+      _logger.d('⚠️ authenticate() called but already loading, ignoring...');
+      return;
+    }
 
+    _logger.d('🔍 authenticate() called - starting authentication process...');
     _isLoading.add(true);
     _error.add(null);
 
     try {
+      _logger.d('📤 Calling _api.authenticate()...');
       await _api.authenticate();
-      _logger.d('Authentication successful');
+      _logger.d('✅ Authentication successful - token received');
 
       // Небольшая задержка, чтобы токен точно сохранился
       await Future.delayed(const Duration(milliseconds: 100));
 
+      // Проверяем, что токен действительно сохранен
+      try {
+        final token = (_api as dynamic)._token;
+        if (token != null && token.toString().isNotEmpty) {
+          _logger.d('✅ Token verified in storage (length: ${token.toString().length})');
+        } else {
+          _logger.w('⚠️ Token not found in storage after authentication!');
+        }
+      } catch (e) {
+        _logger.w('⚠️ Could not verify token: $e');
+      }
+
       // Переход на игровой экран
-      _logger.d('Navigating to game screen...');
+      _logger.d('🔄 Navigating to game screen...');
       _navigator.goToGame();
-    } catch (e) {
+    } catch (e, stackTrace) {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       _error.add(errorMsg);
-      _logger.e('Authentication failed: $e');
+      _logger.e('❌ Authentication failed: $e');
+      _logger.e('   Stack trace: $stackTrace');
+      print('❌ AuthWidgetModel.authenticate() error: $e');
+      print('   Stack: $stackTrace');
     } finally {
       _isLoading.add(false);
+      _logger.d('🏁 authenticate() completed');
     }
   }
 
