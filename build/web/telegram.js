@@ -50,23 +50,58 @@ window.Telegram.WebApp.getInitDataProperty = window.Telegram.WebApp.getInitDataP
 
 // Helper to get initData as string (URL-encoded) - alternative way to get user data
 window.Telegram.WebApp.getInitData = window.Telegram.WebApp.getInitData || function() {
-  return window.Telegram?.WebApp?.initData || null;
+  // Try multiple ways to get initData string
+  if (window.Telegram?.WebApp?.initData) {
+    return window.Telegram.WebApp.initData;
+  }
+  // Sometimes it's available as a property directly
+  if (window.Telegram?.WebApp?.initDataRaw) {
+    return window.Telegram.WebApp.initDataRaw;
+  }
+  // Check if it's in the URL (for debugging)
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tgWebAppData = urlParams.get('tgWebAppData');
+    if (tgWebAppData) {
+      console.log('📋 Found tgWebAppData in URL params');
+      return tgWebAppData;
+    }
+  } catch (e) {
+    // Ignore
+  }
+  return null;
 };
 
 // Helper to parse initData string and extract user
 window.Telegram.WebApp.parseInitDataUser = window.Telegram.WebApp.parseInitDataUser || function() {
   try {
-    const initDataString = window.Telegram?.WebApp?.initData;
-    if (!initDataString) return null;
+    // Use getInitData() to get the string (handles multiple sources)
+    const initDataString = window.Telegram.WebApp.getInitData();
+    if (!initDataString) {
+      console.warn('⚠️ parseInitDataUser: initData string is not available');
+      return null;
+    }
+    
+    console.log('📋 parseInitDataUser: initData string length:', initDataString.length);
+    console.log('📋 parseInitDataUser: initData string preview:', initDataString.substring(0, 100) + '...');
     
     // Parse URL-encoded string: "hash=...&user=%7B%22id%22%3A123%7D&auth_date=..."
     const params = new URLSearchParams(initDataString);
     const userParam = params.get('user');
+    
     if (userParam) {
-      return JSON.parse(decodeURIComponent(userParam));
+      console.log('✅ parseInitDataUser: found user param, length:', userParam.length);
+      const decoded = decodeURIComponent(userParam);
+      console.log('📋 parseInitDataUser: decoded user:', decoded);
+      const userObj = JSON.parse(decoded);
+      console.log('✅ parseInitDataUser: successfully parsed user object');
+      return userObj;
+    } else {
+      console.warn('⚠️ parseInitDataUser: user param not found in initData string');
+      console.log('📋 Available params:', Array.from(params.keys()));
     }
   } catch (e) {
-    console.warn('Failed to parse initData user:', e);
+    console.error('❌ Failed to parse initData user:', e);
   }
   return null;
 };
@@ -76,21 +111,41 @@ window.Telegram.WebApp.diagnose = window.Telegram.WebApp.diagnose || function() 
   const result = {
     version: window.Telegram?.WebApp?.version || null,
     platform: window.Telegram?.WebApp?.platform || null,
-    initData: window.Telegram?.WebApp?.initData || null,
+    initData: null,
+    initDataViaGetInitData: null,
     initDataUnsafe: window.Telegram?.WebApp?.initDataUnsafe || null,
     initDataUnsafeKeys: null,
     userFromUnsafe: null,
     userFromParsed: null,
   };
   
+  // Check initData property directly
+  result.initData = window.Telegram?.WebApp?.initData || null;
+  
+  // Check via getInitData() function (handles multiple sources)
+  if (window.Telegram.WebApp.getInitData) {
+    result.initDataViaGetInitData = window.Telegram.WebApp.getInitData();
+  }
+  
   if (result.initDataUnsafe) {
     result.initDataUnsafeKeys = Object.keys(result.initDataUnsafe);
     result.userFromUnsafe = result.initDataUnsafe.user || null;
   }
   
-  result.userFromParsed = window.Telegram.WebApp.parseInitDataUser();
+  // Try to parse user from initData string
+  if (window.Telegram.WebApp.parseInitDataUser) {
+    result.userFromParsed = window.Telegram.WebApp.parseInitDataUser();
+  }
   
   console.log('🔍 Telegram WebApp Diagnostics:', result);
+  console.log('📋 Detailed info:');
+  console.log('   - initData (direct):', result.initData ? `available (${result.initData.length} chars)` : 'not available');
+  console.log('   - initData (via getInitData):', result.initDataViaGetInitData ? `available (${result.initDataViaGetInitData.length} chars)` : 'not available');
+  console.log('   - initDataUnsafe:', result.initDataUnsafe ? 'available' : 'not available');
+  console.log('   - initDataUnsafe keys:', result.initDataUnsafeKeys || 'N/A');
+  console.log('   - user from initDataUnsafe:', result.userFromUnsafe ? 'available' : 'not available');
+  console.log('   - user from parsed initData:', result.userFromParsed ? 'available' : 'not available');
+  
   return result;
 };
 

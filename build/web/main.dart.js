@@ -40457,7 +40457,8 @@ e=!1
 try{try{f=self.Telegram.WebApp.getInitDataProperty("user")
 if(f!=null)e=!0}catch(b7){}if(!e&&f==null)try{d=self.Telegram.WebApp.initDataUnsafe
 if(d!=null){f=d.gWL()
-if(f!=null)e=!0}}catch(b7){}if(!e&&f==null)try{c=self.Telegram.WebApp.parseInitDataUser()
+if(f!=null)e=!0}}catch(b7){}if(!e&&f==null)try{self.Telegram.WebApp.getInitData()
+c=self.Telegram.WebApp.parseInitDataUser()
 if(c!=null){f=c
 e=!0}}catch(b7){}if(f!=null&&e)try{b=J.aGY(f)
 a=J.aH2(f)

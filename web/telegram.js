@@ -50,25 +50,88 @@ window.Telegram.WebApp.getInitDataProperty = window.Telegram.WebApp.getInitDataP
 
 // Helper to get initData as string (URL-encoded) - alternative way to get user data
 window.Telegram.WebApp.getInitData = window.Telegram.WebApp.getInitData || function() {
-  // Try multiple ways to get initData string
+  // Method 1: Try Telegram.WebApp.initData (standard way)
   if (window.Telegram?.WebApp?.initData) {
+    console.log('✅ getInitData: Found via Telegram.WebApp.initData');
     return window.Telegram.WebApp.initData;
   }
-  // Sometimes it's available as a property directly
+  
+  // Method 2: Sometimes it's available as a property directly
   if (window.Telegram?.WebApp?.initDataRaw) {
+    console.log('✅ getInitData: Found via Telegram.WebApp.initDataRaw');
     return window.Telegram.WebApp.initDataRaw;
   }
-  // Check if it's in the URL (for debugging)
+  
+  // Method 3: Check if it's in the URL as tgWebAppData (Telegram Web)
   try {
+    // Check current URL hash (Telegram Web uses hash for routing)
+    // Format: #@bot_name?tgWebAppData=query_id%3D...%26user%3D...%26hash%3D...
+    const hash = window.location.hash;
+    if (hash && hash.includes('tgWebAppData=')) {
+      console.log('📋 getInitData: Found tgWebAppData in hash, extracting...');
+      
+      // Try to extract tgWebAppData value - it might be the entire rest of the hash
+      // Format: #@bot_name?tgWebAppData=ENCODED_STRING
+      const tgWebAppDataIndex = hash.indexOf('tgWebAppData=');
+      if (tgWebAppDataIndex !== -1) {
+        // Get everything after 'tgWebAppData='
+        let tgWebAppDataValue = hash.substring(tgWebAppDataIndex + 'tgWebAppData='.length);
+        
+        // Remove any trailing parameters (like &tgWebAppVersion=...)
+        const nextParamIndex = tgWebAppDataValue.indexOf('&tgWebApp');
+        if (nextParamIndex !== -1) {
+          tgWebAppDataValue = tgWebAppDataValue.substring(0, nextParamIndex);
+        }
+        
+        console.log('📋 getInitData: Extracted tgWebAppData value, length:', tgWebAppDataValue.length);
+        console.log('📋 getInitData: Preview:', tgWebAppDataValue.substring(0, 100) + '...');
+        
+        // The data is URL-encoded, decode it
+        try {
+          const decoded = decodeURIComponent(tgWebAppDataValue);
+          console.log('✅ getInitData: Successfully decoded tgWebAppData');
+          console.log('📋 getInitData: Decoded length:', decoded.length);
+          console.log('📋 getInitData: Decoded preview:', decoded.substring(0, 100) + '...');
+          return decoded;
+        } catch (e) {
+          console.warn('⚠️ getInitData: Failed to decode, trying as-is:', e);
+          // If decoding fails, return as-is (might be already decoded or have special chars)
+          return tgWebAppDataValue;
+        }
+      }
+      
+      // Alternative: Try parsing as URLSearchParams from hash
+      try {
+        // Remove # and try to parse
+        const hashWithoutHash = hash.substring(1);
+        // Find the ? separator if exists
+        const questionMarkIndex = hashWithoutHash.indexOf('?');
+        if (questionMarkIndex !== -1) {
+          const queryString = hashWithoutHash.substring(questionMarkIndex + 1);
+          const hashParams = new URLSearchParams(queryString);
+          const tgWebAppData = hashParams.get('tgWebAppData');
+          if (tgWebAppData) {
+            console.log('✅ getInitData: Found tgWebAppData via URLSearchParams from hash');
+            return decodeURIComponent(tgWebAppData);
+          }
+        }
+      } catch (e) {
+        console.warn('⚠️ getInitData: URLSearchParams parsing failed:', e);
+      }
+    }
+    
+    // Check URL search params (fallback)
     const urlParams = new URLSearchParams(window.location.search);
     const tgWebAppData = urlParams.get('tgWebAppData');
     if (tgWebAppData) {
-      console.log('📋 Found tgWebAppData in URL params');
-      return tgWebAppData;
+      console.log('✅ getInitData: Found tgWebAppData in URL search params');
+      return decodeURIComponent(tgWebAppData);
     }
   } catch (e) {
-    // Ignore
+    console.warn('⚠️ getInitData: Error parsing URL params:', e);
   }
+  
+  console.warn('⚠️ getInitData: initData string not found in any source');
   return null;
 };
 
