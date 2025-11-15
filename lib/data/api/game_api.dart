@@ -266,47 +266,61 @@ class GameApi {
       }
     }
 
-    // Get user
+    // Get user (REQUIRED field)
     try {
-      final user = getInitDataProperty('user');
-      if (user != null) {
-        data['user'] = {
-          'id': (user as dynamic).id,
-          'username': (user as dynamic).username,
-          'first_name': (user as dynamic).first_name,
-          'last_name': (user as dynamic).last_name,
-        };
-        if (kDebugMode) {
+      dynamic userObj;
+      
+      // Method 1: Try getInitDataProperty first
+      try {
+        userObj = getInitDataProperty('user');
+        if (kDebugMode && userObj != null) {
           _logger.d('✅ Got user via getInitDataProperty');
         }
-      } else {
-        // Fallback to direct access
+      } catch (e) {
+        if (kDebugMode) {
+          _logger.w('⚠️ getInitDataProperty("user") failed: $e, trying direct access...');
+        }
+      }
+      
+      // Method 2: Fallback to direct access if getInitDataProperty failed
+      if (userObj == null) {
         try {
           final initData = _telegramInitData;
           if (initData != null) {
-            final user = (initData as dynamic).user;
-            if (user != null) {
-              data['user'] = {
-                'id': (user as dynamic).id,
-                'username': (user as dynamic).username,
-                'first_name': (user as dynamic).first_name,
-                'last_name': (user as dynamic).last_name,
-              };
-              if (kDebugMode) {
-                _logger.d('✅ Got user via direct access');
-              }
+            userObj = (initData as dynamic).user;
+            if (kDebugMode && userObj != null) {
+              _logger.d('✅ Got user via direct access');
             }
           }
         } catch (e) {
           if (kDebugMode) {
-            _logger.w('⚠️ Failed to get user: $e');
+            _logger.w('⚠️ Direct access to user failed: $e');
           }
+        }
+      }
+      
+      // Build user object with all required fields (some may be null)
+      if (userObj != null) {
+        data['user'] = {
+          'id': (userObj as dynamic).id,
+          'username': (userObj as dynamic).username,
+          'first_name': (userObj as dynamic).first_name,
+          'last_name': (userObj as dynamic).last_name,
+        };
+        
+        if (kDebugMode) {
+          _logger.d('✅ User object created: id=${data['user']['id']}, username=${data['user']['username']}');
+        }
+      } else {
+        if (kDebugMode) {
+          _logger.e('❌ User object is null! Cannot proceed with authentication.');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        _logger.w('⚠️ getInitDataProperty("user") failed: $e');
+        _logger.e('❌ Failed to get user data: $e');
       }
+      // Don't throw here - validation will catch it below
     }
 
     // Final validation - hash is required (CRITICAL for security)
@@ -320,10 +334,28 @@ class GameApi {
       throw Exception('Invalid Telegram hash detected. Application must be run inside real Telegram WebApp');
     }
 
+    // Validate that user is present (required by backend)
+    if (!data.containsKey('user') || data['user'] == null) {
+      throw Exception('Telegram user data is required for authentication. Application must be run inside Telegram WebApp');
+    }
+
+    // Validate user structure
+    final user = data['user'] as Map<String, dynamic>?;
+    if (user == null || user['id'] == null) {
+      throw Exception('Invalid Telegram user data. User ID is required for authentication');
+    }
+
     if (kDebugMode) {
       _logger.d('📤 Final data being sent:');
       _logger.d('  - Keys: ${data.keys.toList()}');
       _logger.d('  - Has user: ${data.containsKey('user')}');
+      if (data.containsKey('user')) {
+        final userData = data['user'] as Map<String, dynamic>;
+        _logger.d('  - user.id: ${userData['id']}');
+        _logger.d('  - user.username: ${userData['username']}');
+        _logger.d('  - user.first_name: ${userData['first_name']}');
+        _logger.d('  - user.last_name: ${userData['last_name']}');
+      }
       _logger.d('  - auth_date: ${data['auth_date']}');
       _logger.d('  - hash length: ${data['hash']?.toString().length ?? 0}');
     }
@@ -476,3 +508,4 @@ class GameApi {
     _storage.remove('user_id');
   }
 }
+
