@@ -118,16 +118,16 @@ class GameApi {
     try {
       final initData = _telegramInitData;
       if (initData == null) return false;
-      
+
       final hash = getInitDataProperty('hash');
       if (hash == null || hash.toString().isEmpty) return false;
-      
+
       final hashStr = hash.toString();
       // В продакшене не должно быть моковых хешей
       if (AppConfig.isProduction && hashStr.contains('mock')) {
         return false;
       }
-      
+
       // Реальный хеш от Telegram обычно длиннее 40 символов и является hex строкой
       if (AppConfig.isProduction) {
         // Проверяем что это не мок
@@ -135,7 +135,7 @@ class GameApi {
           return false;
         }
       }
-      
+
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -267,58 +267,131 @@ class GameApi {
     }
 
     // Get user (REQUIRED field)
+    dynamic userObj;
+    bool userObtained = false;
+
     try {
-      dynamic userObj;
-      
       // Method 1: Try getInitDataProperty first
+      if (kDebugMode) {
+        _logger.d('🔍 Attempting to get user via getInitDataProperty("user")...');
+      }
+
       try {
         userObj = getInitDataProperty('user');
-        if (kDebugMode && userObj != null) {
-          _logger.d('✅ Got user via getInitDataProperty');
+
+        if (kDebugMode) {
+          _logger.d('📥 getInitDataProperty("user") returned: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
+          if (userObj != null) {
+            _logger.d('   - userObj is not null, checking properties...');
+            try {
+              final userId = (userObj as dynamic).id;
+              _logger.d('   - user.id: $userId');
+            } catch (e) {
+              _logger.w('   - Could not access user.id: $e');
+            }
+          }
+        }
+
+        if (userObj != null) {
+          userObtained = true;
+          if (kDebugMode) {
+            _logger.d('✅ Got user via getInitDataProperty');
+          }
+        } else {
+          if (kDebugMode) {
+            _logger.w('⚠️ getInitDataProperty("user") returned null, trying direct access...');
+          }
         }
       } catch (e) {
         if (kDebugMode) {
-          _logger.w('⚠️ getInitDataProperty("user") failed: $e, trying direct access...');
+          _logger.w('⚠️ getInitDataProperty("user") failed with exception: $e');
+          _logger.w('   Trying direct access as fallback...');
         }
       }
-      
+
       // Method 2: Fallback to direct access if getInitDataProperty failed
-      if (userObj == null) {
+      if (!userObtained && userObj == null) {
+        if (kDebugMode) {
+          _logger.d('🔍 Attempting to get user via direct access...');
+        }
+
         try {
           final initData = _telegramInitData;
           if (initData != null) {
+            if (kDebugMode) {
+              _logger.d('   - initData is not null, accessing .user property...');
+            }
+
             userObj = (initData as dynamic).user;
-            if (kDebugMode && userObj != null) {
-              _logger.d('✅ Got user via direct access');
+
+            if (kDebugMode) {
+              _logger.d('   - Direct access result: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
+            }
+
+            if (userObj != null) {
+              userObtained = true;
+              if (kDebugMode) {
+                _logger.d('✅ Got user via direct access');
+              }
+            } else {
+              if (kDebugMode) {
+                _logger.w('⚠️ Direct access returned null - user not available in initData');
+              }
+            }
+          } else {
+            if (kDebugMode) {
+              _logger.w('⚠️ initData is null, cannot access user');
             }
           }
         } catch (e) {
           if (kDebugMode) {
-            _logger.w('⚠️ Direct access to user failed: $e');
+            _logger.e('❌ Direct access to user failed: $e');
           }
         }
       }
-      
+
       // Build user object with all required fields (some may be null)
-      if (userObj != null) {
-        data['user'] = {
-          'id': (userObj as dynamic).id,
-          'username': (userObj as dynamic).username,
-          'first_name': (userObj as dynamic).first_name,
-          'last_name': (userObj as dynamic).last_name,
-        };
-        
-        if (kDebugMode) {
-          _logger.d('✅ User object created: id=${data['user']['id']}, username=${data['user']['username']}');
+      if (userObj != null && userObtained) {
+        try {
+          final userId = (userObj as dynamic).id;
+          final username = (userObj as dynamic).username;
+          final firstName = (userObj as dynamic).first_name;
+          final lastName = (userObj as dynamic).last_name;
+
+          if (kDebugMode) {
+            _logger.d('📋 Building user object from properties:');
+            _logger.d('   - id: $userId');
+            _logger.d('   - username: $username');
+            _logger.d('   - first_name: $firstName');
+            _logger.d('   - last_name: $lastName');
+          }
+
+          data['user'] = {'id': userId, 'username': username, 'first_name': firstName, 'last_name': lastName};
+
+          if (kDebugMode) {
+            _logger.d('✅ User object created successfully');
+            _logger.d('   - Final user.id: ${data['user']['id']}');
+            _logger.d('   - Final user.username: ${data['user']['username']}');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            _logger.e('❌ Failed to build user object from userObj: $e');
+          }
+          // Clear userObj so validation will catch it
+          userObj = null;
+          userObtained = false;
         }
       } else {
         if (kDebugMode) {
           _logger.e('❌ User object is null! Cannot proceed with authentication.');
+          _logger.e('   - userObtained: $userObtained');
+          _logger.e('   - userObj: $userObj');
         }
       }
     } catch (e) {
       if (kDebugMode) {
         _logger.e('❌ Failed to get user data: $e');
+        _logger.e('   Stack trace: ${StackTrace.current}');
       }
       // Don't throw here - validation will catch it below
     }
@@ -335,14 +408,49 @@ class GameApi {
     }
 
     // Validate that user is present (required by backend)
+    if (kDebugMode) {
+      _logger.d('🔍 Validating user data before sending...');
+      _logger.d('   - data.containsKey("user"): ${data.containsKey('user')}');
+      _logger.d('   - data["user"] is null: ${data['user'] == null}');
+    }
+
     if (!data.containsKey('user') || data['user'] == null) {
-      throw Exception('Telegram user data is required for authentication. Application must be run inside Telegram WebApp');
+      final errorMsg =
+          'Telegram user data is required for authentication. Application must be run inside Telegram WebApp';
+      if (kDebugMode) {
+        _logger.e('❌ VALIDATION FAILED: User is missing');
+        _logger.e('   - Available keys in data: ${data.keys.toList()}');
+      }
+      throw Exception(errorMsg);
     }
 
     // Validate user structure
+    if (kDebugMode) {
+      _logger.d('🔍 Validating user structure...');
+    }
+
     final user = data['user'] as Map<String, dynamic>?;
-    if (user == null || user['id'] == null) {
-      throw Exception('Invalid Telegram user data. User ID is required for authentication');
+    if (user == null) {
+      final errorMsg = 'Invalid Telegram user data. User object is null';
+      if (kDebugMode) {
+        _logger.e('❌ VALIDATION FAILED: User object is null');
+      }
+      throw Exception(errorMsg);
+    }
+
+    if (user['id'] == null) {
+      final errorMsg = 'Invalid Telegram user data. User ID is required for authentication';
+      if (kDebugMode) {
+        _logger.e('❌ VALIDATION FAILED: User ID is missing');
+        _logger.e('   - User object keys: ${user.keys.toList()}');
+        _logger.e('   - User object: $user');
+      }
+      throw Exception(errorMsg);
+    }
+
+    if (kDebugMode) {
+      _logger.d('✅ User validation passed');
+      _logger.d('   - user.id: ${user['id']}');
     }
 
     if (kDebugMode) {
@@ -508,4 +616,3 @@ class GameApi {
     _storage.remove('user_id');
   }
 }
-
