@@ -414,6 +414,17 @@ class GameApi {
         }
 
         try {
+          // First, check if initData string is available
+          final initDataString = getInitDataString();
+          if (kDebugMode) {
+            if (initDataString != null) {
+              _logger.d('✅ initData string is available (length: ${initDataString.length})');
+              _logger.d('   - Preview: ${initDataString.length > 100 ? initDataString.substring(0, 100) + "..." : initDataString}');
+            } else {
+              _logger.w('⚠️ initData string is not available');
+            }
+          }
+
           final parsedUser = parseInitDataUser();
           if (parsedUser != null) {
             userObj = parsedUser;
@@ -422,19 +433,29 @@ class GameApi {
               _logger.d('✅ Got user via parsing initData string');
               try {
                 final userId = (parsedUser as dynamic).id;
+                final username = (parsedUser as dynamic).username;
+                final firstName = (parsedUser as dynamic).first_name;
                 _logger.d('   - Parsed user.id: $userId');
+                _logger.d('   - Parsed user.username: $username');
+                _logger.d('   - Parsed user.first_name: $firstName');
               } catch (e) {
-                _logger.w('   - Could not access parsed user.id: $e');
+                _logger.w('   - Could not access parsed user properties: $e');
               }
             }
           } else {
             if (kDebugMode) {
               _logger.w('⚠️ parseInitDataUser() returned null');
+              if (initDataString != null) {
+                _logger.w('   - initData string exists but user could not be parsed');
+              } else {
+                _logger.w('   - initData string is not available');
+              }
             }
           }
         } catch (e) {
           if (kDebugMode) {
-            _logger.w('⚠️ parseInitDataUser() failed: $e');
+            _logger.e('❌ parseInitDataUser() failed: $e');
+            _logger.e('   - Stack trace: ${StackTrace.current}');
           }
         }
       }

@@ -40439,71 +40439,73 @@ case 2:s=3
 return A.S(A.z9(B.d4,null,t.z),$async$iB)
 case 3:return A.N(null,r)}})
 return A.O($async$iB,r)},
-hL(){var s=0,r=A.P(t.N),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,b0,b1,b2,b3,b4,b5
-var $async$hL=A.Q(function(b7,b8){if(b7===1){o.push(b8)
-s=p}while(true)switch(s){case 0:b2=t.N
-b3=t.z
-b4=A.r(b2,b3)
-try{m=self.Telegram.WebApp.initDataUnsafe}catch(b6){}try{l=self.Telegram.WebApp.getInitDataProperty("hash")
-if(l!=null&&J.ck(l).length!==0)J.eh(b4,"hash",J.ck(l))}catch(b6){}if(J.aP(b4,"hash")==null||J.ck(J.aP(b4,"hash")).length===0){k=self.Telegram.WebApp.initDataUnsafe
+hL(){var s=0,r=A.P(t.N),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,b0,b1,b2,b3,b4,b5,b6
+var $async$hL=A.Q(function(b8,b9){if(b8===1){o.push(b9)
+s=p}while(true)switch(s){case 0:b3=t.N
+b4=t.z
+b5=A.r(b3,b4)
+try{m=self.Telegram.WebApp.initDataUnsafe}catch(b7){}try{l=self.Telegram.WebApp.getInitDataProperty("hash")
+if(l!=null&&J.ck(l).length!==0)J.eh(b5,"hash",J.ck(l))}catch(b7){}if(J.aP(b5,"hash")==null||J.ck(J.aP(b5,"hash")).length===0){k=self.Telegram.WebApp.initDataUnsafe
 if(k!=null)try{j=J.aGX(k)
-if(j!=null&&J.ck(j).length!==0)J.eh(b4,"hash",J.ck(j))}catch(b6){}}try{i=self.Telegram.WebApp.getInitDataProperty("auth_date")
-if(i!=null){a9=typeof i=="number"?B.d.fs(i):i
-J.eh(b4,"auth_date",a9)}else try{h=self.Telegram.WebApp.initDataUnsafe
+if(j!=null&&J.ck(j).length!==0)J.eh(b5,"hash",J.ck(j))}catch(b7){}}try{i=self.Telegram.WebApp.getInitDataProperty("auth_date")
+if(i!=null){b0=typeof i=="number"?B.d.fs(i):i
+J.eh(b5,"auth_date",b0)}else try{h=self.Telegram.WebApp.initDataUnsafe
 if(h!=null){g=h.gRN()
-if(g!=null){a9=typeof g=="number"?B.d.fs(g):g
-J.eh(b4,"auth_date",a9)}}}catch(b6){}}catch(b6){}f=null
+if(g!=null){b0=typeof g=="number"?B.d.fs(g):g
+J.eh(b5,"auth_date",b0)}}}catch(b7){}}catch(b7){}f=null
 e=!1
 try{try{f=self.Telegram.WebApp.getInitDataProperty("user")
-if(f!=null)e=!0}catch(b6){}if(!e&&f==null)try{d=self.Telegram.WebApp.initDataUnsafe
+if(f!=null)e=!0}catch(b7){}if(!e&&f==null)try{d=self.Telegram.WebApp.initDataUnsafe
 if(d!=null){f=d.gWL()
-if(f!=null)e=!0}}catch(b6){}if(f!=null&&e)try{c=J.aGY(f)
-b=J.aH2(f)
-a=f.gTF()
-a0=f.gV_()
-J.eh(b4,"user",A.ao(["id",c,"username",b,"first_name",a,"last_name",a0],b2,b3))}catch(b6){f=null
-e=!1}}catch(b6){}if(J.aP(b4,"hash")==null||J.ck(J.aP(b4,"hash")).length===0)throw A.e(A.db("Telegram hash is required for authentication. Application must be run inside Telegram WebApp"))
-b0=J.ck(J.aP(b4,"hash"))
-if(B.c.q(b0,"mock")||B.c.bn(b0,"mock_"))throw A.e(A.db("Invalid Telegram hash detected. Application must be run inside real Telegram WebApp"))
-if(!J.or(b4,"user")||J.aP(b4,"user")==null)throw A.e(A.db("Telegram user data is required for authentication. Application must be run inside Telegram WebApp"))
-b1=t.nA.a(J.aP(b4,"user"))
-if(b1==null)throw A.e(A.db("Invalid Telegram user data. User object is null"))
-if(J.aP(b1,"id")==null)throw A.e(A.db("Invalid Telegram user data. User ID is required for authentication"))
+if(f!=null)e=!0}}catch(b7){}if(!e&&f==null)try{c=self.Telegram.WebApp.parseInitDataUser()
+if(c!=null){f=c
+e=!0}}catch(b7){}if(f!=null&&e)try{b=J.aGY(f)
+a=J.aH2(f)
+a0=f.gTF()
+a1=f.gV_()
+J.eh(b5,"user",A.ao(["id",b,"username",a,"first_name",a0,"last_name",a1],b3,b4))}catch(b7){f=null
+e=!1}}catch(b7){}if(J.aP(b5,"hash")==null||J.ck(J.aP(b5,"hash")).length===0)throw A.e(A.db("Telegram hash is required for authentication. Application must be run inside Telegram WebApp"))
+b1=J.ck(J.aP(b5,"hash"))
+if(B.c.q(b1,"mock")||B.c.bn(b1,"mock_"))throw A.e(A.db("Invalid Telegram hash detected. Application must be run inside real Telegram WebApp"))
+if(!J.or(b5,"user")||J.aP(b5,"user")==null)throw A.e(A.db("Telegram user data is required for authentication.\n\nPlease ensure:\n1. The app is opened via the bot's Menu Button (not directly by URL)\n2. The Menu Button URL is correctly configured in BotFather\n3. You are using the Telegram mobile app or Telegram Web (web.telegram.org)\n\n"))
+b2=t.nA.a(J.aP(b5,"user"))
+if(b2==null)throw A.e(A.db("Invalid Telegram user data. User object is null"))
+if(J.aP(b2,"id")==null)throw A.e(A.db("Invalid Telegram user data. User ID is required for authentication"))
 p=4
 s=7
-return A.S(n.a.ano("/auth/telegram",b4,b3),$async$hL)
-case 7:a1=b8
-a2=A.bj(J.aP(a1.a,"token"))
-a3=A.bI(J.aP(a1.a,"user_id"))
-b2=a2
-b3=n.b
-if(b2==null)b3.D(0,"jwt_token")
-else b3.Ar(0,"jwt_token",b2)
-b2=b3.c
-b2===$&&A.a()
-b2=b2.c.a
-a9=$.cq
-if(a9==null)a9=$.cq=new A.ec()
-a9.dm(b2.d5$)
-a4=A.bI(J.aP(b2.by$,"jwt_token"))
-if(a4==null||a4!==a2){n.c.Td(0,"\u274c CRITICAL: Token was not saved correctly!")
-b2=A.db("Failed to save authentication token")
-throw A.e(b2)}if(a3!=null)b3.Ar(0,"user_id",a3)
-q=a2
+return A.S(n.a.ano("/auth/telegram",b5,b4),$async$hL)
+case 7:a2=b9
+a3=A.bj(J.aP(a2.a,"token"))
+a4=A.bI(J.aP(a2.a,"user_id"))
+b3=a3
+b4=n.b
+if(b3==null)b4.D(0,"jwt_token")
+else b4.Ar(0,"jwt_token",b3)
+b3=b4.c
+b3===$&&A.a()
+b3=b3.c.a
+b0=$.cq
+if(b0==null)b0=$.cq=new A.ec()
+b0.dm(b3.d5$)
+a5=A.bI(J.aP(b3.by$,"jwt_token"))
+if(a5==null||a5!==a3){n.c.Td(0,"\u274c CRITICAL: Token was not saved correctly!")
+b3=A.db("Failed to save authentication token")
+throw A.e(b3)}if(a4!=null)b4.Ar(0,"user_id",a4)
+q=a3
 s=1
 break
 p=2
 s=6
 break
 case 4:p=3
-b5=o.pop()
-b2=A.ae(b5)
-if(b2 instanceof A.eX){a5=b2
-if(a5.b!=null){a6=a5.b.c
-a7=a5.b.a
-b2=A.l(a6)
-b3=a7!=null?" - "+A.l(a7):""
-throw A.e(A.db("Auth failed: "+b2+b3))}throw A.e(A.db("Connection error: "+A.l(a5.f)))}else throw b5
+b6=o.pop()
+b3=A.ae(b6)
+if(b3 instanceof A.eX){a6=b3
+if(a6.b!=null){a7=a6.b.c
+a8=a6.b.a
+b3=A.l(a7)
+b4=a8!=null?" - "+A.l(a8):""
+throw A.e(A.db("Auth failed: "+b3+b4))}throw A.e(A.db("Connection error: "+A.l(a6.f)))}else throw b6
 s=6
 break
 case 3:s=2

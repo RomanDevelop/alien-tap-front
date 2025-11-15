@@ -41,12 +41,25 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="telegram.js"></script>
   <script>
-    // Verify Telegram WebApp is available
-    if (window.Telegram.WebApp.initDataUnsafe) {
-      const hash = window.Telegram.WebApp.initDataUnsafe.hash;
-      if (hash && !hash.toString().startsWith('mock_')) {
-        console.log('✅ Telegram WebApp initialized with real data');
+    // Verify Telegram WebApp is available and run diagnostics
+    if (window.Telegram && window.Telegram.WebApp) {
+      if (window.Telegram.WebApp.initDataUnsafe) {
+        const hash = window.Telegram.WebApp.initDataUnsafe.hash;
+        if (hash && !hash.toString().startsWith('mock_')) {
+          console.log('✅ Telegram WebApp initialized with real data');
+        }
       }
+      
+      // Run diagnostics if available (helps debug user data issues)
+      if (window.Telegram.WebApp.diagnose && typeof window.Telegram.WebApp.diagnose === 'function') {
+        try {
+          window.Telegram.WebApp.diagnose();
+        } catch (e) {
+          console.warn('Could not run diagnostics:', e);
+        }
+      }
+    } else {
+      console.warn('⚠️ Telegram.WebApp is not available');
     }
   </script>
   <script src="flutter_bootstrap.js" async></script>
