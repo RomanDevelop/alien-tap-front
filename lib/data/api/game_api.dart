@@ -15,8 +15,7 @@ external String? getInitDataJSON();
 @JS('Telegram.WebApp.getInitDataProperty')
 external dynamic getInitDataProperty(String key);
 
-@JS('ensureTelegramMock')
-external dynamic ensureTelegramMock();
+// ensureTelegramMock removed for production - only real Telegram data is used
 
 // Alternative: Get initData via JS function if available
 @JS('JSON.parse')
@@ -74,27 +73,13 @@ class GameApi {
 
   Future<void> initialize() async {
     await GetStorage.init();
-    // Don't authenticate on init - will happen when making first API call
-    // This allows the app to start even if Telegram WebApp is not available (e.g., in dev)
-
     // Wait for JS to be ready
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Ensure mock is created (ONLY for development)
-    if (kDebugMode && !AppConfig.isProduction) {
-      try {
-        if (kDebugMode) {
-          _logger.d('🔧 Ensuring Telegram mock is created during initialization...');
-        }
-        ensureTelegramMock();
-        if (kDebugMode) {
-          _logger.d('✅ ensureTelegramMock() called during init');
-        }
-        await Future.delayed(const Duration(milliseconds: 200));
-      } catch (e) {
-        if (kDebugMode) {
-          _logger.w('⚠️ ensureTelegramMock() not available during init: $e (this is OK if running in real Telegram)');
-        }
+    // In production, verify that we're running in Telegram
+    if (AppConfig.isProduction) {
+      if (!_isRunningInTelegram()) {
+        throw Exception('Application must be run inside Telegram WebApp. Telegram initData is not available.');
       }
     }
 
@@ -104,14 +89,10 @@ class GameApi {
         final initData = _telegramInitData;
         if (initData != null) {
           _logger.d('✅ Telegram initData is available');
-
-          // Try to get hash to verify data structure
           try {
             final hash = getInitDataProperty('hash');
             if (hash != null && hash.toString().isNotEmpty) {
               _logger.d('✅ Hash is available in initData (length: ${hash.toString().length})');
-              final isMock = hash.toString().contains('mock');
-              _logger.d('📋 Development mode: ${isMock ? 'Yes (using mock)' : 'No (real Telegram)'}');
             } else {
               _logger.w('⚠️ Hash is missing in initData');
             }
@@ -119,7 +100,11 @@ class GameApi {
             _logger.w('Could not verify hash: $e');
           }
         } else {
-          _logger.w('⚠️ Telegram initData not available (running outside Telegram - should use mock)');
+          if (AppConfig.isProduction) {
+            _logger.e('❌ Telegram initData not available in production!');
+          } else {
+            _logger.w('⚠️ Telegram initData not available (development mode)');
+          }
         }
       } catch (e) {
         _logger.w('Could not check Telegram initData: $e');
@@ -172,26 +157,7 @@ class GameApi {
     // В продакшене проверяем что мы в Telegram
     if (AppConfig.isProduction) {
       if (!_isRunningInTelegram()) {
-        throw Exception('Application must be run inside Telegram WebApp');
-      }
-    }
-
-    // First, ensure mock is created (ONLY for development)
-    if (kDebugMode && !AppConfig.isProduction) {
-      try {
-        if (kDebugMode) {
-          _logger.d('🔧 Ensuring Telegram mock is created...');
-        }
-        ensureTelegramMock();
-        if (kDebugMode) {
-          _logger.d('✅ ensureTelegramMock() called');
-        }
-        // Wait a bit for mock to be created
-        await Future.delayed(const Duration(milliseconds: 100));
-      } catch (e) {
-        if (kDebugMode) {
-          _logger.w('⚠️ ensureTelegramMock() not available: $e (this is OK if running in real Telegram)');
-        }
+        throw Exception('Application must be run inside Telegram WebApp. Telegram initData is not available.');
       }
     }
 
@@ -208,7 +174,7 @@ class GameApi {
           throw Exception('Telegram initData is not available. Application must be run inside Telegram WebApp');
         }
         if (kDebugMode) {
-          _logger.w('⚠️ _telegramInitData is null! Will use fallback mock data for development.');
+          _logger.w('⚠️ _telegramInitData is null!');
         }
       }
     } catch (e) {
@@ -345,29 +311,13 @@ class GameApi {
 
     // Final validation - hash is required (CRITICAL for security)
     if (data['hash'] == null || data['hash'].toString().isEmpty) {
-      // В продакшене НЕ создаём мок данные - это критическая уязвимость!
-      if (AppConfig.isProduction) {
-        throw Exception('Telegram hash is required for authentication. Application must be run inside Telegram WebApp');
-      }
-      
-      // Только в development режиме создаём мок данные
-      if (kDebugMode) {
-        _logger.w('⚠️ Hash is missing, creating fallback mock data for development...');
-        
-        final fallbackHash = 'mock_hash_for_development_fallback_${DateTime.now().millisecondsSinceEpoch}';
-        data['hash'] = fallbackHash;
+      throw Exception('Telegram hash is required for authentication. Application must be run inside Telegram WebApp');
+    }
 
-        if (data['auth_date'] == null) {
-          data['auth_date'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        }
-
-        if (data['user'] == null) {
-          data['user'] = {'id': 1111, 'username': 'dev_user', 'first_name': 'Dev', 'last_name': 'User'};
-        }
-
-        _logger.w('✅ Created fallback mock data for development');
-        _logger.d('📋 Fallback data: hash length=${data['hash'].toString().length}, auth_date=${data['auth_date']}');
-      }
+    // Validate that hash is not a mock (security check)
+    final hashStr = data['hash'].toString();
+    if (hashStr.contains('mock') || hashStr.startsWith('mock_')) {
+      throw Exception('Invalid Telegram hash detected. Application must be run inside real Telegram WebApp');
     }
 
     if (kDebugMode) {
