@@ -25,6 +25,16 @@ external dynamic parseInitDataUser();
 @JS('Telegram.WebApp.diagnose')
 external dynamic diagnoseTelegramWebApp();
 
+// Direct console.log for guaranteed logging in production
+@JS('console.log')
+external void jsConsoleLog(String message);
+
+@JS('console.warn')
+external void jsConsoleWarn(String message);
+
+@JS('console.error')
+external void jsConsoleError(String message);
+
 // ensureTelegramMock removed for production - only real Telegram data is used
 
 // Alternative: Get initData via JS function if available
@@ -47,12 +57,27 @@ class GameApi {
           },
         ),
       ) {
+    // Log API base URL for debugging
+    print('🔧 GameApi initialized with baseUrl: $baseUrl');
+    try {
+      jsConsoleLog('🔧 GameApi initialized with baseUrl: $baseUrl');
+    } catch (e) {
+      // JS not available yet, ignore
+    }
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
+          // Always log requests (not just in debug mode) for production debugging
+          final fullUrl = options.uri.toString();
+          print('📡 REQUEST[${options.method}] => $fullUrl');
+          try {
+            jsConsoleLog('📡 REQUEST[${options.method}] => $fullUrl');
+          } catch (e) {
+            // JS not available, ignore
+          }
+          
           if (kDebugMode) {
             // Формируем полный URL для логирования
-            final fullUrl = options.uri.toString();
             _logger.d('REQUEST[${options.method}] => URL: $fullUrl');
             if (options.headers.containsKey('Authorization')) {
               _logger.d('  Authorization: Bearer *** (token present)');
@@ -91,8 +116,26 @@ class GameApi {
           return handler.next(options);
         },
         onError: (e, handler) {
+          // Always log errors for production debugging
+          final url = e.requestOptions.uri.toString();
+          print('❌ ERROR[${e.response?.statusCode ?? 'NO_RESPONSE'}] => $url');
+          try {
+            jsConsoleError('❌ ERROR[${e.response?.statusCode ?? 'NO_RESPONSE'}] => $url');
+            if (e.response != null) {
+              jsConsoleError('   Response: ${e.response!.data}');
+            } else {
+              jsConsoleError('   Error: ${e.message}');
+            }
+          } catch (jsError) {
+            // JS not available, ignore
+          }
+          if (e.response != null) {
+            print('   Response: ${e.response!.data}');
+          } else {
+            print('   Error: ${e.message}');
+          }
+          
           if (kDebugMode) {
-            final url = e.requestOptions.uri.toString();
             _logger.e('ERROR[${e.response?.statusCode}] => URL: $url');
             _logger.e('  Message: ${e.message}');
             if (e.response != null) {
@@ -191,6 +234,11 @@ class GameApi {
     Map<String, dynamic> data = {};
 
     print('🔍 GameApi.authenticate() called');
+    try {
+      jsConsoleLog('🔍 GameApi.authenticate() called');
+    } catch (e) {
+      // JS not available, ignore
+    }
     if (kDebugMode) {
       _logger.d('🔍 Starting authentication...');
     }
@@ -445,6 +493,11 @@ class GameApi {
       // but initData string contains the user data
       if (!userObtained) {
         print('🔍 Method 3: Attempting to get user via parsing initData string...');
+        try {
+          jsConsoleLog('🔍 Method 3: Attempting to get user via parsing initData string...');
+        } catch (e) {
+          // JS not available, ignore
+        }
         if (kDebugMode) {
           _logger.d('🔍 Attempting to get user via parsing initData string...');
         }
@@ -467,14 +520,31 @@ class GameApi {
             userObtained = true;
             print('✅ Method 3: Got user via parsing initData string!');
             try {
+              jsConsoleLog('✅ Method 3: Got user via parsing initData string!');
+            } catch (e) {
+              // JS not available, ignore
+            }
+            try {
               final userId = (parsedUser as dynamic).id;
               final username = (parsedUser as dynamic).username;
               final firstName = (parsedUser as dynamic).first_name;
               print('   - Parsed user.id: $userId');
               print('   - Parsed user.username: $username');
               print('   - Parsed user.first_name: $firstName');
+              try {
+                jsConsoleLog('   - Parsed user.id: $userId');
+                jsConsoleLog('   - Parsed user.username: $username');
+                jsConsoleLog('   - Parsed user.first_name: $firstName');
+              } catch (e) {
+                // JS not available, ignore
+              }
             } catch (e) {
               print('   - Could not access parsed user properties: $e');
+              try {
+                jsConsoleError('   - Could not access parsed user properties: $e');
+              } catch (jsError) {
+                // JS not available, ignore
+              }
             }
             if (kDebugMode) {
               _logger.d('✅ Got user via parsing initData string');
@@ -684,24 +754,50 @@ class GameApi {
         }
       }
 
-      print('📤 Sending authentication request to /auth/telegram...');
-      print('   - Data keys: ${data.keys.toList()}');
-      print('   - Has hash: ${data.containsKey('hash')}');
-      print('   - Has user: ${data.containsKey('user')}');
+      // Log full URL before sending
+      final fullUrl = '${_dio.options.baseUrl}/auth/telegram';
+      print('📤 Sending authentication request to: $fullUrl');
+      try {
+        jsConsoleLog('📤 Sending authentication request to: $fullUrl');
+        jsConsoleLog('   - Base URL: ${_dio.options.baseUrl}');
+        jsConsoleLog('   - Data keys: ${data.keys.toList()}');
+        jsConsoleLog('   - Has hash: ${data.containsKey('hash')}');
+        jsConsoleLog('   - Has user: ${data.containsKey('user')}');
+        if (data.containsKey('user')) {
+          jsConsoleLog('   - User id: ${data['user']?['id']}');
+        }
+      } catch (e) {
+        // JS not available, ignore
+      }
       if (data.containsKey('user')) {
         print('   - User id: ${data['user']?['id']}');
       }
       final response = await _dio.post('/auth/telegram', data: data);
       print('📥 Received response: status=${response.statusCode}');
+      try {
+        jsConsoleLog('📥 Received response: status=${response.statusCode}');
+      } catch (e) {
+        // JS not available, ignore
+      }
 
       final token = response.data['token'] as String;
       final userId = response.data['user_id'] as String?;
 
       print('✅ Token received from backend (length: ${token.length})');
+      try {
+        jsConsoleLog('✅ Token received from backend (length: ${token.length})');
+      } catch (e) {
+        // JS not available, ignore
+      }
       
       // Save token synchronously (GetStorage.write is synchronous)
       _token = token;
       print('💾 Token saved to storage');
+      try {
+        jsConsoleLog('💾 Token saved to storage');
+      } catch (e) {
+        // JS not available, ignore
+      }
       if (kDebugMode) {
         _logger.d('✅ Token saved (length: ${token.length})');
       }

@@ -27,6 +27,18 @@ void main() async {
 
   // Получаем API URL из конфигурации
   final apiBaseUrl = AppConfig.apiBaseUrl;
+  
+  // Log API URL to console (always, not just in debug mode)
+  print('🌐 API Base URL: $apiBaseUrl');
+  print('🌐 Is Production: ${AppConfig.isProduction}');
+  
+  // Also log to JS console for visibility in browser
+  try {
+    // Use JS interop to log to console
+    // This will be available after JS is loaded
+  } catch (e) {
+    // Ignore if JS not available yet
+  }
 
   // Настраиваем обработку ошибок Flutter
   FlutterError.onError = (FlutterErrorDetails details) {

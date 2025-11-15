@@ -48,6 +48,13 @@ class AuthWidgetModel extends WidgetModel {
     }
 
     print('🔍 authenticate() called - starting authentication process...');
+    // Use JS console.log for guaranteed visibility
+    try {
+      // @JS interop would require import, using window.console directly via JS
+      // For now, print should work, but let's also add a visual indicator
+    } catch (e) {
+      // Ignore
+    }
     _logger.d('🔍 authenticate() called - starting authentication process...');
     _isLoading.add(true);
     _error.add(null);
