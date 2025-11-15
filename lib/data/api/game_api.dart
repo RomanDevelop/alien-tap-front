@@ -20,7 +20,7 @@ external dynamic getInitDataProperty(String key);
 external String? getInitDataString();
 
 @JS('Telegram.WebApp.parseInitDataUser')
-external dynamic parseInitDataUser();
+external String? parseInitDataUser();
 
 @JS('Telegram.WebApp.diagnose')
 external dynamic diagnoseTelegramWebApp();
@@ -530,8 +530,15 @@ class GameApi {
           print('🔍 Method 3: parseInitDataUser() returned: ${parsedUserJson != null ? "not null (${parsedUserJson.runtimeType})" : "null"}');
           if (parsedUserJson != null) {
             try {
-              // parseInitDataUser now returns JSON string, parse it in Dart
-              final userMap = jsonDecode(parsedUserJson as String) as Map<String, dynamic>;
+              // parseInitDataUser returns JSON string, parse it in Dart
+              print('   - parsedUserJson type: ${parsedUserJson.runtimeType}');
+              print('   - parsedUserJson value: ${parsedUserJson.toString().substring(0, parsedUserJson.toString().length > 100 ? 100 : parsedUserJson.toString().length)}...');
+              
+              // parseInitDataUser returns String (JSON), parse it
+              final jsonString = parsedUserJson;
+              print('   - Parsing JSON string (length: ${jsonString.length})...');
+              print('   - JSON preview: ${jsonString.length > 100 ? jsonString.substring(0, 100) + "..." : jsonString}');
+              final userMap = jsonDecode(jsonString) as Map<String, dynamic>;
               userObj = userMap;
               userObtained = true;
               print('✅ Method 3: Got user via parsing initData string!');
@@ -554,8 +561,9 @@ class GameApi {
               } catch (e) {
                 // JS not available, ignore
               }
-            } catch (e) {
+            } catch (e, stackTrace) {
               print('   - Failed to parse user JSON: $e');
+              print('   - Stack trace: $stackTrace');
               try {
                 jsConsoleError('   - Failed to parse user JSON: $e');
               } catch (jsError) {
