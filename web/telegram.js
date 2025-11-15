@@ -48,6 +48,52 @@ window.Telegram.WebApp.getInitDataProperty = window.Telegram.WebApp.getInitDataP
   return data[key];
 };
 
+// Helper to get initData as string (URL-encoded) - alternative way to get user data
+window.Telegram.WebApp.getInitData = window.Telegram.WebApp.getInitData || function() {
+  return window.Telegram?.WebApp?.initData || null;
+};
+
+// Helper to parse initData string and extract user
+window.Telegram.WebApp.parseInitDataUser = window.Telegram.WebApp.parseInitDataUser || function() {
+  try {
+    const initDataString = window.Telegram?.WebApp?.initData;
+    if (!initDataString) return null;
+    
+    // Parse URL-encoded string: "hash=...&user=%7B%22id%22%3A123%7D&auth_date=..."
+    const params = new URLSearchParams(initDataString);
+    const userParam = params.get('user');
+    if (userParam) {
+      return JSON.parse(decodeURIComponent(userParam));
+    }
+  } catch (e) {
+    console.warn('Failed to parse initData user:', e);
+  }
+  return null;
+};
+
+// Diagnostic function to log all available Telegram WebApp data
+window.Telegram.WebApp.diagnose = window.Telegram.WebApp.diagnose || function() {
+  const result = {
+    version: window.Telegram?.WebApp?.version || null,
+    platform: window.Telegram?.WebApp?.platform || null,
+    initData: window.Telegram?.WebApp?.initData || null,
+    initDataUnsafe: window.Telegram?.WebApp?.initDataUnsafe || null,
+    initDataUnsafeKeys: null,
+    userFromUnsafe: null,
+    userFromParsed: null,
+  };
+  
+  if (result.initDataUnsafe) {
+    result.initDataUnsafeKeys = Object.keys(result.initDataUnsafe);
+    result.userFromUnsafe = result.initDataUnsafe.user || null;
+  }
+  
+  result.userFromParsed = window.Telegram.WebApp.parseInitDataUser();
+  
+  console.log('🔍 Telegram WebApp Diagnostics:', result);
+  return result;
+};
+
 // Initialize Telegram WebApp (if not already initialized)
 if (window.Telegram.WebApp.ready && typeof window.Telegram.WebApp.ready === 'function') {
   window.Telegram.WebApp.ready();

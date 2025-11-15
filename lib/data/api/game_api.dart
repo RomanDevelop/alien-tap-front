@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:js/js.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import 'package:alien_tap/config/app_config.dart';
 
 @JS('Telegram.WebApp.initDataUnsafe')
@@ -14,6 +15,15 @@ external String? getInitDataJSON();
 
 @JS('Telegram.WebApp.getInitDataProperty')
 external dynamic getInitDataProperty(String key);
+
+@JS('Telegram.WebApp.getInitData')
+external String? getInitDataString();
+
+@JS('Telegram.WebApp.parseInitDataUser')
+external dynamic parseInitDataUser();
+
+@JS('Telegram.WebApp.diagnose')
+external dynamic diagnoseTelegramWebApp();
 
 // ensureTelegramMock removed for production - only real Telegram data is used
 
@@ -46,6 +56,36 @@ class GameApi {
             _logger.d('REQUEST[${options.method}] => URL: $fullUrl');
             if (options.headers.containsKey('Authorization')) {
               _logger.d('  Authorization: Bearer *** (token present)');
+            }
+
+            // Логируем тело запроса для /auth/telegram
+            if (options.path == '/auth/telegram' && options.data != null) {
+              try {
+                final requestData = options.data as Map<String, dynamic>?;
+                if (requestData != null) {
+                  _logger.d('📤 REQUEST BODY (before serialization):');
+                  _logger.d('  - Keys: ${requestData.keys.toList()}');
+                  _logger.d('  - Has user: ${requestData.containsKey('user')}');
+                  if (requestData.containsKey('user')) {
+                    final user = requestData['user'];
+                    _logger.d('  - user type: ${user.runtimeType}');
+                    if (user is Map) {
+                      _logger.d('  - user.id: ${user['id']}');
+                      _logger.d('  - user.username: ${user['username']}');
+                    } else {
+                      _logger.w('  - user is not a Map! user: $user');
+                    }
+                  } else {
+                    _logger.e('  - ❌ USER IS MISSING IN REQUEST BODY!');
+                  }
+                  _logger.d('  - hash: ${requestData['hash']?.toString().substring(0, 20)}...');
+                  _logger.d('  - auth_date: ${requestData['auth_date']}');
+                } else {
+                  _logger.w('  - Request data is null');
+                }
+              } catch (e) {
+                _logger.w('  - Could not log request body: $e');
+              }
             }
           }
           return handler.next(options);
@@ -270,6 +310,23 @@ class GameApi {
     dynamic userObj;
     bool userObtained = false;
 
+    // Diagnostic: Log all available Telegram WebApp data (only in debug mode)
+    if (kDebugMode) {
+      try {
+        final diagnosis = diagnoseTelegramWebApp();
+        _logger.d('🔍 Telegram WebApp Diagnostics:');
+        _logger.d('   - version: ${diagnosis?.version}');
+        _logger.d('   - platform: ${diagnosis?.platform}');
+        _logger.d('   - initData string available: ${diagnosis?.initData != null}');
+        _logger.d('   - initDataUnsafe available: ${diagnosis?.initDataUnsafe != null}');
+        _logger.d('   - initDataUnsafe keys: ${diagnosis?.initDataUnsafeKeys}');
+        _logger.d('   - user from initDataUnsafe: ${diagnosis?.userFromUnsafe != null}');
+        _logger.d('   - user from parsed initData: ${diagnosis?.userFromParsed != null}');
+      } catch (e) {
+        _logger.w('⚠️ Failed to run diagnostics: $e');
+      }
+    }
+
     try {
       // Method 1: Try getInitDataProperty first
       if (kDebugMode) {
@@ -350,6 +407,38 @@ class GameApi {
         }
       }
 
+      // Method 3: Try parsing initData string (alternative way - works in Telegram Web)
+      if (!userObtained && userObj == null) {
+        if (kDebugMode) {
+          _logger.d('🔍 Attempting to get user via parsing initData string...');
+        }
+
+        try {
+          final parsedUser = parseInitDataUser();
+          if (parsedUser != null) {
+            userObj = parsedUser;
+            userObtained = true;
+            if (kDebugMode) {
+              _logger.d('✅ Got user via parsing initData string');
+              try {
+                final userId = (parsedUser as dynamic).id;
+                _logger.d('   - Parsed user.id: $userId');
+              } catch (e) {
+                _logger.w('   - Could not access parsed user.id: $e');
+              }
+            }
+          } else {
+            if (kDebugMode) {
+              _logger.w('⚠️ parseInitDataUser() returned null');
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            _logger.w('⚠️ parseInitDataUser() failed: $e');
+          }
+        }
+      }
+
       // Build user object with all required fields (some may be null)
       if (userObj != null && userObtained) {
         try {
@@ -415,11 +504,28 @@ class GameApi {
     }
 
     if (!data.containsKey('user') || data['user'] == null) {
-      final errorMsg =
-          'Telegram user data is required for authentication. Application must be run inside Telegram WebApp';
+      // Provide detailed error message with diagnostics
+      String errorMsg = 'Telegram user data is required for authentication.\n\n';
+      errorMsg += 'Please ensure:\n';
+      errorMsg += '1. The app is opened via the bot\'s Menu Button (not directly by URL)\n';
+      errorMsg += '2. The Menu Button URL is correctly configured in BotFather\n';
+      errorMsg += '3. You are using the Telegram mobile app or Telegram Web (web.telegram.org)\n\n';
       if (kDebugMode) {
         _logger.e('❌ VALIDATION FAILED: User is missing');
         _logger.e('   - Available keys in data: ${data.keys.toList()}');
+        try {
+          final diagnosis = diagnoseTelegramWebApp();
+          errorMsg += 'Diagnostics:\n';
+          errorMsg += '- WebApp version: ${diagnosis?.version ?? "N/A"}\n';
+          errorMsg += '- Platform: ${diagnosis?.platform ?? "N/A"}\n';
+          errorMsg += '- initData available: ${diagnosis?.initData != null}\n';
+          errorMsg += '- initDataUnsafe available: ${diagnosis?.initDataUnsafe != null}\n';
+          errorMsg += '- User in initDataUnsafe: ${diagnosis?.userFromUnsafe != null}\n';
+          errorMsg += '- User in parsed initData: ${diagnosis?.userFromParsed != null}';
+          _logger.d('🔍 Diagnostics: $diagnosis');
+        } catch (e) {
+          errorMsg += 'Could not run diagnostics: $e';
+        }
       }
       throw Exception(errorMsg);
     }
@@ -468,8 +574,48 @@ class GameApi {
       _logger.d('  - hash length: ${data['hash']?.toString().length ?? 0}');
     }
 
+    // Final check before sending - log the exact data structure
+    if (kDebugMode) {
+      _logger.d('🔍 FINAL CHECK before sending request:');
+      _logger.d('  - data type: ${data.runtimeType}');
+      _logger.d('  - data keys: ${data.keys.toList()}');
+      _logger.d('  - data.containsKey("user"): ${data.containsKey('user')}');
+      if (data.containsKey('user')) {
+        final userCheck = data['user'];
+        _logger.d('  - data["user"] type: ${userCheck.runtimeType}');
+        _logger.d('  - data["user"] value: $userCheck');
+        if (userCheck is Map<String, dynamic>) {
+          _logger.d('  - data["user"] is Map with keys: ${userCheck.keys.toList()}');
+        }
+      } else {
+        _logger.e('  - ❌ CRITICAL: user key is missing in data map!');
+        _logger.e('  - This should have been caught by validation above!');
+      }
+    }
+
     // Send initData as-is (according to docs: data: initData)
     try {
+      if (kDebugMode) {
+        _logger.d('🚀 Sending POST request to /auth/telegram...');
+
+        // Дополнительная проверка - сериализуем в JSON чтобы увидеть что будет отправлено
+        try {
+          final jsonString = jsonEncode(data);
+          _logger.d('📋 JSON representation of data:');
+          _logger.d('   $jsonString');
+
+          // Проверяем что user есть в JSON
+          if (jsonString.contains('"user"')) {
+            _logger.d('✅ "user" found in JSON string');
+          } else {
+            _logger.e('❌ "user" NOT found in JSON string!');
+            _logger.e('   This means user will not be sent to backend!');
+          }
+        } catch (e) {
+          _logger.w('⚠️ Could not serialize data to JSON for logging: $e');
+        }
+      }
+
       final response = await _dio.post('/auth/telegram', data: data);
 
       final token = response.data['token'] as String;
