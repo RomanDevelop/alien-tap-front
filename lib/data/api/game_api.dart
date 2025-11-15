@@ -383,7 +383,9 @@ class GameApi {
       }
 
       try {
+        print('🔍 Method 1: Calling getInitDataProperty("user")...');
         userObj = getInitDataProperty('user');
+        print('🔍 Method 1: getInitDataProperty("user") returned: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
 
         if (kDebugMode) {
           _logger.d('📥 getInitDataProperty("user") returned: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
@@ -392,8 +394,10 @@ class GameApi {
             try {
               final userId = (userObj as dynamic).id;
               _logger.d('   - user.id: $userId');
+              print('   - user.id: $userId');
             } catch (e) {
               _logger.w('   - Could not access user.id: $e');
+              print('   - Could not access user.id: $e');
             }
           }
         }
@@ -433,6 +437,7 @@ class GameApi {
 
       // Method 2: Fallback to direct access if getInitDataProperty failed
       if (!userObtained && userObj == null) {
+        print('🔍 Method 2: Attempting to get user via direct access...');
         if (kDebugMode) {
           _logger.d('🔍 Attempting to get user via direct access...');
         }
@@ -440,11 +445,13 @@ class GameApi {
         try {
           final initData = _telegramInitData;
           if (initData != null) {
+            print('   - initData is not null');
             if (kDebugMode) {
               _logger.d('   - initData is not null, accessing .user property...');
             }
 
             userObj = (initData as dynamic).user;
+            print('🔍 Method 2: Direct access result: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
 
             if (kDebugMode) {
               _logger.d('   - Direct access result: ${userObj != null ? "${userObj.runtimeType}" : "null"}');
@@ -505,6 +512,10 @@ class GameApi {
         try {
           // First, check if initData string is available
           final initDataString = getInitDataString();
+          print('🔍 Method 3: getInitDataString() returned: ${initDataString != null ? "not null (length: ${initDataString.length})" : "null"}');
+          if (initDataString != null) {
+            print('   - Preview: ${initDataString.length > 100 ? initDataString.substring(0, 100) + "..." : initDataString}');
+          }
           if (kDebugMode) {
             if (initDataString != null) {
               _logger.d('✅ initData string is available (length: ${initDataString.length})');
@@ -514,7 +525,9 @@ class GameApi {
             }
           }
 
+          print('🔍 Method 3: Calling parseInitDataUser()...');
           final parsedUser = parseInitDataUser();
+          print('🔍 Method 3: parseInitDataUser() returned: ${parsedUser != null ? "not null" : "null"}');
           if (parsedUser != null) {
             userObj = parsedUser;
             userObtained = true;
