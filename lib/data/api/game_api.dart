@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:js/js.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter/foundation.dart';
+import 'package:alien_tap/config/app_config.dart';
 
 @JS('Telegram.WebApp.initDataUnsafe')
 external dynamic get _telegramInitData;
@@ -31,19 +33,33 @@ class GameApi {
           baseUrl: baseUrl,
           headers: {
             'Content-Type': 'application/json',
-            // Убираем предупреждение ngrok (для локального тестирования)
-            'ngrok-skip-browser-warning': 'true',
+            // Убираем предупреждение ngrok (только для разработки)
+            if (kDebugMode) 'ngrok-skip-browser-warning': 'true',
           },
         ),
       ) {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          _logger.d('REQUEST[${options.method}] => PATH: ${options.path}');
+          if (kDebugMode) {
+            // Формируем полный URL для логирования
+            final fullUrl = options.uri.toString();
+            _logger.d('REQUEST[${options.method}] => URL: $fullUrl');
+            if (options.headers.containsKey('Authorization')) {
+              _logger.d('  Authorization: Bearer *** (token present)');
+            }
+          }
           return handler.next(options);
         },
         onError: (e, handler) {
-          _logger.e('ERROR[${e.response?.statusCode}] => ${e.message}');
+          if (kDebugMode) {
+            final url = e.requestOptions.uri.toString();
+            _logger.e('ERROR[${e.response?.statusCode}] => URL: $url');
+            _logger.e('  Message: ${e.message}');
+            if (e.response != null) {
+              _logger.e('  Response: ${e.response!.data}');
+            }
+          }
           return handler.next(e);
         },
       ),
@@ -64,46 +80,83 @@ class GameApi {
     // Wait for JS to be ready
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Ensure mock is created (for development)
-    try {
-      _logger.d('🔧 Ensuring Telegram mock is created during initialization...');
-      ensureTelegramMock();
-      _logger.d('✅ ensureTelegramMock() called during init');
-      await Future.delayed(const Duration(milliseconds: 200));
-    } catch (e) {
-      _logger.w('⚠️ ensureTelegramMock() not available during init: $e (this is OK if running in real Telegram)');
+    // Ensure mock is created (ONLY for development)
+    if (kDebugMode && !AppConfig.isProduction) {
+      try {
+        if (kDebugMode) {
+          _logger.d('🔧 Ensuring Telegram mock is created during initialization...');
+        }
+        ensureTelegramMock();
+        if (kDebugMode) {
+          _logger.d('✅ ensureTelegramMock() called during init');
+        }
+        await Future.delayed(const Duration(milliseconds: 200));
+      } catch (e) {
+        if (kDebugMode) {
+          _logger.w('⚠️ ensureTelegramMock() not available during init: $e (this is OK if running in real Telegram)');
+        }
+      }
     }
 
-    // Check if initData is available (for debugging)
+    // Check if initData is available (only in debug mode)
+    if (kDebugMode) {
+      try {
+        final initData = _telegramInitData;
+        if (initData != null) {
+          _logger.d('✅ Telegram initData is available');
+
+          // Try to get hash to verify data structure
+          try {
+            final hash = getInitDataProperty('hash');
+            if (hash != null && hash.toString().isNotEmpty) {
+              _logger.d('✅ Hash is available in initData (length: ${hash.toString().length})');
+              final isMock = hash.toString().contains('mock');
+              _logger.d('📋 Development mode: ${isMock ? 'Yes (using mock)' : 'No (real Telegram)'}');
+            } else {
+              _logger.w('⚠️ Hash is missing in initData');
+            }
+          } catch (e) {
+            _logger.w('Could not verify hash: $e');
+          }
+        } else {
+          _logger.w('⚠️ Telegram initData not available (running outside Telegram - should use mock)');
+        }
+      } catch (e) {
+        _logger.w('Could not check Telegram initData: $e');
+      }
+    }
+  }
+
+  /// Проверяет, что приложение запущено в Telegram WebApp
+  /// В продакшене это критично для безопасности
+  bool _isRunningInTelegram() {
     try {
       final initData = _telegramInitData;
-      if (initData != null) {
-        _logger.d('✅ Telegram initData is available');
-
-        // Try to get hash to verify data structure
-        try {
-          // Use getInitDataProperty for simple direct access
-          final hash = getInitDataProperty('hash');
-          if (hash != null && hash.toString().isNotEmpty) {
-            _logger.d('✅ Hash is available in initData (length: ${hash.toString().length})');
-            _logger.d(
-              '📋 Development mode: ${hash.toString().contains('mock') ? 'Yes (using mock)' : 'No (real Telegram)'}',
-            );
-          } else {
-            _logger.w('⚠️ Hash is missing in initData');
-            _logger.w('💡 Try calling ensureTelegramMock() again');
-          }
-        } catch (e) {
-          _logger.w('Could not verify hash: $e');
-        }
-      } else {
-        _logger.w('⚠️ Telegram initData not available (running outside Telegram - should use mock)');
-        _logger.w('💡 Check web/telegram.js - mock should be created automatically');
-        _logger.w('💡 Try calling ensureTelegramMock() manually in browser console');
+      if (initData == null) return false;
+      
+      final hash = getInitDataProperty('hash');
+      if (hash == null || hash.toString().isEmpty) return false;
+      
+      final hashStr = hash.toString();
+      // В продакшене не должно быть моковых хешей
+      if (AppConfig.isProduction && hashStr.contains('mock')) {
+        return false;
       }
+      
+      // Реальный хеш от Telegram обычно длиннее 40 символов и является hex строкой
+      if (AppConfig.isProduction) {
+        // Проверяем что это не мок
+        if (hashStr.length < 40 || hashStr.startsWith('mock_')) {
+          return false;
+        }
+      }
+      
+      return true;
     } catch (e) {
-      _logger.w('Could not check Telegram initData: $e');
-      _logger.w('💡 If running locally, check browser console (F12) for mock creation messages');
+      if (kDebugMode) {
+        _logger.w('Error checking Telegram environment: $e');
+      }
+      return false;
     }
   }
 
@@ -112,63 +165,104 @@ class GameApi {
     // This function is defined in telegram.js and can properly access JS object properties
     Map<String, dynamic> data = {};
 
-    _logger.d('🔍 Starting authentication...');
-
-    // First, ensure mock is created (for development)
-    try {
-      _logger.d('🔧 Ensuring Telegram mock is created...');
-      ensureTelegramMock();
-      _logger.d('✅ ensureTelegramMock() called');
-    } catch (e) {
-      _logger.w('⚠️ ensureTelegramMock() not available: $e (this is OK if running in real Telegram)');
+    if (kDebugMode) {
+      _logger.d('🔍 Starting authentication...');
     }
 
-    // Wait a bit for mock to be created
-    await Future.delayed(const Duration(milliseconds: 100));
+    // В продакшене проверяем что мы в Telegram
+    if (AppConfig.isProduction) {
+      if (!_isRunningInTelegram()) {
+        throw Exception('Application must be run inside Telegram WebApp');
+      }
+    }
+
+    // First, ensure mock is created (ONLY for development)
+    if (kDebugMode && !AppConfig.isProduction) {
+      try {
+        if (kDebugMode) {
+          _logger.d('🔧 Ensuring Telegram mock is created...');
+        }
+        ensureTelegramMock();
+        if (kDebugMode) {
+          _logger.d('✅ ensureTelegramMock() called');
+        }
+        // Wait a bit for mock to be created
+        await Future.delayed(const Duration(milliseconds: 100));
+      } catch (e) {
+        if (kDebugMode) {
+          _logger.w('⚠️ ensureTelegramMock() not available: $e (this is OK if running in real Telegram)');
+        }
+      }
+    }
 
     // First, check if initData exists at all
     try {
       final initDataCheck = _telegramInitData;
-      _logger.d(
-        '📥 _telegramInitData check: ${initDataCheck != null ? "exists (${initDataCheck.runtimeType})" : "null"}',
-      );
+      if (kDebugMode) {
+        _logger.d(
+          '📥 _telegramInitData check: ${initDataCheck != null ? "exists (${initDataCheck.runtimeType})" : "null"}',
+        );
+      }
       if (initDataCheck == null) {
-        _logger.w('⚠️ _telegramInitData is null! Will use fallback mock data for development.');
-        _logger.w('💡 Check browser console (F12) for mock creation logs from telegram.js');
+        if (AppConfig.isProduction) {
+          throw Exception('Telegram initData is not available. Application must be run inside Telegram WebApp');
+        }
+        if (kDebugMode) {
+          _logger.w('⚠️ _telegramInitData is null! Will use fallback mock data for development.');
+        }
       }
     } catch (e) {
-      _logger.w('⚠️ Failed to access _telegramInitData: $e (will use fallback)');
+      if (AppConfig.isProduction) {
+        rethrow;
+      }
+      if (kDebugMode) {
+        _logger.w('⚠️ Failed to access _telegramInitData: $e');
+      }
     }
 
     // Method 1: Try getInitDataProperty first (most reliable - works from JS)
     try {
       // Get hash (CRITICAL)
       final hash = getInitDataProperty('hash');
-      _logger.d('📥 getInitDataProperty("hash") returned: ${hash != null ? "${hash.runtimeType} - $hash" : "null"}');
+      if (kDebugMode) {
+        _logger.d('📥 getInitDataProperty("hash") returned: ${hash != null ? "${hash.runtimeType}" : "null"}');
+      }
 
       if (hash != null && hash.toString().isNotEmpty) {
         data['hash'] = hash.toString();
-        _logger.d('✅ Got hash via getInitDataProperty: ${data['hash']} (length: ${data['hash'].length})');
+        if (kDebugMode) {
+          _logger.d('✅ Got hash via getInitDataProperty (length: ${data['hash'].length})');
+        }
       } else {
-        _logger.w('⚠️ Hash is null from getInitDataProperty, trying direct access...');
+        if (kDebugMode) {
+          _logger.w('⚠️ Hash is null from getInitDataProperty, trying direct access...');
+        }
       }
     } catch (e) {
-      _logger.w('⚠️ getInitDataProperty("hash") failed: $e');
+      if (kDebugMode) {
+        _logger.w('⚠️ getInitDataProperty("hash") failed: $e');
+      }
     }
 
     // Method 2: Fallback to direct access if getInitDataProperty failed
     if (data['hash'] == null || data['hash'].toString().isEmpty) {
-      _logger.w('⚠️ Trying direct access to _telegramInitData...');
+      if (kDebugMode) {
+        _logger.w('⚠️ Trying direct access to _telegramInitData...');
+      }
       final initData = _telegramInitData;
       if (initData != null) {
         try {
           final hash = (initData as dynamic).hash;
           if (hash != null && hash.toString().isNotEmpty) {
             data['hash'] = hash.toString();
-            _logger.d('✅ Got hash via direct access: ${data['hash']}');
+            if (kDebugMode) {
+              _logger.d('✅ Got hash via direct access');
+            }
           }
         } catch (e) {
-          _logger.e('❌ Direct access to hash failed: $e');
+          if (kDebugMode) {
+            _logger.e('❌ Direct access to hash failed: $e');
+          }
         }
       }
     }
@@ -178,7 +272,9 @@ class GameApi {
       final authDate = getInitDataProperty('auth_date');
       if (authDate != null) {
         data['auth_date'] = authDate is num ? authDate.toInt() : authDate;
-        _logger.d('✅ Got auth_date via getInitDataProperty: ${data['auth_date']}');
+        if (kDebugMode) {
+          _logger.d('✅ Got auth_date via getInitDataProperty');
+        }
       } else {
         // Fallback to direct access
         try {
@@ -187,15 +283,21 @@ class GameApi {
             final authDate = (initData as dynamic).auth_date;
             if (authDate != null) {
               data['auth_date'] = authDate is num ? authDate.toInt() : authDate;
-              _logger.d('✅ Got auth_date via direct access: ${data['auth_date']}');
+              if (kDebugMode) {
+                _logger.d('✅ Got auth_date via direct access');
+              }
             }
           }
         } catch (e) {
-          _logger.w('⚠️ Failed to get auth_date: $e');
+          if (kDebugMode) {
+            _logger.w('⚠️ Failed to get auth_date: $e');
+          }
         }
       }
     } catch (e) {
-      _logger.w('⚠️ getInitDataProperty("auth_date") failed: $e');
+      if (kDebugMode) {
+        _logger.w('⚠️ getInitDataProperty("auth_date") failed: $e');
+      }
     }
 
     // Get user
@@ -208,7 +310,9 @@ class GameApi {
           'first_name': (user as dynamic).first_name,
           'last_name': (user as dynamic).last_name,
         };
-        _logger.d('✅ Got user via getInitDataProperty: ${data['user']}');
+        if (kDebugMode) {
+          _logger.d('✅ Got user via getInitDataProperty');
+        }
       } else {
         // Fallback to direct access
         try {
@@ -222,43 +326,57 @@ class GameApi {
                 'first_name': (user as dynamic).first_name,
                 'last_name': (user as dynamic).last_name,
               };
-              _logger.d('✅ Got user via direct access: ${data['user']}');
+              if (kDebugMode) {
+                _logger.d('✅ Got user via direct access');
+              }
             }
           }
         } catch (e) {
-          _logger.w('⚠️ Failed to get user: $e');
+          if (kDebugMode) {
+            _logger.w('⚠️ Failed to get user: $e');
+          }
         }
       }
     } catch (e) {
-      _logger.w('⚠️ getInitDataProperty("user") failed: $e');
+      if (kDebugMode) {
+        _logger.w('⚠️ getInitDataProperty("user") failed: $e');
+      }
     }
 
-    // Final validation - hash is required (outside of catch block)
-    // If hash is still missing, create fallback mock data for development
+    // Final validation - hash is required (CRITICAL for security)
     if (data['hash'] == null || data['hash'].toString().isEmpty) {
-      _logger.w('⚠️ Hash is missing, creating fallback mock data for development...');
-
-      // Create fallback mock data
-      final fallbackHash = 'mock_hash_for_development_fallback_${DateTime.now().millisecondsSinceEpoch}';
-      data['hash'] = fallbackHash;
-
-      if (data['auth_date'] == null) {
-        data['auth_date'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      // В продакшене НЕ создаём мок данные - это критическая уязвимость!
+      if (AppConfig.isProduction) {
+        throw Exception('Telegram hash is required for authentication. Application must be run inside Telegram WebApp');
       }
+      
+      // Только в development режиме создаём мок данные
+      if (kDebugMode) {
+        _logger.w('⚠️ Hash is missing, creating fallback mock data for development...');
+        
+        final fallbackHash = 'mock_hash_for_development_fallback_${DateTime.now().millisecondsSinceEpoch}';
+        data['hash'] = fallbackHash;
 
-      if (data['user'] == null) {
-        data['user'] = {'id': 1111, 'username': 'dev_user', 'first_name': 'Dev', 'last_name': 'User'};
+        if (data['auth_date'] == null) {
+          data['auth_date'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        }
+
+        if (data['user'] == null) {
+          data['user'] = {'id': 1111, 'username': 'dev_user', 'first_name': 'Dev', 'last_name': 'User'};
+        }
+
+        _logger.w('✅ Created fallback mock data for development');
+        _logger.d('📋 Fallback data: hash length=${data['hash'].toString().length}, auth_date=${data['auth_date']}');
       }
-
-      _logger.w('✅ Created fallback mock data for development');
-      _logger.d('📋 Fallback data: hash=${data['hash']}, auth_date=${data['auth_date']}, user=${data['user']}');
     }
 
-    _logger.d('📤 Final data being sent:');
-    _logger.d('  - Keys: ${data.keys.toList()}');
-    _logger.d('  - Has user: ${data.containsKey('user')}');
-    _logger.d('  - auth_date: ${data['auth_date']}');
-    _logger.d('  - hash: ${data['hash']} (length: ${data['hash'].toString().length})');
+    if (kDebugMode) {
+      _logger.d('📤 Final data being sent:');
+      _logger.d('  - Keys: ${data.keys.toList()}');
+      _logger.d('  - Has user: ${data.containsKey('user')}');
+      _logger.d('  - auth_date: ${data['auth_date']}');
+      _logger.d('  - hash length: ${data['hash']?.toString().length ?? 0}');
+    }
 
     // Send initData as-is (according to docs: data: initData)
     try {
@@ -269,32 +387,43 @@ class GameApi {
 
       // Save token synchronously (GetStorage.write is synchronous)
       _token = token;
-      _logger.d('✅ Token saved: ${token.substring(0, 20)}... (length: ${token.length})');
+      if (kDebugMode) {
+        _logger.d('✅ Token saved (length: ${token.length})');
+      }
 
       // Verify token was saved
       final savedToken = _token;
       if (savedToken == null || savedToken != token) {
         _logger.e('❌ CRITICAL: Token was not saved correctly!');
-        _logger.e('Expected: ${token.substring(0, 20)}...');
-        _logger.e('Got: ${savedToken?.substring(0, 20) ?? "null"}...');
+        throw Exception('Failed to save authentication token');
       } else {
-        _logger.d('✅ Token verification: saved correctly');
+        if (kDebugMode) {
+          _logger.d('✅ Token verification: saved correctly');
+        }
       }
 
       if (userId != null) {
         _storage.write('user_id', userId);
       }
 
-      _logger.d('Authentication successful, token received');
+      if (kDebugMode) {
+        _logger.d('Authentication successful, token received');
+      }
       return token;
     } on DioException catch (e) {
-      _logger.e('Authentication failed: ${e.response?.statusCode} - ${e.response?.data}');
+      if (kDebugMode) {
+        _logger.e('Authentication failed: ${e.response?.statusCode} - ${e.response?.data}');
+      }
       if (e.response != null) {
-        throw Exception('Auth failed: ${e.response!.statusCode} - ${e.response!.data}');
+        final statusCode = e.response!.statusCode;
+        final errorData = e.response!.data;
+        throw Exception('Auth failed: $statusCode${errorData != null ? ' - $errorData' : ''}');
       }
       throw Exception('Connection error: ${e.message}');
     } catch (e) {
-      _logger.e('Unexpected error during authentication: $e');
+      if (kDebugMode) {
+        _logger.e('Unexpected error during authentication: $e');
+      }
       rethrow;
     }
   }
@@ -305,14 +434,18 @@ class GameApi {
       return res.data['score'] as int;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        _logger.w('401 Unauthorized, attempting re-authentication...');
+        if (kDebugMode) {
+          _logger.w('401 Unauthorized, attempting re-authentication...');
+        }
         try {
           await authenticate();
           // Retry the request once
           final res = await _dio.post('/game/update_score', data: {'score': score}, options: _authOptions);
           return res.data['score'] as int;
         } catch (authError) {
-          _logger.e('Re-authentication failed: $authError');
+          if (kDebugMode) {
+            _logger.e('Re-authentication failed: $authError');
+          }
           rethrow;
         }
       }
@@ -327,7 +460,9 @@ class GameApi {
       final List<dynamic> data = res.data as List;
       return data.map((json) => json as Map<String, dynamic>).toList();
     } catch (e) {
-      _logger.e('Failed to get leaderboard: $e');
+      if (kDebugMode) {
+        _logger.e('Failed to get leaderboard: $e');
+      }
       rethrow;
     }
   }
@@ -338,17 +473,23 @@ class GameApi {
       return res.data['claim_id'] as String;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        _logger.w('401 Unauthorized, attempting re-authentication...');
+        if (kDebugMode) {
+          _logger.w('401 Unauthorized, attempting re-authentication...');
+        }
         try {
           await authenticate();
           final res = await _dio.post('/claim/start', data: {'amount': amount}, options: _authOptions);
           return res.data['claim_id'] as String;
         } catch (authError) {
-          _logger.e('Re-authentication failed: $authError');
+          if (kDebugMode) {
+            _logger.e('Re-authentication failed: $authError');
+          }
           rethrow;
         }
       }
-      _logger.e('Failed to start claim: ${e.response?.data}');
+      if (kDebugMode) {
+        _logger.e('Failed to start claim: ${e.response?.data}');
+      }
       rethrow;
     }
   }
@@ -358,16 +499,22 @@ class GameApi {
       await _dio.post('/claim/confirm', data: {'claim_id': claimId}, options: _authOptions);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        _logger.w('401 Unauthorized, attempting re-authentication...');
+        if (kDebugMode) {
+          _logger.w('401 Unauthorized, attempting re-authentication...');
+        }
         try {
           await authenticate();
           await _dio.post('/claim/confirm', data: {'claim_id': claimId}, options: _authOptions);
         } catch (authError) {
-          _logger.e('Re-authentication failed: $authError');
+          if (kDebugMode) {
+            _logger.e('Re-authentication failed: $authError');
+          }
           rethrow;
         }
       } else {
-        _logger.e('Failed to confirm claim: ${e.response?.data}');
+        if (kDebugMode) {
+          _logger.e('Failed to confirm claim: ${e.response?.data}');
+        }
         rethrow;
       }
     }
