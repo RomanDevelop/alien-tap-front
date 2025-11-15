@@ -42,17 +42,21 @@ class AuthWidgetModel extends WidgetModel {
 
   Future<void> authenticate() async {
     if (_isLoading.value == true) {
+      print('⚠️ authenticate() called but already loading, ignoring...');
       _logger.d('⚠️ authenticate() called but already loading, ignoring...');
       return;
     }
 
+    print('🔍 authenticate() called - starting authentication process...');
     _logger.d('🔍 authenticate() called - starting authentication process...');
     _isLoading.add(true);
     _error.add(null);
 
     try {
+      print('📤 Calling _api.authenticate()...');
       _logger.d('📤 Calling _api.authenticate()...');
       await _api.authenticate();
+      print('✅ Authentication successful - token received');
       _logger.d('✅ Authentication successful - token received');
 
       // Небольшая задержка, чтобы токен точно сохранился

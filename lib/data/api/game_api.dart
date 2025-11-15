@@ -190,6 +190,7 @@ class GameApi {
     // This function is defined in telegram.js and can properly access JS object properties
     Map<String, dynamic> data = {};
 
+    print('🔍 GameApi.authenticate() called');
     if (kDebugMode) {
       _logger.d('🔍 Starting authentication...');
     }
@@ -443,6 +444,7 @@ class GameApi {
       // IMPORTANT: This method works in Telegram Web where initDataUnsafe.user might be null
       // but initData string contains the user data
       if (!userObtained) {
+        print('🔍 Method 3: Attempting to get user via parsing initData string...');
         if (kDebugMode) {
           _logger.d('🔍 Attempting to get user via parsing initData string...');
         }
@@ -463,6 +465,17 @@ class GameApi {
           if (parsedUser != null) {
             userObj = parsedUser;
             userObtained = true;
+            print('✅ Method 3: Got user via parsing initData string!');
+            try {
+              final userId = (parsedUser as dynamic).id;
+              final username = (parsedUser as dynamic).username;
+              final firstName = (parsedUser as dynamic).first_name;
+              print('   - Parsed user.id: $userId');
+              print('   - Parsed user.username: $username');
+              print('   - Parsed user.first_name: $firstName');
+            } catch (e) {
+              print('   - Could not access parsed user properties: $e');
+            }
             if (kDebugMode) {
               _logger.d('✅ Got user via parsing initData string');
               try {
@@ -671,13 +684,24 @@ class GameApi {
         }
       }
 
+      print('📤 Sending authentication request to /auth/telegram...');
+      print('   - Data keys: ${data.keys.toList()}');
+      print('   - Has hash: ${data.containsKey('hash')}');
+      print('   - Has user: ${data.containsKey('user')}');
+      if (data.containsKey('user')) {
+        print('   - User id: ${data['user']?['id']}');
+      }
       final response = await _dio.post('/auth/telegram', data: data);
+      print('📥 Received response: status=${response.statusCode}');
 
       final token = response.data['token'] as String;
       final userId = response.data['user_id'] as String?;
 
+      print('✅ Token received from backend (length: ${token.length})');
+      
       // Save token synchronously (GetStorage.write is synchronous)
       _token = token;
+      print('💾 Token saved to storage');
       if (kDebugMode) {
         _logger.d('✅ Token saved (length: ${token.length})');
       }
