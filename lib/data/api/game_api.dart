@@ -526,21 +526,24 @@ class GameApi {
           }
 
           print('🔍 Method 3: Calling parseInitDataUser()...');
-          final parsedUser = parseInitDataUser();
-          print('🔍 Method 3: parseInitDataUser() returned: ${parsedUser != null ? "not null" : "null"}');
-          if (parsedUser != null) {
-            userObj = parsedUser;
-            userObtained = true;
-            print('✅ Method 3: Got user via parsing initData string!');
+          final parsedUserJson = parseInitDataUser();
+          print('🔍 Method 3: parseInitDataUser() returned: ${parsedUserJson != null ? "not null (${parsedUserJson.runtimeType})" : "null"}');
+          if (parsedUserJson != null) {
             try {
-              jsConsoleLog('✅ Method 3: Got user via parsing initData string!');
-            } catch (e) {
-              // JS not available, ignore
-            }
-            try {
-              final userId = (parsedUser as dynamic).id;
-              final username = (parsedUser as dynamic).username;
-              final firstName = (parsedUser as dynamic).first_name;
+              // parseInitDataUser now returns JSON string, parse it in Dart
+              final userMap = jsonDecode(parsedUserJson as String) as Map<String, dynamic>;
+              userObj = userMap;
+              userObtained = true;
+              print('✅ Method 3: Got user via parsing initData string!');
+              try {
+                jsConsoleLog('✅ Method 3: Got user via parsing initData string!');
+              } catch (e) {
+                // JS not available, ignore
+              }
+              
+              final userId = userMap['id'];
+              final username = userMap['username'];
+              final firstName = userMap['first_name'];
               print('   - Parsed user.id: $userId');
               print('   - Parsed user.username: $username');
               print('   - Parsed user.first_name: $firstName');
@@ -552,9 +555,9 @@ class GameApi {
                 // JS not available, ignore
               }
             } catch (e) {
-              print('   - Could not access parsed user properties: $e');
+              print('   - Failed to parse user JSON: $e');
               try {
-                jsConsoleError('   - Could not access parsed user properties: $e');
+                jsConsoleError('   - Failed to parse user JSON: $e');
               } catch (jsError) {
                 // JS not available, ignore
               }
@@ -562,9 +565,10 @@ class GameApi {
             if (kDebugMode) {
               _logger.d('✅ Got user via parsing initData string');
               try {
-                final userId = (parsedUser as dynamic).id;
-                final username = (parsedUser as dynamic).username;
-                final firstName = (parsedUser as dynamic).first_name;
+                final userMapForLog = userObj as Map<String, dynamic>;
+                final userId = userMapForLog['id'];
+                final username = userMapForLog['username'];
+                final firstName = userMapForLog['first_name'];
                 _logger.d('   - Parsed user.id: $userId');
                 _logger.d('   - Parsed user.username: $username');
                 _logger.d('   - Parsed user.first_name: $firstName');
@@ -593,10 +597,24 @@ class GameApi {
       // Build user object with all required fields (some may be null)
       if (userObj != null && userObtained) {
         try {
-          final userId = (userObj as dynamic).id;
-          final username = (userObj as dynamic).username;
-          final firstName = (userObj as dynamic).first_name;
-          final lastName = (userObj as dynamic).last_name;
+          // userObj can be either a Map (from method 3) or a JS object (from methods 1-2)
+          dynamic userId, username, firstName, lastName;
+          
+          if (userObj is Map<String, dynamic>) {
+            // Method 3: userObj is already a Map
+            userId = userObj['id'];
+            username = userObj['username'];
+            firstName = userObj['first_name'];
+            lastName = userObj['last_name'];
+            print('📋 Building user object from Map (Method 3)');
+          } else {
+            // Methods 1-2: userObj is a JS object
+            userId = (userObj as dynamic).id;
+            username = (userObj as dynamic).username;
+            firstName = (userObj as dynamic).first_name;
+            lastName = (userObj as dynamic).last_name;
+            print('📋 Building user object from JS object (Method 1-2)');
+          }
 
           if (kDebugMode) {
             _logger.d('📋 Building user object from properties:');
