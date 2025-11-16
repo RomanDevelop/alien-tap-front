@@ -14,4 +14,8 @@ class TapGameNavigator {
   void openClaim() {
     _context.push('/claim');
   }
+
+  void logout() {
+    _context.go('/auth');
+  }
 }

@@ -8,4 +8,5 @@ class TapGameI18n {
   String get startClaimButton => 'Забрать награду';
   String get saving => 'Сохранение...';
   String get error => 'Ошибка';
+  String get logoutButton => 'Выйти';
 }

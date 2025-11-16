@@ -107,4 +107,17 @@ class TapGameWidgetModel extends WidgetModel {
   void openLeaderboard() => _navigator.openLeaderboard();
 
   void openClaim() => _navigator.openClaim();
+
+  Future<void> logout() async {
+    try {
+      _logger.d('Logging out...');
+      await _repository.logout();
+      _logger.d('Logout successful, redirecting to auth');
+      _navigator.logout();
+    } catch (e) {
+      _logger.e('Logout failed', error: e);
+      // Even if logout fails, try to redirect to auth page
+      _navigator.logout();
+    }
+  }
 }

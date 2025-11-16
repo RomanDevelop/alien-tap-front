@@ -17,4 +17,6 @@ class TapRepository {
   Future<String> startClaim(double amount) => api.startClaim(amount);
 
   Future<void> confirmClaim(String claimId) => api.confirmClaim(claimId);
+
+  Future<void> logout() async => api.logout();
 }
