@@ -40481,11 +40481,10 @@ A.b7("\ud83d\udd0d Method 3: Calling parseInitDataUser()...")
 a0=self.Telegram.WebApp.parseInitDataUser()
 A.b7("\ud83d\udd0d Method 3: parseInitDataUser() returned: "+(a0!=null?"not null ("+A.bb(c5).k(0)+")":"null"))
 if(a0!=null)try{A.b7("   - parsedUserJson type: "+A.bb(c5).k(0))
-c1=a0.length>100?100:a0.length
-A.b7("   - parsedUserJson value: "+B.c.P(a0,0,c1)+"...")
 a1=a0
-A.b7("   - Parsing JSON string (length: "+J.c_(a1)+")...")
+A.b7("   - parsedUserJson is String (length: "+J.c_(a1)+")")
 A.b7("   - JSON preview: "+A.j(J.c_(a1)>100?J.aHc(a1,0,100)+"...":a1))
+A.b7("   - Parsing JSON string...")
 a2=t.P.a(B.b1.SN(0,a1,null))
 f=a2
 e=!0

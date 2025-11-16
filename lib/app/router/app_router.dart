@@ -31,10 +31,30 @@ class AppRouter {
           ),
       redirect: (context, state) {
         try {
+          // Игнорируем hash параметры (tgWebAppData и т.д.) - они не являются маршрутами
+          final matchedLocation = state.matchedLocation;
+          
+          // Если matchedLocation содержит tgWebAppData или другие hash параметры, игнорируем их
+          if (matchedLocation.contains('tgWebAppData') || 
+              matchedLocation.contains('query_id') ||
+              matchedLocation.contains('&') ||
+              (!matchedLocation.startsWith('/') && matchedLocation.isNotEmpty)) {
+            print('⚠️ Router: ignoring hash parameters in route: $matchedLocation');
+            // Проверяем авторизацию и редиректим на правильный маршрут
+            final isAuthenticated = _checkAuth();
+            if (isAuthenticated) {
+              print('🔄 Redirecting to /game (authenticated, ignoring hash)');
+              return '/game';
+            } else {
+              print('🔄 Redirecting to /auth (not authenticated, ignoring hash)');
+              return '/auth';
+            }
+          }
+          
           // Проверяем наличие токена
           final isAuthenticated = _checkAuth();
-          final isAuthRoute = state.matchedLocation == '/auth';
-          final targetRoute = state.matchedLocation;
+          final isAuthRoute = matchedLocation == '/auth';
+          final targetRoute = matchedLocation;
 
           print('🔍 Router redirect: target=$targetRoute, isAuth=$isAuthenticated, isAuthRoute=$isAuthRoute');
 

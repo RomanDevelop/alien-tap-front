@@ -668,6 +668,13 @@ class GameApi {
       // Don't throw here - validation will catch it below
     }
 
+    // Get original initData string for signature verification
+    // Backend needs the original string to verify the signature correctly
+    final initDataString = getInitDataString();
+    if (initDataString == null || initDataString.isEmpty) {
+      throw Exception('Telegram initData string is required for authentication. Application must be run inside Telegram WebApp');
+    }
+
     // Final validation - hash is required (CRITICAL for security)
     if (data['hash'] == null || data['hash'].toString().isEmpty) {
       throw Exception('Telegram hash is required for authentication. Application must be run inside Telegram WebApp');
@@ -776,26 +783,33 @@ class GameApi {
       }
     }
 
-    // Send initData as-is (according to docs: data: initData)
+    // Send original initData string to backend for proper signature verification
+    // Backend needs the original string to verify the signature correctly
+    // We also include parsed data for convenience, but backend should use initData string
     try {
       if (kDebugMode) {
         _logger.d('🚀 Sending POST request to /auth/telegram...');
+        _logger.d('   - Using original initData string for signature verification');
+        _logger.d('   - initData string length: ${initDataString.length}');
+      }
 
-        // Дополнительная проверка - сериализуем в JSON чтобы увидеть что будет отправлено
-        try {
-          final jsonString = jsonEncode(data);
-          _logger.d('📋 JSON representation of data:');
-          _logger.d('   $jsonString');
+      // Prepare request data: send original initData string + parsed data
+      // Backend should use initData string for signature verification
+      final requestData = {
+        'initData': initDataString, // Original string for signature verification
+        'hash': data['hash'], // For convenience
+        'auth_date': data['auth_date'], // For convenience
+        'user': data['user'], // For convenience
+      };
 
-          // Проверяем что user есть в JSON
-          if (jsonString.contains('"user"')) {
-            _logger.d('✅ "user" found in JSON string');
-          } else {
-            _logger.e('❌ "user" NOT found in JSON string!');
-            _logger.e('   This means user will not be sent to backend!');
-          }
-        } catch (e) {
-          _logger.w('⚠️ Could not serialize data to JSON for logging: $e');
+      if (kDebugMode) {
+        _logger.d('📋 Request data keys: ${requestData.keys.toList()}');
+        _logger.d('   - initData string length: ${initDataString.length}');
+        _logger.d('   - Has hash: ${requestData.containsKey('hash')}');
+        _logger.d('   - Has user: ${requestData.containsKey('user')}');
+        if (requestData.containsKey('user')) {
+          final userData = requestData['user'] as Map<String, dynamic>;
+          _logger.d('   - User id: ${userData['id']}');
         }
       }
 
@@ -805,19 +819,21 @@ class GameApi {
       try {
         jsConsoleLog('📤 Sending authentication request to: $fullUrl');
         jsConsoleLog('   - Base URL: ${_dio.options.baseUrl}');
-        jsConsoleLog('   - Data keys: ${data.keys.toList()}');
-        jsConsoleLog('   - Has hash: ${data.containsKey('hash')}');
-        jsConsoleLog('   - Has user: ${data.containsKey('user')}');
-        if (data.containsKey('user')) {
-          jsConsoleLog('   - User id: ${data['user']?['id']}');
+        jsConsoleLog('   - Data keys: ${requestData.keys.toList()}');
+        jsConsoleLog('   - Has initData string: ${requestData.containsKey('initData')}');
+        jsConsoleLog('   - Has hash: ${requestData.containsKey('hash')}');
+        jsConsoleLog('   - Has user: ${requestData.containsKey('user')}');
+        if (requestData.containsKey('user')) {
+          jsConsoleLog('   - User id: ${(requestData['user'] as Map<String, dynamic>)['id']}');
         }
       } catch (e) {
         // JS not available, ignore
       }
-      if (data.containsKey('user')) {
-        print('   - User id: ${data['user']?['id']}');
+      if (requestData.containsKey('user')) {
+        final userData = requestData['user'] as Map<String, dynamic>;
+        print('   - User id: ${userData['id']}');
       }
-      final response = await _dio.post('/auth/telegram', data: data);
+      final response = await _dio.post('/auth/telegram', data: requestData);
       print('📥 Received response: status=${response.statusCode}');
       try {
         jsConsoleLog('📥 Received response: status=${response.statusCode}');

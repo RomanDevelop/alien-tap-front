@@ -159,7 +159,10 @@ window.Telegram.WebApp.parseInitDataUser = window.Telegram.WebApp.parseInitDataU
       const userObj = JSON.parse(decoded);
       console.log('✅ parseInitDataUser: successfully parsed user object');
       // Return as JSON string so Dart can parse it properly
-      return JSON.stringify(userObj);
+      const jsonString = JSON.stringify(userObj);
+      console.log('📋 parseInitDataUser: returning JSON string (length:', jsonString.length, ')');
+      console.log('📋 parseInitDataUser: JSON string preview:', jsonString.substring(0, 100) + '...');
+      return jsonString;
     } else {
       console.warn('⚠️ parseInitDataUser: user param not found in initData string');
       console.log('📋 Available params:', Array.from(params.keys()));
