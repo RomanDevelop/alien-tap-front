@@ -179,7 +179,20 @@ class GameApi {
 
   set _token(String? t) => t == null ? _storage.remove('jwt_token') : _storage.write('jwt_token', t);
 
-  Options get _authOptions => Options(headers: {'Authorization': 'Bearer ${_token}'});
+  Options get _authOptions {
+    final token = _token;
+    if (token == null || token.isEmpty) {
+      print('⚠️ _authOptions: token is null or empty!');
+      try {
+        jsConsoleWarn('⚠️ _authOptions: token is null or empty!');
+      } catch (e) {
+        // JS not available, ignore
+      }
+      // Return empty options if no token (will cause 401, but at least request will be sent)
+      return Options();
+    }
+    return Options(headers: {'Authorization': 'Bearer $token'});
+  }
 
   Future<void> initialize() async {
     await GetStorage.init();
