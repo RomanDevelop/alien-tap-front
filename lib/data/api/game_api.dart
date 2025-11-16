@@ -76,6 +76,33 @@ class GameApi {
             // JS not available, ignore
           }
           
+          // Log Authorization header status (always, not just in debug mode)
+          if (options.headers.containsKey('Authorization')) {
+            final authHeader = options.headers['Authorization'] as String?;
+            if (authHeader != null && authHeader.isNotEmpty) {
+              print('   ✅ Authorization header present (length: ${authHeader.length})');
+              try {
+                jsConsoleLog('   ✅ Authorization header present (length: ${authHeader.length})');
+              } catch (e) {
+                // JS not available, ignore
+              }
+            } else {
+              print('   ⚠️ Authorization header is empty');
+              try {
+                jsConsoleWarn('   ⚠️ Authorization header is empty');
+              } catch (e) {
+                // JS not available, ignore
+              }
+            }
+          } else {
+            print('   ⚠️ Authorization header missing');
+            try {
+              jsConsoleWarn('   ⚠️ Authorization header missing');
+            } catch (e) {
+              // JS not available, ignore
+            }
+          }
+          
           if (kDebugMode) {
             // Формируем полный URL для логирования
             _logger.d('REQUEST[${options.method}] => URL: $fullUrl');
@@ -927,10 +954,29 @@ class GameApi {
 
   Future<List<Map<String, dynamic>>> getLeaderboard() async {
     try {
-      final res = await _dio.get('/game/leaderboard');
+      final res = await _dio.get('/game/leaderboard', options: _authOptions);
       // According to docs, response is a List
       final List<dynamic> data = res.data as List;
       return data.map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        if (kDebugMode) {
+          _logger.w('401 Unauthorized on leaderboard, attempting re-authentication...');
+        }
+        try {
+          await authenticate();
+          // Retry the request once
+          final res = await _dio.get('/game/leaderboard', options: _authOptions);
+          final List<dynamic> data = res.data as List;
+          return data.map((json) => json as Map<String, dynamic>).toList();
+        } catch (authError) {
+          if (kDebugMode) {
+            _logger.e('Re-authentication failed: $authError');
+          }
+          rethrow;
+        }
+      }
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         _logger.e('Failed to get leaderboard: $e');

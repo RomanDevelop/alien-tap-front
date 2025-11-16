@@ -35,10 +35,15 @@ class AppRouter {
           final matchedLocation = state.matchedLocation;
           
           // Если matchedLocation содержит tgWebAppData или другие hash параметры, игнорируем их
+          // Проверяем это ПЕРВЫМ делом, до всех остальных проверок
           if (matchedLocation.contains('tgWebAppData') || 
               matchedLocation.contains('query_id') ||
-              matchedLocation.contains('&') ||
-              (!matchedLocation.startsWith('/') && matchedLocation.isNotEmpty)) {
+              matchedLocation.contains('auth_date') ||
+              matchedLocation.contains('hash=') ||
+              matchedLocation.contains('signature=') ||
+              matchedLocation.contains('&tgWebApp') ||
+              (matchedLocation.contains('&') && !matchedLocation.startsWith('/')) ||
+              (!matchedLocation.startsWith('/') && matchedLocation.isNotEmpty && matchedLocation != '/')) {
             print('⚠️ Router: ignoring hash parameters in route: $matchedLocation');
             // Проверяем авторизацию и редиректим на правильный маршрут
             final isAuthenticated = _checkAuth();
