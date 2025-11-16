@@ -34,24 +34,30 @@ class AppRouter {
           // Игнорируем hash параметры (tgWebAppData и т.д.) - они не являются маршрутами
           final matchedLocation = state.matchedLocation;
           
-          // Если matchedLocation содержит tgWebAppData или другие hash параметры, игнорируем их
-          // Проверяем это ПЕРВЫМ делом, до всех остальных проверок
-          if (matchedLocation.contains('tgWebAppData') || 
-              matchedLocation.contains('query_id') ||
-              matchedLocation.contains('auth_date') ||
-              matchedLocation.contains('hash=') ||
-              matchedLocation.contains('signature=') ||
-              matchedLocation.contains('&tgWebApp') ||
-              (matchedLocation.contains('&') && !matchedLocation.startsWith('/')) ||
-              (!matchedLocation.startsWith('/') && matchedLocation.isNotEmpty && matchedLocation != '/')) {
-            print('⚠️ Router: ignoring hash parameters in route: $matchedLocation');
+          // Проверяем, является ли matchedLocation валидным маршрутом
+          // Валидные маршруты начинаются с '/' и не содержат hash параметры
+          final isValidRoute = matchedLocation.startsWith('/') && 
+                              !matchedLocation.contains('tgWebAppData') &&
+                              !matchedLocation.contains('query_id') &&
+                              !matchedLocation.contains('auth_date') &&
+                              !matchedLocation.contains('hash=') &&
+                              !matchedLocation.contains('signature=') &&
+                              !matchedLocation.contains('&tgWebApp') &&
+                              (matchedLocation == '/auth' || 
+                               matchedLocation == '/game' || 
+                               matchedLocation == '/leaderboard' || 
+                               matchedLocation == '/claim');
+          
+          // Если это не валидный маршрут (hash параметры или неизвестный путь)
+          if (!isValidRoute) {
+            print('⚠️ Router: invalid route detected, redirecting. matchedLocation: $matchedLocation');
             // Проверяем авторизацию и редиректим на правильный маршрут
             final isAuthenticated = _checkAuth();
             if (isAuthenticated) {
-              print('🔄 Redirecting to /game (authenticated, ignoring hash)');
+              print('🔄 Redirecting to /game (authenticated, invalid route)');
               return '/game';
             } else {
-              print('🔄 Redirecting to /auth (not authenticated, ignoring hash)');
+              print('🔄 Redirecting to /auth (not authenticated, invalid route)');
               return '/auth';
             }
           }
