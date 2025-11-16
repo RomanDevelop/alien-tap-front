@@ -35,6 +35,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
               return SizedBox.shrink();
             },
           ),
+          IconButton(icon: Icon(Icons.logout, color: Colors.red), tooltip: wm.i18n.logoutButton, onPressed: wm.logout),
         ],
       ),
       body: Column(
@@ -83,26 +84,6 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 label: Text(wm.i18n.startClaimButton),
               ),
             ],
-          ),
-          Spacer(),
-          // Logout button at the bottom
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: wm.logout,
-                icon: Icon(Icons.logout, color: Colors.red),
-                label: Text(
-                  wm.i18n.logoutButton,
-                  style: TextStyle(color: Colors.red),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.red),
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
           ),
         ],
       ),
