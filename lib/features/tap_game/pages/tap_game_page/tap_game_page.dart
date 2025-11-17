@@ -30,25 +30,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.topRight,
-                  colors: [
-                    NeonTheme.darkSurface,
-                    NeonTheme.darkCard,
-                  ],
+                  colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: NeonTheme.neonCyan.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: NeonTheme.neonCyan.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)],
               ),
               child: AppBar(
                 title: Text(
                   wm.i18n.pageTitle,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    shadows: NeonTheme.neonTextShadow,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(shadows: NeonTheme.neonTextShadow),
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -101,30 +90,21 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  NeonTheme.neonPurple.withOpacity(0.2),
-                                  NeonTheme.neonCyan.withOpacity(0.2),
-                                ],
+                                colors: [NeonTheme.neonPurple.withOpacity(0.2), NeonTheme.neonCyan.withOpacity(0.2)],
                               ),
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: NeonTheme.neonCyan.withOpacity(0.5),
-                                width: 2,
-                              ),
+                              border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
                               boxShadow: NeonTheme.neonGlow,
                             ),
                             child: Column(
                               children: [
-                                Text(
-                                  wm.i18n.scoreLabel,
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
+                                Text(wm.i18n.scoreLabel, style: Theme.of(context).textTheme.titleMedium),
                                 const SizedBox(height: 8),
                                 Text(
                                   '${score}',
-                                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                    shadows: NeonTheme.neonTextShadow,
-                                  ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium?.copyWith(shadows: NeonTheme.neonTextShadow),
                                 ),
                               ],
                             ),
@@ -144,20 +124,12 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [
-                                NeonTheme.neonCyan,
-                                NeonTheme.neonPurple,
-                                NeonTheme.neonPink,
-                              ],
+                              colors: [NeonTheme.neonCyan, NeonTheme.neonPurple, NeonTheme.neonPink],
                               stops: [0.0, 0.5, 1.0],
                             ),
                             boxShadow: [
                               ...NeonTheme.neonGlow,
-                              BoxShadow(
-                                color: NeonTheme.neonPink.withOpacity(0.4),
-                                blurRadius: 30,
-                                spreadRadius: 5,
-                              ),
+                              BoxShadow(color: NeonTheme.neonPink.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
                             ],
                           ),
                           child: Text(
@@ -185,20 +157,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                                 icon: const Icon(Icons.leaderboard, size: 24),
                                 label: Text(
                                   wm.i18n.leaderboardButton,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   foregroundColor: NeonTheme.darkBackground,
                                   elevation: 0,
                                   shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
                               ),
                             ),
@@ -211,10 +177,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [
-                                    NeonTheme.neonPink,
-                                    NeonTheme.neonPurple,
-                                  ],
+                                  colors: [NeonTheme.neonPink, NeonTheme.neonPurple],
                                 ),
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: NeonTheme.neonPinkGlow,
@@ -224,20 +187,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                                 icon: const Icon(Icons.monetization_on, size: 24),
                                 label: Text(
                                   wm.i18n.startClaimButton,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                   shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
                               ),
                             ),
