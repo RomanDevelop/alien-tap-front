@@ -14,4 +14,8 @@ class ClaimI18n {
   String get successMessage => 'Ваша награда будет обработана в ближайшее время';
   String get backToGame => 'Вернуться к игре';
   String get invalidAmount => 'Введите корректную сумму';
+  String get walletAddress => 'Адрес кошелька Polygon';
+  String get walletAddressHint => '0x...';
+  String get walletAddressRequired => 'Введите адрес кошелька';
+  String get invalidWalletAddress => 'Неверный формат адреса';
 }

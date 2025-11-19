@@ -15,6 +15,26 @@ class TapGameNavigator {
     _context.push('/claim');
   }
 
+  void openTrading() {
+    _context.push('/trading');
+  }
+
+  void openPortfolio() {
+    _context.push('/portfolio');
+  }
+
+  void openLiquidity() {
+    _context.push('/liquidity');
+  }
+
+  void openProfile() {
+    _context.push('/profile');
+  }
+
+  void openWithdraw() {
+    _context.push('/claim');
+  }
+
   void logout() {
     _context.go('/auth');
   }

@@ -22,6 +22,31 @@ class TapGameWidgetModel extends WidgetModel {
   final BehaviorSubject<bool> _isSaving = BehaviorSubject.seeded(false);
   Stream<bool> get isSavingStream => _isSaving.stream;
 
+  // Баланс ALEN (мок данные)
+  final BehaviorSubject<double> _alenBalance = BehaviorSubject.seeded(12450.0);
+  Stream<double> get alenBalanceStream => _alenBalance.stream;
+  double get alenBalance => _alenBalance.value;
+
+  // Фонд токенов (мок данные)
+  final BehaviorSubject<Map<String, dynamic>> _tokenFund = BehaviorSubject.seeded({
+    'total': 900000000.0,
+    'usdValue': 241430.0,
+  });
+  Stream<Map<String, dynamic>> get tokenFundStream => _tokenFund.stream;
+
+  // Счетчик сессии
+  final BehaviorSubject<int> _sessionTapped = BehaviorSubject.seeded(0);
+  Stream<int> get sessionTappedStream => _sessionTapped.stream;
+  int get sessionTapped => _sessionTapped.value;
+  
+  DateTime _sessionStartTime = DateTime.now();
+  Duration get sessionDuration => DateTime.now().difference(_sessionStartTime);
+  
+  // Торговый баланс (мок данные)
+  final BehaviorSubject<double> _tradingBalance = BehaviorSubject.seeded(10000.0);
+  Stream<double> get tradingBalanceStream => _tradingBalance.stream;
+  double get tradingBalance => _tradingBalance.value;
+
   // Leaderboard
   final BehaviorSubject<List<LeaderboardEntry>> _leaderboard = BehaviorSubject.seeded([]);
   Stream<List<LeaderboardEntry>> get leaderboardStream => _leaderboard.stream;
@@ -41,6 +66,21 @@ class TapGameWidgetModel extends WidgetModel {
     super.onLoad();
     _loadLeaderboard();
     _startAutosave();
+    _sessionStartTime = DateTime.now();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    // Загрузка баланса и других данных пользователя
+    // Пока используем мок данные
+    try {
+      // В будущем здесь будет API вызов
+      // final userData = await _repository.getUserData();
+      // _alenBalance.add(userData.alenBalance);
+      // _tradingBalance.add(userData.tradingBalance);
+    } catch (e) {
+      _logger.e('Failed to load user data', error: e);
+    }
   }
 
   @override
@@ -48,6 +88,10 @@ class TapGameWidgetModel extends WidgetModel {
     _score.close();
     _isSaving.close();
     _leaderboard.close();
+    _alenBalance.close();
+    _tokenFund.close();
+    _sessionTapped.close();
+    _tradingBalance.close();
     _autosaveTimer?.cancel();
     super.dispose();
   }
@@ -60,13 +104,35 @@ class TapGameWidgetModel extends WidgetModel {
       return;
     }
     _lastTap = now;
-    _score.add(score + 1);
+    final newScore = score + 1;
+    _score.add(newScore);
+    
+    // Обновляем счетчик сессии и баланс ALEN
+    _sessionTapped.add(sessionTapped + 1);
+    _alenBalance.add(alenBalance + 1.0);
 
     // Save if reached threshold (every 10 points)
-    if (score + 1 - _lastSavedScore >= 10) {
+    if (newScore - _lastSavedScore >= 10) {
       _maybeSaveScore();
     }
   }
+
+  void transferToTrading() {
+    if (sessionTapped > 0) {
+      // Переводим натапанные токены в торговый баланс
+      _tradingBalance.add(tradingBalance + sessionTapped);
+      _alenBalance.add(alenBalance - sessionTapped);
+      _sessionTapped.add(0);
+      _sessionStartTime = DateTime.now();
+      _logger.d('Transferred $sessionTapped ALEN to trading balance');
+    }
+  }
+
+  void openTrading() => _navigator.openTrading();
+  void openPortfolio() => _navigator.openPortfolio();
+  void openLiquidity() => _navigator.openLiquidity();
+  void openProfile() => _navigator.openProfile();
+  void openWithdraw() => _navigator.openWithdraw();
 
   void _startAutosave() {
     // Every 5 seconds, if score changed, try to push to server

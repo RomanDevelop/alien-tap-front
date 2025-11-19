@@ -43,16 +43,26 @@ class ClaimWidgetModel extends WidgetModel {
     _currentScore.add(0);
   }
 
-  Future<void> startClaim(double amount) async {
+  Future<void> startClaim(double amount, String walletAddress) async {
     if (_isLoading.value == true) return;
+
+    // Валидация адреса Polygon (базовая проверка)
+    if (walletAddress.isEmpty || !walletAddress.startsWith('0x') || walletAddress.length < 40) {
+      _navigator.showError(i18n.invalidWalletAddress);
+      return;
+    }
 
     _isLoading.add(true);
     try {
       final claimId = await _repository.startClaim(amount);
       _claimId = claimId;
-      _claimInfo.add({'amount': amount, 'claim_id': claimId});
+      _claimInfo.add({
+        'amount': amount,
+        'claim_id': claimId,
+        'wallet_address': walletAddress,
+      });
       _state.add(ClaimState.confirmation);
-      _logger.d('Claim started: $claimId');
+      _logger.d('Claim started: $claimId for wallet: $walletAddress');
     } catch (e) {
       _logger.e('Failed to start claim', error: e);
       _navigator.showError(e.toString());

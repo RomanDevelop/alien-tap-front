@@ -15,10 +15,12 @@ class ClaimPage extends CoreMwwmWidget<ClaimWidgetModel> {
 
 class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
   final _amountController = TextEditingController();
+  final _walletController = TextEditingController();
 
   @override
   void dispose() {
     _amountController.dispose();
+    _walletController.dispose();
     super.dispose();
   }
 
@@ -137,6 +139,16 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                 hintText: wm.i18n.amountHint,
               ),
             ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _walletController,
+              style: TextStyle(color: NeonTheme.lightText, fontFamily: 'monospace'),
+              decoration: InputDecoration(
+                labelText: wm.i18n.walletAddress,
+                hintText: wm.i18n.walletAddressHint,
+                prefixIcon: Icon(Icons.account_balance_wallet, color: NeonTheme.neonCyan),
+              ),
+            ),
             const SizedBox(height: 32),
             StreamBuilder<bool>(
               stream: wm.isLoadingStream,
@@ -152,8 +164,15 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                             ? null
                             : () {
                               final amount = double.tryParse(_amountController.text);
+                              final walletAddress = _walletController.text.trim();
                               if (amount != null && amount > 0) {
-                                wm.startClaim(amount);
+                                if (walletAddress.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(wm.i18n.walletAddressRequired)),
+                                  );
+                                } else {
+                                  wm.startClaim(amount, walletAddress);
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(wm.i18n.invalidAmount)),
@@ -270,6 +289,26 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                               fontSize: 12,
                               color: NeonTheme.mediumText,
                               fontFamily: 'monospace',
+                            ),
+                          ),
+                        ),
+                        Divider(color: NeonTheme.neonCyan.withOpacity(0.3)),
+                        ListTile(
+                          title: Text(
+                            wm.i18n.walletAddress,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          trailing: SizedBox(
+                            width: 150,
+                            child: Text(
+                              '${info['wallet_address'] ?? ''}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: NeonTheme.mediumText,
+                                fontFamily: 'monospace',
+                              ),
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),

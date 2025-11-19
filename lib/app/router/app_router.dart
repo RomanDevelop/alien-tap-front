@@ -6,6 +6,10 @@ import 'package:alien_tap/features/auth/pages/auth_page/auth_page.dart';
 import 'package:alien_tap/features/tap_game/pages/tap_game_page/tap_game_page.dart';
 import 'package:alien_tap/features/leaderboard/pages/leaderboard_page/leaderboard_page.dart';
 import 'package:alien_tap/features/claim/pages/claim_page/claim_page.dart';
+import 'package:alien_tap/features/trading/pages/trading_page/trading_page.dart';
+import 'package:alien_tap/features/portfolio/pages/portfolio_page/portfolio_page.dart';
+import 'package:alien_tap/features/liquidity/pages/liquidity_page/liquidity_page.dart';
+import 'package:alien_tap/features/profile/pages/profile_page/profile_page.dart';
 import 'package:alien_tap/features/tap_game/repositories/tap_repository.dart';
 import 'package:alien_tap/app/di/app_scope.dart';
 import 'package:alien_tap/data/api/game_api.dart';
@@ -46,7 +50,11 @@ class AppRouter {
                               (matchedLocation == '/auth' || 
                                matchedLocation == '/game' || 
                                matchedLocation == '/leaderboard' || 
-                               matchedLocation == '/claim');
+                               matchedLocation == '/claim' ||
+                               matchedLocation == '/trading' ||
+                               matchedLocation == '/portfolio' ||
+                               matchedLocation == '/liquidity' ||
+                               matchedLocation == '/profile');
           
           // Если это не валидный маршрут (hash параметры или неизвестный путь)
           if (!isValidRoute) {
@@ -141,6 +149,50 @@ class AppRouter {
               return ClaimPage();
             } catch (e) {
               print('❌ Error building ClaimPage: $e');
+              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
+            }
+          },
+        ),
+        GoRoute(
+          path: '/trading',
+          builder: (context, state) {
+            try {
+              return TradingPage();
+            } catch (e) {
+              print('❌ Error building TradingPage: $e');
+              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
+            }
+          },
+        ),
+        GoRoute(
+          path: '/portfolio',
+          builder: (context, state) {
+            try {
+              return PortfolioPage();
+            } catch (e) {
+              print('❌ Error building PortfolioPage: $e');
+              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
+            }
+          },
+        ),
+        GoRoute(
+          path: '/liquidity',
+          builder: (context, state) {
+            try {
+              return LiquidityPage();
+            } catch (e) {
+              print('❌ Error building LiquidityPage: $e');
+              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
+            }
+          },
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) {
+            try {
+              return ProfilePage();
+            } catch (e) {
+              print('❌ Error building ProfilePage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
