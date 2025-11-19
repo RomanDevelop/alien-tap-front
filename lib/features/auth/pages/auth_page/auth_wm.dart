@@ -1,6 +1,7 @@
 // lib/features/auth/pages/auth_page/auth_wm.dart
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:alien_tap/data/api/game_api.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/auth_i18n.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/navigation/auth_navigator.dart';
@@ -67,22 +68,36 @@ class AuthWidgetModel extends WidgetModel {
       _logger.d('✅ Authentication successful - token received');
 
       // Небольшая задержка, чтобы токен точно сохранился
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 200));
 
-      // Проверяем, что токен действительно сохранен
+      // Проверяем, что токен действительно сохранен через GetStorage напрямую
       try {
-        final token = (_api as dynamic)._token;
-        if (token != null && token.toString().isNotEmpty) {
-          _logger.d('✅ Token verified in storage (length: ${token.toString().length})');
+        final storage = GetStorage();
+        final token = storage.read<String>('jwt_token');
+        if (token != null && token.isNotEmpty) {
+          _logger.d('✅ Token verified in storage (length: ${token.length})');
+          print('✅ Token verified in storage (length: ${token.length})');
         } else {
           _logger.w('⚠️ Token not found in storage after authentication!');
+          print('⚠️ Token not found in storage after authentication!');
+          // Проверяем через API тоже
+          final apiToken = (_api as dynamic)._token;
+          if (apiToken != null && apiToken.toString().isNotEmpty) {
+            _logger.w('⚠️ Token exists in API but not in direct storage access');
+            print('⚠️ Token exists in API but not in direct storage access');
+          }
         }
       } catch (e) {
         _logger.w('⚠️ Could not verify token: $e');
+        print('⚠️ Could not verify token: $e');
       }
+
+      // Дополнительная задержка для гарантии синхронизации
+      await Future.delayed(const Duration(milliseconds: 100));
 
       // Переход на игровой экран
       _logger.d('🔄 Navigating to game screen...');
+      print('🔄 Navigating to game screen...');
       _navigator.goToGame();
     } catch (e, stackTrace) {
       final errorMsg = e.toString().replaceAll('Exception: ', '');

@@ -12,7 +12,6 @@ import 'package:alien_tap/features/liquidity/pages/liquidity_page/liquidity_page
 import 'package:alien_tap/features/profile/pages/profile_page/profile_page.dart';
 import 'package:alien_tap/features/tap_game/repositories/tap_repository.dart';
 import 'package:alien_tap/app/di/app_scope.dart';
-import 'package:alien_tap/data/api/game_api.dart';
 
 class AppRouter {
   static GoRouter createRouter() {
@@ -203,13 +202,8 @@ class AppRouter {
 
   static bool _checkAuth() {
     try {
-      // Проверяем, инициализирован ли locator
-      if (!locator.isRegistered<GameApi>()) {
-        print('⚠️ Router _checkAuth(): GameApi not registered yet');
-        return false;
-      }
-
       // Use GetStorage directly to check token (more reliable)
+      // Не проверяем locator, так как GetStorage работает независимо
       final storage = GetStorage();
       final token = storage.read<String>('jwt_token');
       final isAuth = token != null && token.isNotEmpty;
