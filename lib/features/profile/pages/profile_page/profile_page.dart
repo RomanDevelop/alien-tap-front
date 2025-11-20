@@ -67,7 +67,7 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: NeonTheme.neonCyan),
+          icon: Icon(Icons.arrow_back, color: NeonTheme.brandBrightGreen),
           onPressed: wm.goBack,
         ),
       ),
@@ -91,7 +91,7 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [NeonTheme.neonCyan, NeonTheme.neonPurple],
+                  colors: [NeonTheme.brandBrightGreen, NeonTheme.brandDarkBlue],
                 ),
                 boxShadow: NeonTheme.neonGlow,
               ),
@@ -137,12 +137,12 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                NeonTheme.neonPurple.withOpacity(0.2),
-                NeonTheme.neonCyan.withOpacity(0.2),
+                NeonTheme.brandDarkBlue.withOpacity(0.2),
+                NeonTheme.brandBrightGreen.withOpacity(0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
             boxShadow: NeonTheme.neonGlow,
           ),
           child: Column(
@@ -157,7 +157,7 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
               Text(
                 '${balance.toStringAsFixed(2)} ALEN',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: NeonTheme.neonCyan,
+                  color: NeonTheme.brandBrightGreen,
                   shadows: NeonTheme.neonTextShadow,
                   fontWeight: FontWeight.bold,
                 ),
@@ -237,7 +237,7 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
                     decoration: BoxDecoration(
                       color: NeonTheme.darkCard.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.3), width: 1),
+                      border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
                     ),
                     child: Row(
                       children: [
@@ -254,7 +254,7 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: Icon(Icons.copy, color: NeonTheme.neonCyan, size: 20),
+                          icon: Icon(Icons.copy, color: NeonTheme.brandBrightGreen, size: 20),
                           onPressed: () {
                             wm.copyReferralLink();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -339,12 +339,12 @@ class _ProfilePageState extends WidgetState<ProfilePage, ProfileWidgetModel> {
         break;
       case 'transfer':
         icon = Icons.swap_horiz;
-        color = NeonTheme.neonCyan;
+        color = NeonTheme.brandBrightGreen;
         typeLabel = 'Перевод';
         break;
       case 'claim':
         icon = Icons.monetization_on;
-        color = NeonTheme.neonGreen;
+        color = NeonTheme.brandBrightGreen;
         typeLabel = 'Забрать';
         break;
       default:

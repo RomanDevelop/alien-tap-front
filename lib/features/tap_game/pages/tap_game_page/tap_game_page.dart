@@ -69,7 +69,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
           end: Alignment.topRight,
           colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
         ),
-        boxShadow: [BoxShadow(color: NeonTheme.neonCyan.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)],
+        boxShadow: [BoxShadow(color: NeonTheme.brandBrightGreen.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
@@ -94,7 +94,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                     return Text(
                       '${balance.toStringAsFixed(0)} ALEN',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: NeonTheme.neonCyan,
+                        color: NeonTheme.brandBrightGreen,
                         shadows: NeonTheme.neonTextShadow,
                         fontWeight: FontWeight.bold,
                       ),
@@ -118,7 +118,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                          valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                         ),
                       ),
                     );
@@ -131,7 +131,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 child: Text(
                   wm.i18n.withdrawButton,
                   style: TextStyle(
-                    color: NeonTheme.neonPurple,
+                    color: NeonTheme.brandDarkBlue,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -140,7 +140,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 icon: Icon(Icons.person),
                 tooltip: wm.i18n.profileButton,
                 onPressed: wm.openProfile,
-                color: NeonTheme.neonCyan,
+                color: NeonTheme.brandBrightGreen,
               ),
             ],
           ),
@@ -163,7 +163,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
           decoration: BoxDecoration(
             color: NeonTheme.darkCard.withOpacity(0.6),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.3), width: 1),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +191,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
               ),
               IconButton(
                 icon: Icon(Icons.info_outline, size: 20),
-                color: NeonTheme.neonCyan,
+                color: NeonTheme.brandBrightGreen,
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -199,7 +199,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                       backgroundColor: NeonTheme.darkSurface,
                       title: Text(
                         wm.i18n.tokenFund,
-                        style: TextStyle(color: NeonTheme.neonCyan),
+                        style: TextStyle(color: NeonTheme.brandBrightGreen),
                       ),
                       content: Text(
                         wm.i18n.tokenFundInfo,
@@ -208,7 +208,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: Text('OK', style: TextStyle(color: NeonTheme.neonCyan)),
+                          child: Text('OK', style: TextStyle(color: NeonTheme.brandBrightGreen)),
                         ),
                       ],
                     ),
@@ -235,21 +235,20 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              NeonTheme.neonCyan,
-              NeonTheme.neonPurple,
-              NeonTheme.neonPink,
+              NeonTheme.brandBrightGreen,
+              NeonTheme.brandLightGreen,
             ],
-            stops: [0.0, 0.5, 1.0],
+            stops: [0.0, 1.0],
           ),
           boxShadow: [
             ...NeonTheme.neonGlow,
             BoxShadow(
-              color: NeonTheme.neonPink.withOpacity(0.4),
+              color: NeonTheme.brandLightGreen.withOpacity(0.4),
               blurRadius: 40,
               spreadRadius: 8,
             ),
             BoxShadow(
-              color: NeonTheme.neonCyan.withOpacity(0.3),
+              color: NeonTheme.brandBrightGreen.withOpacity(0.3),
               blurRadius: 60,
               spreadRadius: 12,
             ),
@@ -288,22 +287,22 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                NeonTheme.neonPurple.withOpacity(0.2),
-                NeonTheme.neonCyan.withOpacity(0.2),
+                NeonTheme.brandDarkBlue.withOpacity(0.2),
+                NeonTheme.brandBrightGreen.withOpacity(0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.touch_app, color: NeonTheme.neonCyan, size: 24),
+              Icon(Icons.touch_app, color: NeonTheme.brandBrightGreen, size: 24),
               const SizedBox(width: 12),
               Text(
                 '+$tapped ALEN ${wm.i18n.tappedInSession} $minutes ${wm.i18n.minutes}',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: NeonTheme.neonCyan,
+                  color: NeonTheme.brandBrightGreen,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -332,7 +331,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [NeonTheme.neonCyan, NeonTheme.neonBlue],
+              colors: [NeonTheme.brandBrightGreen, NeonTheme.brandMediumBlue],
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: NeonTheme.neonGlow,
@@ -345,7 +344,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                   backgroundColor: NeonTheme.darkSurface,
                   title: Text(
                     wm.i18n.confirmTransfer,
-                    style: TextStyle(color: NeonTheme.neonCyan),
+                    style: TextStyle(color: NeonTheme.brandBrightGreen),
                   ),
                   content: Text(
                     '${wm.i18n.transferAmount} $tapped ALEN → ${wm.i18n.tradingButton}',
@@ -363,7 +362,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                       },
                       child: Text(
                         wm.i18n.confirmTransfer,
-                        style: TextStyle(color: NeonTheme.neonCyan, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: NeonTheme.brandBrightGreen, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -402,7 +401,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 icon: Icons.trending_up,
                 label: wm.i18n.tradingButton,
                 onPressed: wm.openTrading,
-                gradient: [NeonTheme.neonCyan, NeonTheme.neonBlue],
+                gradient: [NeonTheme.brandBrightGreen, NeonTheme.brandMediumBlue],
               ),
             ),
             const SizedBox(width: 12),
@@ -412,7 +411,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 icon: Icons.wallet,
                 label: wm.i18n.portfolioButton,
                 onPressed: wm.openPortfolio,
-                gradient: [NeonTheme.neonPurple, NeonTheme.neonPink],
+                gradient: [NeonTheme.brandDarkBlue, NeonTheme.brandLightGreen],
               ),
             ),
           ],
@@ -426,7 +425,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 icon: Icons.water_drop,
                 label: wm.i18n.liquidityButton,
                 onPressed: wm.openLiquidity,
-                gradient: [NeonTheme.neonPink, NeonTheme.neonPurple],
+                gradient: [NeonTheme.brandLightGreen, NeonTheme.brandDarkBlue],
               ),
             ),
             const SizedBox(width: 12),
@@ -436,7 +435,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 icon: Icons.leaderboard,
                 label: wm.i18n.leaderboardButton,
                 onPressed: wm.openLeaderboard,
-                gradient: [NeonTheme.neonGreen, NeonTheme.neonCyan],
+                gradient: [NeonTheme.brandBrightGreen, NeonTheme.brandBrightGreen],
               ),
             ),
           ],

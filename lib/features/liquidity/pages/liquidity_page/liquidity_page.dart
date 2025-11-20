@@ -73,7 +73,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: NeonTheme.neonCyan),
+          icon: Icon(Icons.arrow_back, color: NeonTheme.brandBrightGreen),
           onPressed: wm.goBack,
         ),
       ),
@@ -86,7 +86,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
       decoration: BoxDecoration(
         color: NeonTheme.darkCard.withOpacity(0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.3), width: 1),
+        border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
       ),
       child: Text(
         wm.i18n.description,
@@ -116,12 +116,12 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                NeonTheme.neonPurple.withOpacity(0.2),
-                NeonTheme.neonCyan.withOpacity(0.2),
+                NeonTheme.brandDarkBlue.withOpacity(0.2),
+                NeonTheme.brandBrightGreen.withOpacity(0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
             boxShadow: NeonTheme.neonGlow,
           ),
           child: Column(
@@ -153,7 +153,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
         Text(
           value,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: isHighlight ? NeonTheme.neonCyan : NeonTheme.lightText,
+            color: isHighlight ? NeonTheme.brandBrightGreen : NeonTheme.lightText,
             fontWeight: FontWeight.bold,
             shadows: isHighlight ? NeonTheme.neonTextShadow : null,
           ),
@@ -168,7 +168,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
       decoration: BoxDecoration(
         color: NeonTheme.darkCard.withOpacity(0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.3), width: 1),
+        border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -252,7 +252,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
                   onPressed: isLoading ? null : wm.addLiquidity,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                    foregroundColor: isLoading ? NeonTheme.neonCyan : NeonTheme.darkBackground,
+                    foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
                     elevation: 0,
                     shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -263,7 +263,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                            valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                           ),
                         )
                       : Text(
@@ -288,9 +288,9 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
       width: 60,
       height: 48,
       decoration: BoxDecoration(
-        color: NeonTheme.neonCyan.withOpacity(0.2),
+        color: NeonTheme.brandBrightGreen.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 1),
+        border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 1),
       ),
       child: TextButton(
         onPressed: onPressed,
@@ -298,7 +298,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
         child: Text(
           label,
           style: TextStyle(
-            color: NeonTheme.neonCyan,
+            color: NeonTheme.brandBrightGreen,
             fontWeight: FontWeight.bold,
             fontSize: 12,
           ),
@@ -346,7 +346,7 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
           decoration: BoxDecoration(
             color: NeonTheme.darkCard.withOpacity(0.6),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonPurple.withOpacity(0.3), width: 1),
+            border: Border.all(color: NeonTheme.brandDarkBlue.withOpacity(0.3), width: 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -372,10 +372,10 @@ class _LiquidityPageState extends WidgetState<LiquidityPage, LiquidityWidgetMode
                     height: 56,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [NeonTheme.neonPurple, NeonTheme.neonPink],
+                        colors: [NeonTheme.brandDarkBlue, NeonTheme.brandLightGreen],
                       ),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: NeonTheme.neonPurpleGlow,
+                      boxShadow: NeonTheme.blueGlow,
                     ),
                     child: ElevatedButton(
                       onPressed: isLoading ? null : wm.removeLiquidity,

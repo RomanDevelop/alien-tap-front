@@ -43,7 +43,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: NeonTheme.neonPink.withOpacity(0.2),
+                    color: NeonTheme.brandLightGreen.withOpacity(0.2),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -109,13 +109,13 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        NeonTheme.neonPurple.withOpacity(0.2),
-                        NeonTheme.neonCyan.withOpacity(0.2),
+                        NeonTheme.brandDarkBlue.withOpacity(0.2),
+                        NeonTheme.brandBrightGreen.withOpacity(0.2),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: NeonTheme.neonCyan.withOpacity(0.5),
+                      color: NeonTheme.brandBrightGreen.withOpacity(0.5),
                       width: 2,
                     ),
                   ),
@@ -146,7 +146,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
               decoration: InputDecoration(
                 labelText: wm.i18n.walletAddress,
                 hintText: wm.i18n.walletAddressHint,
-                prefixIcon: Icon(Icons.account_balance_wallet, color: NeonTheme.neonCyan),
+                prefixIcon: Icon(Icons.account_balance_wallet, color: NeonTheme.brandBrightGreen),
               ),
             ),
             const SizedBox(height: 32),
@@ -181,7 +181,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                             },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                      foregroundColor: isLoading ? NeonTheme.neonCyan : NeonTheme.darkBackground,
+                      foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
                       elevation: 0,
                       shadowColor: Colors.transparent,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -196,7 +196,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                                 height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                                  valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                                 ),
                               )
                             : Text(
@@ -232,8 +232,8 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    NeonTheme.neonCyan,
-                    NeonTheme.neonPurple,
+                    NeonTheme.brandBrightGreen,
+                    NeonTheme.brandDarkBlue,
                   ],
                 ),
                 boxShadow: NeonTheme.neonGlow,
@@ -272,12 +272,12 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                           trailing: Text(
                             '${info['amount'] ?? 0}',
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: NeonTheme.neonCyan,
+                              color: NeonTheme.brandBrightGreen,
                               shadows: NeonTheme.neonTextShadow,
                             ),
                           ),
                         ),
-                        Divider(color: NeonTheme.neonCyan.withOpacity(0.3)),
+                        Divider(color: NeonTheme.brandBrightGreen.withOpacity(0.3)),
                         ListTile(
                           title: Text(
                             wm.i18n.claimId,
@@ -292,7 +292,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                             ),
                           ),
                         ),
-                        Divider(color: NeonTheme.neonCyan.withOpacity(0.3)),
+                        Divider(color: NeonTheme.brandBrightGreen.withOpacity(0.3)),
                         ListTile(
                           title: Text(
                             wm.i18n.walletAddress,
@@ -331,7 +331,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                     onPressed: isLoading ? null : wm.confirmClaim,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                      foregroundColor: isLoading ? NeonTheme.neonCyan : NeonTheme.darkBackground,
+                      foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
                       elevation: 0,
                       shadowColor: Colors.transparent,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -346,7 +346,7 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                                 height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                                  valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                                 ),
                               )
                             : Text(
@@ -391,13 +391,13 @@ class _ClaimPageState extends WidgetState<ClaimPage, ClaimWidgetModel> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      NeonTheme.neonGreen,
-                      NeonTheme.neonCyan,
+                      NeonTheme.brandBrightGreen,
+                      NeonTheme.brandBrightGreen,
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: NeonTheme.neonGreen.withOpacity(0.5),
+                      color: NeonTheme.brandBrightGreen.withOpacity(0.5),
                       blurRadius: 30,
                       spreadRadius: 5,
                     ),

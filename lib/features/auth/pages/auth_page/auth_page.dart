@@ -34,7 +34,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [NeonTheme.neonCyan, NeonTheme.neonPurple],
+                          colors: [NeonTheme.brandBrightGreen, NeonTheme.brandDarkBlue],
                         ),
                         boxShadow: NeonTheme.neonGlow,
                       ),
@@ -69,7 +69,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                       height: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                                        valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                                       ),
                                     )
                                     : const Icon(Icons.login, size: 24),
@@ -79,7 +79,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                              foregroundColor: isLoading ? NeonTheme.neonCyan : NeonTheme.darkBackground,
+                              foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
                               elevation: 0,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

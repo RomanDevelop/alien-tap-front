@@ -6,13 +6,6 @@ class NeonTheme {
   static const Color brandBrightGreen = Color(0xFF35C055);
   static const Color brandLightGreen = Color(0xFF6DDA86);
 
-  static const Color neonCyan = Color(0xFF00FFFF);
-  static const Color neonPurple = Color(0xFF9D00FF);
-  static const Color neonPink = Color(0xFFFF00FF);
-  static const Color neonGreen = Color(0xFF00FF41);
-  static const Color neonBlue = Color(0xFF0066FF);
-  static const Color neonOrange = Color(0xFFFF6600);
-
   static const Color darkBackground = Color(0xFF0A0A0F);
   static const Color darkSurface = Color(0xFF203664);
   static const Color darkCard = Color(0xFF405E79);
@@ -20,18 +13,14 @@ class NeonTheme {
   static const Color lightText = Color(0xFFE0E0E0);
   static const Color mediumText = Color(0xFFB0B0B0);
 
-  static const Color accentPrimary = Color(0xFF35C055);
-  static const Color accentSecondary = Color(0xFF6DDA86);
-  static const Color accentNeon = Color(0xFF00FFFF);
-
   static ThemeData get theme {
     final colorScheme = ColorScheme.dark(
       brightness: Brightness.dark,
       primary: brandBrightGreen, 
       onPrimary: darkBackground,
-      secondary: accentSecondary, 
+      secondary: brandLightGreen, 
       onSecondary: Colors.white,
-      tertiary: neonCyan, 
+      tertiary: brandLightGreen, 
       onTertiary: Colors.white,
       error: Color(0xFFFF1744),
       onError: Colors.white,
@@ -67,14 +56,14 @@ class NeonTheme {
         displayLarge: TextStyle(
           fontSize: 48,
           fontWeight: FontWeight.bold,
-          color: neonCyan,
-          shadows: [Shadow(color: neonCyan.withOpacity(0.5), blurRadius: 10)],
+          color: brandBrightGreen,
+          shadows: [Shadow(color: brandBrightGreen.withOpacity(0.5), blurRadius: 10)],
         ),
         displayMedium: TextStyle(
           fontSize: 36,
           fontWeight: FontWeight.bold,
-          color: neonCyan,
-          shadows: [Shadow(color: neonCyan.withOpacity(0.5), blurRadius: 8)],
+          color: brandBrightGreen,
+          shadows: [Shadow(color: brandBrightGreen.withOpacity(0.5), blurRadius: 8)],
         ),
         headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: lightText, letterSpacing: 0.5),
         headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: lightText, letterSpacing: 0.5),
@@ -111,7 +100,7 @@ class NeonTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: accentSecondary, 
+          foregroundColor: brandLightGreen, 
           textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.5),
         ),
       ),
@@ -213,9 +202,8 @@ class NeonTheme {
         darkBackground, 
         brandDarkBlue, 
         brandMediumBlue, 
-        Color(0xFF0F0F1F), 
       ],
-      stops: [0.0, 0.3, 0.7, 1.0],
+      stops: [0.0, 0.5, 1.0],
     ),
   );
 
@@ -226,10 +214,9 @@ class NeonTheme {
       end: Alignment.bottomRight,
       colors: [
         brandBrightGreen, 
-        accentSecondary, 
-        neonCyan, 
+        brandLightGreen, 
       ],
-      stops: [0.0, 0.7, 1.0],
+      stops: [0.0, 1.0],
     ),
     borderRadius: BorderRadius.circular(16),
     boxShadow: [
@@ -239,7 +226,7 @@ class NeonTheme {
         spreadRadius: 2,
       ),
       BoxShadow(
-        color: neonCyan.withOpacity(0.3), 
+        color: brandLightGreen.withOpacity(0.3), 
         blurRadius: 30,
         spreadRadius: 4,
       ),
@@ -280,7 +267,7 @@ class NeonTheme {
       blurRadius: 10,
     ),
     Shadow(
-      color: neonCyan.withOpacity(0.6), 
+      color: brandLightGreen.withOpacity(0.6), 
       blurRadius: 20,
     ),
     Shadow(
@@ -292,7 +279,7 @@ class NeonTheme {
   
   static List<Shadow> get greenTextShadow => [
     Shadow(color: brandBrightGreen.withOpacity(0.8), blurRadius: 12),
-    Shadow(color: accentSecondary.withOpacity(0.5), blurRadius: 24),
+    Shadow(color: brandLightGreen.withOpacity(0.5), blurRadius: 24),
   ];
 
   
@@ -303,7 +290,7 @@ class NeonTheme {
       spreadRadius: 2,
     ),
     BoxShadow(
-      color: neonCyan.withOpacity(0.4), 
+      color: brandLightGreen.withOpacity(0.4), 
       blurRadius: 40,
       spreadRadius: 4,
     ),
@@ -317,7 +304,7 @@ class NeonTheme {
   
   static List<BoxShadow> get greenGlow => [
     BoxShadow(color: brandBrightGreen.withOpacity(0.5), blurRadius: 20, spreadRadius: 2),
-    BoxShadow(color: accentSecondary.withOpacity(0.3), blurRadius: 40, spreadRadius: 4),
+    BoxShadow(color: brandLightGreen.withOpacity(0.3), blurRadius: 40, spreadRadius: 4),
   ];
 
   
@@ -327,14 +314,4 @@ class NeonTheme {
   ];
 
   
-  static List<BoxShadow> get neonPurpleGlow => [
-    BoxShadow(color: neonPurple.withOpacity(0.5), blurRadius: 20, spreadRadius: 2),
-    BoxShadow(color: neonPurple.withOpacity(0.3), blurRadius: 40, spreadRadius: 4),
-  ];
-
-  
-  static List<BoxShadow> get neonPinkGlow => [
-    BoxShadow(color: neonPink.withOpacity(0.5), blurRadius: 20, spreadRadius: 2),
-    BoxShadow(color: neonPink.withOpacity(0.3), blurRadius: 40, spreadRadius: 4),
-  ];
 }

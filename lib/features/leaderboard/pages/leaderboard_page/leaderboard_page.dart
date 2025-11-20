@@ -33,7 +33,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: NeonTheme.neonPurple.withOpacity(0.2),
+                    color: NeonTheme.brandDarkBlue.withOpacity(0.2),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -61,7 +61,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                              valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                             ),
                           ),
                         );
@@ -69,7 +69,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                       return IconButton(
                         icon: const Icon(Icons.refresh),
                         onPressed: wm.refresh,
-                        color: NeonTheme.neonCyan,
+                        color: NeonTheme.brandBrightGreen,
                       );
                     },
                   ),
@@ -100,15 +100,15 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      NeonTheme.neonPurple.withOpacity(0.3),
-                                      NeonTheme.neonCyan.withOpacity(0.3),
+                                      NeonTheme.brandDarkBlue.withOpacity(0.3),
+                                      NeonTheme.brandBrightGreen.withOpacity(0.3),
                                     ],
                                   ),
                                 ),
                                 child: Icon(
                                   Icons.leaderboard_outlined,
                                   size: 64,
-                                  color: NeonTheme.neonCyan,
+                                  color: NeonTheme.brandBrightGreen,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -123,7 +123,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                       return RefreshIndicator(
                         onRefresh: wm.refresh,
                         backgroundColor: NeonTheme.darkCard,
-                        color: NeonTheme.neonCyan,
+                        color: NeonTheme.brandBrightGreen,
                         child: ListView.builder(
                           padding: const EdgeInsets.all(16),
                           itemCount: list.length,
@@ -139,8 +139,8 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          NeonTheme.neonPurple.withOpacity(0.3),
-                                          NeonTheme.neonCyan.withOpacity(0.3),
+                                          NeonTheme.brandDarkBlue.withOpacity(0.3),
+                                          NeonTheme.brandBrightGreen.withOpacity(0.3),
                                         ],
                                       )
                                     : null,
@@ -148,14 +148,14 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: isTopThree
-                                      ? NeonTheme.neonCyan.withOpacity(0.5)
-                                      : NeonTheme.neonCyan.withOpacity(0.2),
+                                      ? NeonTheme.brandBrightGreen.withOpacity(0.5)
+                                      : NeonTheme.brandBrightGreen.withOpacity(0.2),
                                   width: isTopThree ? 2 : 1,
                                 ),
                                 boxShadow: isTopThree
                                     ? [
                                         BoxShadow(
-                                          color: NeonTheme.neonCyan.withOpacity(0.3),
+                                          color: NeonTheme.brandBrightGreen.withOpacity(0.3),
                                           blurRadius: 15,
                                           spreadRadius: 1,
                                         ),
@@ -174,10 +174,10 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: rank == 1
-                                                ? [NeonTheme.neonGreen, NeonTheme.neonCyan]
+                                                ? [NeonTheme.brandBrightGreen, NeonTheme.brandBrightGreen]
                                                 : rank == 2
-                                                    ? [NeonTheme.neonCyan, NeonTheme.neonBlue]
-                                                    : [NeonTheme.neonPurple, NeonTheme.neonPink],
+                                                    ? [NeonTheme.brandBrightGreen, NeonTheme.brandMediumBlue]
+                                                    : [NeonTheme.brandDarkBlue, NeonTheme.brandLightGreen],
                                           )
                                         : null,
                                     color: isTopThree ? null : NeonTheme.darkSurface,
@@ -185,10 +185,10 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                         ? [
                                             BoxShadow(
                                               color: (rank == 1
-                                                      ? NeonTheme.neonGreen
+                                                      ? NeonTheme.brandBrightGreen
                                                       : rank == 2
-                                                          ? NeonTheme.neonCyan
-                                                          : NeonTheme.neonPurple)
+                                                          ? NeonTheme.brandBrightGreen
+                                                          : NeonTheme.brandDarkBlue)
                                                   .withOpacity(0.5),
                                               blurRadius: 10,
                                               spreadRadius: 2,
@@ -210,7 +210,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                 title: Text(
                                   entry.displayName,
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: isTopThree ? NeonTheme.neonCyan : NeonTheme.lightText,
+                                    color: isTopThree ? NeonTheme.brandBrightGreen : NeonTheme.lightText,
                                   ),
                                 ),
                                 trailing: Container(
@@ -220,13 +220,13 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                       colors: [
-                                        NeonTheme.neonCyan.withOpacity(0.3),
-                                        NeonTheme.neonPurple.withOpacity(0.3),
+                                        NeonTheme.brandBrightGreen.withOpacity(0.3),
+                                        NeonTheme.brandDarkBlue.withOpacity(0.3),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: NeonTheme.neonCyan.withOpacity(0.5),
+                                      color: NeonTheme.brandBrightGreen.withOpacity(0.5),
                                       width: 1,
                                     ),
                                   ),
@@ -235,7 +235,7 @@ class _LeaderboardPageState extends WidgetState<LeaderboardPage, LeaderboardWidg
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: NeonTheme.neonCyan,
+                                      color: NeonTheme.brandBrightGreen,
                                       shadows: NeonTheme.neonTextShadow,
                                     ),
                                   ),

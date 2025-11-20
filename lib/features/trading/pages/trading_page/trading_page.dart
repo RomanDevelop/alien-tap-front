@@ -79,7 +79,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: NeonTheme.neonCyan),
+          icon: Icon(Icons.arrow_back, color: NeonTheme.brandBrightGreen),
           onPressed: wm.goBack,
         ),
       ),
@@ -101,12 +101,12 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                NeonTheme.neonPurple.withOpacity(0.2),
-                NeonTheme.neonCyan.withOpacity(0.2),
+                NeonTheme.brandDarkBlue.withOpacity(0.2),
+                NeonTheme.brandBrightGreen.withOpacity(0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
             boxShadow: NeonTheme.neonGlow,
           ),
           child: Column(
@@ -122,7 +122,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
               Text(
                 '${balance.toStringAsFixed(2)} ALEN',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: NeonTheme.neonCyan,
+                  color: NeonTheme.brandBrightGreen,
                   shadows: NeonTheme.neonTextShadow,
                   fontWeight: FontWeight.bold,
                 ),
@@ -148,7 +148,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
       decoration: InputDecoration(
         labelText: wm.i18n.enterTicker,
         hintText: wm.i18n.tickerHint,
-        prefixIcon: Icon(Icons.search, color: NeonTheme.neonCyan),
+        prefixIcon: Icon(Icons.search, color: NeonTheme.brandBrightGreen),
         suffixIcon: StreamBuilder<bool>(
           stream: wm.isLoadingStream,
           initialData: false,
@@ -161,7 +161,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                    valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                   ),
                 ),
               );
@@ -204,12 +204,12 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: NeonTheme.neonCyan.withOpacity(0.2),
+                      color: NeonTheme.brandBrightGreen.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       Icons.currency_bitcoin,
-                      color: NeonTheme.neonCyan,
+                      color: NeonTheme.brandBrightGreen,
                       size: 28,
                     ),
                   ),
@@ -272,7 +272,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                       Text(
                         '${isPositive ? '+' : ''}${asset.changePercent24h.toStringAsFixed(2)}%',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: isPositive ? NeonTheme.neonGreen : Colors.red,
+                          color: isPositive ? NeonTheme.brandBrightGreen : Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -302,7 +302,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
           decoration: BoxDecoration(
             color: NeonTheme.darkCard.withOpacity(0.6),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.3), width: 1),
+            border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -363,7 +363,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                       onPressed: isLoading ? null : wm.buyAsset,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                        foregroundColor: isLoading ? NeonTheme.neonCyan : NeonTheme.darkBackground,
+                        foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
                         elevation: 0,
                         shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -374,7 +374,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                               height: 24,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.neonCyan),
+                                valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
                               ),
                             )
                           : Text(
@@ -401,9 +401,9 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
       width: 60,
       height: 48,
       decoration: BoxDecoration(
-        color: NeonTheme.neonCyan.withOpacity(0.2),
+        color: NeonTheme.brandBrightGreen.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 1),
+        border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 1),
       ),
       child: TextButton(
         onPressed: onPressed,
@@ -413,7 +413,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
         child: Text(
           label,
           style: TextStyle(
-            color: NeonTheme.neonCyan,
+            color: NeonTheme.brandBrightGreen,
             fontWeight: FontWeight.bold,
             fontSize: 12,
           ),
@@ -485,12 +485,12 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: NeonTheme.neonCyan.withOpacity(0.2),
+                      color: NeonTheme.brandBrightGreen.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       Icons.currency_bitcoin,
-                      color: NeonTheme.neonCyan,
+                      color: NeonTheme.brandBrightGreen,
                       size: 20,
                     ),
                   ),
@@ -521,14 +521,14 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
                   Text(
                     '${isProfit ? '+' : ''}${position.pnl.toStringAsFixed(2)} ALEN',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                      color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
                     '${isProfit ? '+' : ''}${position.pnlPercent.toStringAsFixed(2)}%',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                      color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                     ),
                   ),
                 ],
@@ -599,12 +599,12 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isProfit
-                    ? [NeonTheme.neonGreen.withOpacity(0.2), NeonTheme.neonCyan.withOpacity(0.2)]
+                    ? [NeonTheme.brandBrightGreen.withOpacity(0.2), NeonTheme.brandBrightGreen.withOpacity(0.2)]
                     : [Colors.red.withOpacity(0.2), Colors.red.withOpacity(0.1)],
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isProfit ? NeonTheme.neonGreen.withOpacity(0.5) : Colors.red.withOpacity(0.5),
+                color: isProfit ? NeonTheme.brandBrightGreen.withOpacity(0.5) : Colors.red.withOpacity(0.5),
                 width: 1,
               ),
             ),
@@ -613,7 +613,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
               child: Text(
                 wm.i18n.closePosition,
                 style: TextStyle(
-                  color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                  color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
               ),

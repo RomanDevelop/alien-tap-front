@@ -66,7 +66,7 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: NeonTheme.neonCyan),
+          icon: Icon(Icons.arrow_back, color: NeonTheme.brandBrightGreen),
           onPressed: wm.goBack,
         ),
       ),
@@ -126,7 +126,7 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
-                  colors: [NeonTheme.neonCyan, NeonTheme.neonBlue],
+                  colors: [NeonTheme.brandBrightGreen, NeonTheme.brandMediumBlue],
                 )
               : null,
           borderRadius: BorderRadius.circular(12),
@@ -189,12 +189,12 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: NeonTheme.neonCyan.withOpacity(0.2),
+                      color: NeonTheme.brandBrightGreen.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       Icons.currency_bitcoin,
-                      color: NeonTheme.neonCyan,
+                      color: NeonTheme.brandBrightGreen,
                       size: 20,
                     ),
                   ),
@@ -225,14 +225,14 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
                   Text(
                     '${isProfit ? '+' : ''}${position.pnl.toStringAsFixed(2)} ALEN',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                      color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
                     '${isProfit ? '+' : ''}${position.pnlPercent.toStringAsFixed(2)}%',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                      color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                     ),
                   ),
                 ],
@@ -319,13 +319,13 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
                 height: 40,
                 decoration: BoxDecoration(
                   color: isBuy
-                      ? NeonTheme.neonCyan.withOpacity(0.2)
-                      : NeonTheme.neonPurple.withOpacity(0.2),
+                      ? NeonTheme.brandBrightGreen.withOpacity(0.2)
+                      : NeonTheme.brandDarkBlue.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   isBuy ? Icons.arrow_downward : Icons.arrow_upward,
-                  color: isBuy ? NeonTheme.neonCyan : NeonTheme.neonPurple,
+                  color: isBuy ? NeonTheme.brandBrightGreen : NeonTheme.brandDarkBlue,
                   size: 20,
                 ),
               ),
@@ -364,7 +364,7 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
                 Text(
                   '${isProfit ? '+' : ''}${history.profit!.toStringAsFixed(2)} ALEN',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isProfit ? NeonTheme.neonGreen : Colors.red,
+                    color: isProfit ? NeonTheme.brandBrightGreen : Colors.red,
                   ),
                 ),
             ],
@@ -405,12 +405,12 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            NeonTheme.neonPurple.withOpacity(0.2),
-            NeonTheme.neonCyan.withOpacity(0.2),
+            NeonTheme.brandDarkBlue.withOpacity(0.2),
+            NeonTheme.brandBrightGreen.withOpacity(0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: NeonTheme.neonCyan.withOpacity(0.5), width: 2),
+        border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
         boxShadow: NeonTheme.neonGlow,
       ),
       child: Row(
@@ -425,7 +425,7 @@ class _PortfolioPageState extends WidgetState<PortfolioPage, PortfolioWidgetMode
           Text(
             '${amount.toStringAsFixed(2)} ALEN',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: NeonTheme.neonCyan,
+              color: NeonTheme.brandBrightGreen,
               shadows: NeonTheme.neonTextShadow,
               fontWeight: FontWeight.bold,
             ),
