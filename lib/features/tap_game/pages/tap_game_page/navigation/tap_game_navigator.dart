@@ -36,6 +36,19 @@ class TapGameNavigator {
   }
 
   void logout() {
-    _context.go('/auth');
+    print('🚪 TapGameNavigator.logout() called - redirecting to /auth');
+    try {
+      _context.go('/auth');
+      print('✅ Navigation to /auth initiated');
+    } catch (e) {
+      print('❌ Navigation error: $e');
+      // Fallback: try push instead of go
+      try {
+        _context.push('/auth');
+        print('✅ Navigation via push succeeded');
+      } catch (e2) {
+        print('❌ Push navigation also failed: $e2');
+      }
+    }
   }
 }

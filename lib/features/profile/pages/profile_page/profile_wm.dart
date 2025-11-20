@@ -90,8 +90,19 @@ class ProfileWidgetModel extends WidgetModel {
     }
   }
 
-  void logout() {
-    _navigator.logout();
+  Future<void> logout() async {
+    try {
+      _logger.d('Logging out from profile...');
+      // Очищаем токен через репозиторий
+      await _repository.logout();
+      _logger.d('Logout successful, redirecting to auth');
+      // Переходим на экран авторизации
+      _navigator.logout();
+    } catch (e) {
+      _logger.e('Logout failed', error: e);
+      // Даже если logout не удался, пытаемся перейти на экран авторизации
+      _navigator.logout();
+    }
   }
 
   void goBack() => _navigator.goBack();

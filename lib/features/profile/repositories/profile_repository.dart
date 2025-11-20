@@ -1,4 +1,5 @@
 // lib/features/profile/repositories/profile_repository.dart
+import 'package:get_storage/get_storage.dart';
 
 class ProfileRepository {
   Future<Map<String, dynamic>> getUserProfile() async {
@@ -38,6 +39,14 @@ class ProfileRepository {
   Future<String> generateReferralLink() async {
     await Future.delayed(const Duration(milliseconds: 300));
     return 'https://t.me/alien_tap_bot?start=ref_123456789';
+  }
+
+  Future<void> logout() async {
+    // Очищаем токен и данные пользователя из хранилища
+    final storage = GetStorage();
+    storage.remove('jwt_token');
+    storage.remove('user_id');
+    print('✅ ProfileRepository: Token and user data cleared');
   }
 }
 
