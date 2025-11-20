@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
@@ -26,31 +25,49 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [NeonTheme.brandBrightGreen, NeonTheme.brandDarkBlue],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [NeonTheme.brandLightGreen, NeonTheme.brandDarkBlue],
                         ),
-                        boxShadow: NeonTheme.neonGlow,
+                        boxShadow: [
+                          BoxShadow(color: NeonTheme.brandLightGreen.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
+                          BoxShadow(color: NeonTheme.brandDarkBlue.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
+                        ],
                       ),
-                      child: Icon(Icons.gamepad, size: 80, color: NeonTheme.darkBackground),
+                      child: Image.asset('assets/images/alien-logo.png', width: 120, height: 120, fit: BoxFit.contain),
                     ),
                     const SizedBox(height: 40),
-                    
+
                     Text(
                       wm.i18n.pageTitle,
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(shadows: NeonTheme.neonTextShadow),
+                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        color: NeonTheme.brandLightGreen,
+                        shadows: [Shadow(color: NeonTheme.brandLightGreen.withOpacity(0.8), blurRadius: 15)],
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    Text(wm.i18n.subtitle, style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
+                    Column(
+                      children: [
+                        Text(
+                          wm.i18n.subtitleLine1,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Color(0xFFB0B0B0)),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          wm.i18n.subtitleLine2,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Color(0xFFB0B0B0)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 48),
-                    
+
                     StreamBuilder<bool>(
                       stream: wm.isLoadingStream,
                       initialData: false,
@@ -59,7 +76,17 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         return Container(
                           width: double.infinity,
                           height: 60,
-                          decoration: isLoading ? null : NeonTheme.buttonGradient,
+                          decoration:
+                              isLoading
+                                  ? null
+                                  : BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [NeonTheme.brandLightGreen, NeonTheme.brandBrightGreen],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
                           child: ElevatedButton.icon(
                             onPressed: isLoading ? null : wm.authenticate,
                             icon:
@@ -69,17 +96,22 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                       height: 24,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
+                                        valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandLightGreen),
                                       ),
                                     )
                                     : const Icon(Icons.login, size: 24),
                             label: Text(
                               isLoading ? wm.i18n.authenticating : wm.i18n.authenticateButton,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                                color: Colors.black,
+                              ),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                              foregroundColor: isLoading ? NeonTheme.brandBrightGreen : NeonTheme.darkBackground,
+                              foregroundColor: isLoading ? NeonTheme.brandLightGreen : Colors.black,
                               elevation: 0,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -89,7 +121,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       },
                     ),
                     const SizedBox(height: 24),
-                    
+
                     StreamBuilder<String?>(
                       stream: wm.errorStream,
                       initialData: null,

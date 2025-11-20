@@ -2,12 +2,10 @@ import 'package:get_storage/get_storage.dart';
 
 class ProfileRepository {
   Future<Map<String, dynamic>> getUserProfile() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return {'userId': '123456789', 'username': 'User', 'alenBalance': 12450.0, 'avatarUrl': null};
   }
 
   Future<List<Map<String, dynamic>>> getOperationsHistory() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return [
       {'id': '1', 'type': 'withdraw', 'amount': 100.0, 'date': DateTime.now().subtract(const Duration(days: 1))},
       {'id': '2', 'type': 'transfer', 'amount': 500.0, 'date': DateTime.now().subtract(const Duration(days: 3))},
@@ -16,7 +14,6 @@ class ProfileRepository {
   }
 
   Future<String> generateReferralLink() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return 'https://t.me/alien_tap_bot?start=ref_123456789';
   }
 
@@ -24,12 +21,5 @@ class ProfileRepository {
     final storage = GetStorage();
     storage.remove('jwt_token');
     storage.remove('user_id');
-
-    final tokenAfterRemoval = storage.read<String>('jwt_token');
-    if (tokenAfterRemoval != null) {
-      storage.remove('jwt_token');
-    }
-
-    await Future.delayed(const Duration(milliseconds: 100));
   }
 }

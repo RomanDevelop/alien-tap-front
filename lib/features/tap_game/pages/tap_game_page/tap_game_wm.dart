@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:alien_tap/features/tap_game/repositories/tap_repository.dart';
 import 'package:alien_tap/features/tap_game/models/leaderboard_entry.dart';
 import 'tap_game_i18n.dart';
@@ -158,31 +157,6 @@ class TapGameWidgetModel extends WidgetModel {
     try {
       _logger.d('Logging out...');
       await _repository.logout();
-
-      await Future.delayed(const Duration(milliseconds: 200));
-
-      final storage = GetStorage();
-      for (int i = 0; i < 3; i++) {
-        final token = storage.read<String>('jwt_token');
-        if (token == null) {
-          _logger.d('Token verified as cleared (attempt ${i + 1})');
-          break;
-        } else {
-          _logger.w('Token still exists (attempt ${i + 1}), forcing removal');
-          storage.remove('jwt_token');
-          storage.remove('user_id');
-          await Future.delayed(const Duration(milliseconds: 100));
-        }
-      }
-
-      final finalToken = storage.read<String>('jwt_token');
-      if (finalToken != null) {
-        _logger.e('CRITICAL: Token still exists after all attempts!');
-        storage.remove('jwt_token');
-        storage.remove('user_id');
-        await Future.delayed(const Duration(milliseconds: 200));
-      }
-
       _logger.d('Logout successful, redirecting to auth');
       _navigator.logout();
     } catch (e) {

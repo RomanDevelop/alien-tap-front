@@ -4,7 +4,6 @@ import '../../trading/models/trading_position.dart';
 
 class PortfolioRepository {
   Future<List<TradingPosition>> getOpenPositions() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return [
       TradingPosition(
         id: '1',
@@ -28,7 +27,6 @@ class PortfolioRepository {
   }
 
   Future<List<PortfolioHistory>> getHistory() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return [
       PortfolioHistory(
         id: '1',
@@ -60,7 +58,6 @@ class PortfolioRepository {
   }
 
   Future<Map<String, double>> getEarnings() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return {
       'week': 150.0,
       'month': 450.0,

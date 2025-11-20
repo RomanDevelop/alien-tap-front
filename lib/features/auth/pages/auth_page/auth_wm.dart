@@ -1,6 +1,5 @@
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:alien_tap/data/api/game_api.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/auth_i18n.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/navigation/auth_navigator.dart';
@@ -51,27 +50,6 @@ class AuthWidgetModel extends WidgetModel {
       _logger.d('Calling _api.authenticate()...');
       await _api.authenticate();
       _logger.d('Authentication successful - token received');
-
-      await Future.delayed(const Duration(milliseconds: 200));
-
-      try {
-        final storage = GetStorage();
-        final token = storage.read<String>('jwt_token');
-        if (token != null && token.isNotEmpty) {
-          _logger.d('Token verified in storage (length: ${token.length})');
-        } else {
-          _logger.w('Token not found in storage after authentication!');
-          final apiToken = (_api as dynamic)._token;
-          if (apiToken != null && apiToken.toString().isNotEmpty) {
-            _logger.w('Token exists in API but not in direct storage access');
-          }
-        }
-      } catch (e) {
-        _logger.w('Could not verify token: $e');
-      }
-
-      await Future.delayed(const Duration(milliseconds: 100));
-
       _logger.d('Navigating to game screen...');
       _navigator.goToGame();
     } catch (e, stackTrace) {

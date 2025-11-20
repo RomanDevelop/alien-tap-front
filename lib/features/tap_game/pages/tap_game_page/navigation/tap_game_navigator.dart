@@ -37,14 +37,6 @@ class TapGameNavigator {
   void logout() {
     try {
       _context.go('/auth');
-
-      Future.delayed(const Duration(milliseconds: 200), () {
-        try {
-          if (_context.mounted) {
-            _context.go('/auth');
-          }
-        } catch (e) {}
-      });
     } catch (e) {
       try {
         _context.push('/auth');

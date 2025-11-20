@@ -1,14 +1,8 @@
-
 import '../models/asset.dart';
 import '../models/trading_position.dart';
 
 class TradingRepository {
-  
   Future<Asset?> searchAsset(String ticker) async {
-    
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    
     final mockAssets = {
       'AAPL': Asset(
         ticker: 'AAPL',
@@ -43,13 +37,11 @@ class TradingRepository {
         sparkline: [2600.0, 2620.0, 2630.0, 2640.0, 2650.0],
       ),
     };
-    
+
     return mockAssets[ticker.toUpperCase()];
   }
 
   Future<List<TradingPosition>> getOpenPositions() async {
-    
-    await Future.delayed(const Duration(milliseconds: 300));
     return [
       TradingPosition(
         id: '1',
@@ -72,14 +64,7 @@ class TradingRepository {
     ];
   }
 
-  Future<void> buyAsset(String ticker, double amount) async {
-    
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
+  Future<void> buyAsset(String ticker, double amount) async {}
 
-  Future<void> closePosition(String positionId) async {
-    
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
+  Future<void> closePosition(String positionId) async {}
 }
-

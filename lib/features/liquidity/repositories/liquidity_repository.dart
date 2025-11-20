@@ -1,8 +1,5 @@
-
-
 class LiquidityRepository {
   Future<Map<String, dynamic>> getPoolInfo() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     return {
       'lpBalance': 5000.0,
       'rewards24h': 12.5,
@@ -13,12 +10,7 @@ class LiquidityRepository {
     };
   }
 
-  Future<void> addLiquidity(double alenAmount) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
+  Future<void> addLiquidity(double alenAmount) async {}
 
-  Future<void> removeLiquidity(double lpTokens) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
+  Future<void> removeLiquidity(double lpTokens) async {}
 }
-

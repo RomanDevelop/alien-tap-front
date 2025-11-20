@@ -153,7 +153,6 @@ class GameApi {
 
   Future<void> initialize() async {
     await GetStorage.init();
-    await Future.delayed(const Duration(milliseconds: 500));
 
     if (AppConfig.isProduction) {
       if (!_isRunningInTelegram()) {
@@ -450,12 +449,5 @@ class GameApi {
     _storage.remove('jwt_token');
     _storage.remove('user_id');
 
-    final tokenAfterRemoval = _storage.read<String>('jwt_token');
-    if (tokenAfterRemoval != null) {
-      _storage.remove('jwt_token');
-      _storage.remove('user_id');
-    }
-
-    await Future.delayed(const Duration(milliseconds: 100));
   }
 }
