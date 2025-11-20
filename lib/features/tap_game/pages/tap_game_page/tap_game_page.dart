@@ -1,4 +1,4 @@
-// lib/features/tap_game/pages/tap_game_page/tap_game_page.dart
+
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'tap_game_wm.dart';
@@ -25,7 +25,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
         child: SafeArea(
           child: Column(
             children: [
-              // Верхняя панель с балансом
+              
               _buildTopPanel(context),
               Expanded(
                 child: SingleChildScrollView(
@@ -34,19 +34,19 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        // Фонд токенов
+                        
                         _buildTokenFund(context),
                         const SizedBox(height: 40),
-                        // Большая кнопка TAP
+                        
                         _buildTapButton(context),
                         const SizedBox(height: 40),
-                        // Счетчик сессии
+                        
                         _buildSessionCounter(context),
                         const SizedBox(height: 40),
-                        // Кнопка перевода в торговый баланс
+                        
                         _buildTransferButton(context),
                         const SizedBox(height: 30),
-                        // Навигационные кнопки
+                        
                         _buildNavigationButtons(context),
                         const SizedBox(height: 40),
                       ],

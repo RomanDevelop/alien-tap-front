@@ -1,4 +1,4 @@
-// lib/features/liquidity/pages/liquidity_page/liquidity_i18n.dart
+
 
 class LiquidityI18n {
   String get pageTitle => 'LP Пул';

@@ -1,4 +1,3 @@
-// lib/features/profile/pages/profile_page/navigation/profile_navigator.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,20 +11,20 @@ class ProfileNavigator {
   }
 
   void logout() {
-    print('🚪 ProfileNavigator.logout() called - redirecting to /auth');
     try {
       _context.go('/auth');
-      print('✅ Navigation to /auth initiated');
+
+      Future.delayed(const Duration(milliseconds: 200), () {
+        try {
+          if (_context.mounted) {
+            _context.go('/auth');
+          }
+        } catch (e) {}
+      });
     } catch (e) {
-      print('❌ Navigation error: $e');
-      // Fallback: try push instead of go
       try {
         _context.push('/auth');
-        print('✅ Navigation via push succeeded');
-      } catch (e2) {
-        print('❌ Push navigation also failed: $e2');
-      }
+      } catch (e2) {}
     }
   }
 }
-

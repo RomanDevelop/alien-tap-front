@@ -1,4 +1,4 @@
-// lib/features/profile/pages/profile_page/profile_i18n.dart
+
 
 class ProfileI18n {
   String get pageTitle => 'Профиль';

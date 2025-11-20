@@ -1,4 +1,4 @@
-// lib/features/leaderboard/pages/leaderboard_page/leaderboard_page.dart
+
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/leaderboard/pages/leaderboard_page/di/leaderboard_wm_builder.dart';

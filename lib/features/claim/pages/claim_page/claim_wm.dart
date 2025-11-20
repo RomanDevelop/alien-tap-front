@@ -1,4 +1,3 @@
-// lib/features/claim/pages/claim_page/claim_wm.dart
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:alien_tap/features/tap_game/repositories/tap_repository.dart';
@@ -33,20 +32,16 @@ class ClaimWidgetModel extends WidgetModel {
   @override
   void onLoad() {
     super.onLoad();
-    // Получаем текущий счёт (можно из репозитория или передавать параметром)
     _loadCurrentScore();
   }
 
   Future<void> _loadCurrentScore() async {
-    // TODO: Получить текущий счёт пользователя
-    // Пока используем 0
     _currentScore.add(0);
   }
 
   Future<void> startClaim(double amount, String walletAddress) async {
     if (_isLoading.value == true) return;
 
-    // Валидация адреса Polygon (базовая проверка)
     if (walletAddress.isEmpty || !walletAddress.startsWith('0x') || walletAddress.length < 40) {
       _navigator.showError(i18n.invalidWalletAddress);
       return;
@@ -56,11 +51,7 @@ class ClaimWidgetModel extends WidgetModel {
     try {
       final claimId = await _repository.startClaim(amount);
       _claimId = claimId;
-      _claimInfo.add({
-        'amount': amount,
-        'claim_id': claimId,
-        'wallet_address': walletAddress,
-      });
+      _claimInfo.add({'amount': amount, 'claim_id': claimId, 'wallet_address': walletAddress});
       _state.add(ClaimState.confirmation);
       _logger.d('Claim started: $claimId for wallet: $walletAddress');
     } catch (e) {

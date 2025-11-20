@@ -1,4 +1,4 @@
-// lib/features/claim/pages/claim_page/navigation/claim_navigator.dart
+
 import 'package:flutter/material.dart';
 
 class ClaimNavigator {

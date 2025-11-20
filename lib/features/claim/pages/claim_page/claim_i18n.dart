@@ -1,4 +1,4 @@
-// lib/features/claim/pages/claim_page/claim_i18n.dart
+
 class ClaimI18n {
   String get pageTitle => 'Забрать награду';
   String get enterAmount => 'Введите сумму для вывода';

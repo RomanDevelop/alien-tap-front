@@ -1,4 +1,3 @@
-// lib/app/router/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_storage/get_storage.dart';
@@ -34,65 +33,47 @@ class AppRouter {
           ),
       redirect: (context, state) {
         try {
-          // Игнорируем hash параметры (tgWebAppData и т.д.) - они не являются маршрутами
           final matchedLocation = state.matchedLocation;
-          
-          // Проверяем, является ли matchedLocation валидным маршрутом
-          // Валидные маршруты начинаются с '/' и не содержат hash параметры
-          final isValidRoute = matchedLocation.startsWith('/') && 
-                              !matchedLocation.contains('tgWebAppData') &&
-                              !matchedLocation.contains('query_id') &&
-                              !matchedLocation.contains('auth_date') &&
-                              !matchedLocation.contains('hash=') &&
-                              !matchedLocation.contains('signature=') &&
-                              !matchedLocation.contains('&tgWebApp') &&
-                              (matchedLocation == '/auth' || 
-                               matchedLocation == '/game' || 
-                               matchedLocation == '/leaderboard' || 
-                               matchedLocation == '/claim' ||
-                               matchedLocation == '/trading' ||
-                               matchedLocation == '/portfolio' ||
-                               matchedLocation == '/liquidity' ||
-                               matchedLocation == '/profile');
-          
-          // Если это не валидный маршрут (hash параметры или неизвестный путь)
+
+          final isValidRoute =
+              matchedLocation.startsWith('/') &&
+              !matchedLocation.contains('tgWebAppData') &&
+              !matchedLocation.contains('query_id') &&
+              !matchedLocation.contains('auth_date') &&
+              !matchedLocation.contains('hash=') &&
+              !matchedLocation.contains('signature=') &&
+              !matchedLocation.contains('&tgWebApp') &&
+              (matchedLocation == '/auth' ||
+                  matchedLocation == '/game' ||
+                  matchedLocation == '/leaderboard' ||
+                  matchedLocation == '/claim' ||
+                  matchedLocation == '/trading' ||
+                  matchedLocation == '/portfolio' ||
+                  matchedLocation == '/liquidity' ||
+                  matchedLocation == '/profile');
+
           if (!isValidRoute) {
-            print('⚠️ Router: invalid route detected, redirecting. matchedLocation: $matchedLocation');
-            // Проверяем авторизацию и редиректим на правильный маршрут
             final isAuthenticated = _checkAuth();
             if (isAuthenticated) {
-              print('🔄 Redirecting to /game (authenticated, invalid route)');
               return '/game';
             } else {
-              print('🔄 Redirecting to /auth (not authenticated, invalid route)');
               return '/auth';
             }
           }
-          
-          // Проверяем наличие токена
+
           final isAuthenticated = _checkAuth();
           final isAuthRoute = matchedLocation == '/auth';
-          final targetRoute = matchedLocation;
 
-          print('🔍 Router redirect: target=$targetRoute, isAuth=$isAuthenticated, isAuthRoute=$isAuthRoute');
-
-          // Если не авторизован и не на экране авторизации → редирект на /auth
           if (!isAuthenticated && !isAuthRoute) {
-            print('🔄 Redirecting to /auth (not authenticated)');
             return '/auth';
           }
 
-          // Если авторизован и на экране авторизации → редирект на /game
           if (isAuthenticated && isAuthRoute) {
-            print('🔄 Redirecting to /game (authenticated on auth page)');
             return '/game';
           }
 
-          print('✅ Router: allowing access to $targetRoute');
-          return null; // Разрешить доступ
+          return null;
         } catch (e) {
-          print('❌ Router redirect error: $e');
-          // В случае ошибки всегда редиректим на /auth
           return '/auth';
         }
       },
@@ -103,7 +84,6 @@ class AppRouter {
             try {
               return AuthPage();
             } catch (e) {
-              print('❌ Error building AuthPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -115,7 +95,6 @@ class AppRouter {
               final repository = locator<TapRepository>();
               return TapGamePage(repository: repository);
             } catch (e) {
-              print('❌ Error building TapGamePage: $e');
               return Scaffold(
                 body: Center(
                   child: Column(
@@ -136,7 +115,6 @@ class AppRouter {
             try {
               return LeaderboardPage();
             } catch (e) {
-              print('❌ Error building LeaderboardPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -147,7 +125,6 @@ class AppRouter {
             try {
               return ClaimPage();
             } catch (e) {
-              print('❌ Error building ClaimPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -158,7 +135,6 @@ class AppRouter {
             try {
               return TradingPage();
             } catch (e) {
-              print('❌ Error building TradingPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -169,7 +145,6 @@ class AppRouter {
             try {
               return PortfolioPage();
             } catch (e) {
-              print('❌ Error building PortfolioPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -180,7 +155,6 @@ class AppRouter {
             try {
               return LiquidityPage();
             } catch (e) {
-              print('❌ Error building LiquidityPage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -191,7 +165,6 @@ class AppRouter {
             try {
               return ProfilePage();
             } catch (e) {
-              print('❌ Error building ProfilePage: $e');
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
           },
@@ -202,19 +175,11 @@ class AppRouter {
 
   static bool _checkAuth() {
     try {
-      // Use GetStorage directly to check token (more reliable)
-      // Не проверяем locator, так как GetStorage работает независимо
       final storage = GetStorage();
       final token = storage.read<String>('jwt_token');
       final isAuth = token != null && token.isNotEmpty;
-      // Debug logging
-      print(
-        '🔍 Router _checkAuth(): token=${token != null ? "exists (${token.length} chars)" : "null"}, isAuth=$isAuth',
-      );
       return isAuth;
     } catch (e) {
-      print('❌ Router _checkAuth() error: $e');
-      // В случае ошибки считаем, что не авторизован
       return false;
     }
   }

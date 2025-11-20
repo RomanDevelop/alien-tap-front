@@ -1,4 +1,4 @@
-// lib/features/tap_game/pages/tap_game_page/tap_game_i18n.dart
+
 
 class TapGameI18n {
   String get pageTitle => 'Alien Tap';
@@ -10,7 +10,7 @@ class TapGameI18n {
   String get error => 'Ошибка';
   String get logoutButton => 'Выйти';
   
-  // Новые строки для Tap-to-Earn экрана
+  
   String get yourBalance => 'Ваш баланс';
   String get withdrawButton => 'Вывести';
   String get tokenFund => 'Фонд токенов';

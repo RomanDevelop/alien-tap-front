@@ -1,4 +1,4 @@
-// lib/features/liquidity/pages/liquidity_page/liquidity_wm.dart
+
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:logger/logger.dart';
@@ -71,12 +71,12 @@ class LiquidityWidgetModel extends WidgetModel {
   }
 
   void setMaxInvestAmount() {
-    // Мок: максимальная сумма = 10000 ALEN
+    
     setInvestAmount(10000.0);
   }
 
   double calculatePollNeeded(double alenAmount) {
-    // Мок: соотношение 1:1
+    
     return alenAmount;
   }
 

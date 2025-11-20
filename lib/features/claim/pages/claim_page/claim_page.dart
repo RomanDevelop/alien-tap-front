@@ -1,4 +1,4 @@
-// lib/features/claim/pages/claim_page/claim_page.dart
+
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/claim/pages/claim_page/di/claim_wm_builder.dart';

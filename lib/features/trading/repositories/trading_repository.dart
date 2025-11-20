@@ -1,14 +1,14 @@
-// lib/features/trading/repositories/trading_repository.dart
+
 import '../models/asset.dart';
 import '../models/trading_position.dart';
 
 class TradingRepository {
-  // Мок данные для демонстрации
+  
   Future<Asset?> searchAsset(String ticker) async {
-    // Симуляция задержки API
+    
     await Future.delayed(const Duration(milliseconds: 500));
     
-    // Мок данные для популярных тикеров
+    
     final mockAssets = {
       'AAPL': Asset(
         ticker: 'AAPL',
@@ -48,7 +48,7 @@ class TradingRepository {
   }
 
   Future<List<TradingPosition>> getOpenPositions() async {
-    // Мок данные открытых позиций
+    
     await Future.delayed(const Duration(milliseconds: 300));
     return [
       TradingPosition(
@@ -73,12 +73,12 @@ class TradingRepository {
   }
 
   Future<void> buyAsset(String ticker, double amount) async {
-    // Симуляция покупки
+    
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
   Future<void> closePosition(String positionId) async {
-    // Симуляция закрытия позиции
+    
     await Future.delayed(const Duration(milliseconds: 500));
   }
 }

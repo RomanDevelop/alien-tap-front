@@ -1,4 +1,4 @@
-// lib/features/auth/pages/auth_page/auth_page.dart
+
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
@@ -26,7 +26,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Логотип/иконка с неоновым свечением
+                    
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -41,7 +41,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       child: Icon(Icons.gamepad, size: 80, color: NeonTheme.darkBackground),
                     ),
                     const SizedBox(height: 40),
-                    // Заголовок с неоновым эффектом
+                    
                     Text(
                       wm.i18n.pageTitle,
                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(shadows: NeonTheme.neonTextShadow),
@@ -50,7 +50,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                     const SizedBox(height: 16),
                     Text(wm.i18n.subtitle, style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
                     const SizedBox(height: 48),
-                    // Кнопка авторизации с градиентом
+                    
                     StreamBuilder<bool>(
                       stream: wm.isLoadingStream,
                       initialData: false,
@@ -89,7 +89,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       },
                     ),
                     const SizedBox(height: 24),
-                    // Ошибка с неоновым стилем
+                    
                     StreamBuilder<String?>(
                       stream: wm.errorStream,
                       initialData: null,

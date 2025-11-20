@@ -1,4 +1,4 @@
-// lib/features/trading/pages/trading_page/trading_wm.dart
+
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:logger/logger.dart';
@@ -14,24 +14,24 @@ class TradingWidgetModel extends WidgetModel {
   final TradingI18n i18n;
   final Logger _logger = Logger();
 
-  // Торговый баланс (мок данные)
+  
   final BehaviorSubject<double> _tradingBalance = BehaviorSubject.seeded(10000.0);
   Stream<double> get tradingBalanceStream => _tradingBalance.stream;
   double get tradingBalance => _tradingBalance.value;
 
-  // Текущий актив
+  
   final BehaviorSubject<Asset?> _selectedAsset = BehaviorSubject.seeded(null);
   Stream<Asset?> get selectedAssetStream => _selectedAsset.stream;
 
-  // Открытые позиции
+  
   final BehaviorSubject<List<TradingPosition>> _positions = BehaviorSubject.seeded([]);
   Stream<List<TradingPosition>> get positionsStream => _positions.stream;
 
-  // Сумма инвестирования
+  
   final BehaviorSubject<double> _investAmount = BehaviorSubject.seeded(100.0);
   Stream<double> get investAmountStream => _investAmount.stream;
 
-  // Загрузка
+  
   final BehaviorSubject<bool> _isLoading = BehaviorSubject.seeded(false);
   Stream<bool> get isLoadingStream => _isLoading.stream;
 

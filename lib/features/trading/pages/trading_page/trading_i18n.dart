@@ -1,4 +1,4 @@
-// lib/features/trading/pages/trading_page/trading_i18n.dart
+
 
 class TradingI18n {
   String get pageTitle => 'Торговля';

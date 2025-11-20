@@ -1,7 +1,7 @@
-// lib/features/tap_game/models/leaderboard_entry.dart
+
 import 'package:equatable/equatable.dart';
 
-/// Model for leaderboard entry according to FLUTTER_API_DOCS.md
+
 class LeaderboardEntry extends Equatable {
   final String userId;
   final String? username;
@@ -10,11 +10,11 @@ class LeaderboardEntry extends Equatable {
 
   const LeaderboardEntry({required this.userId, this.username, this.firstName, required this.score});
 
-  /// Display name: username > first_name > 'Игрок'
+  
   String get displayName => username ?? firstName ?? 'Игрок';
 
-  /// Rank is not in the API response, should be calculated on client side
-  int get rank => 0; // Will be set when displaying in list
+  
+  int get rank => 0; 
 
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntry(

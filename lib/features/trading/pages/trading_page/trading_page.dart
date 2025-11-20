@@ -1,4 +1,4 @@
-// lib/features/trading/pages/trading_page/trading_page.dart
+
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
@@ -92,7 +92,7 @@ class _TradingPageState extends WidgetState<TradingPage, TradingWidgetModel> {
       initialData: wm.tradingBalance,
       builder: (ctx, snap) {
         final balance = snap.data ?? 0;
-        final usdValue = balance * 0.00245; // Мок курс 1 ALEN = $0.00245
+        final usdValue = balance * 0.00245; 
         
         return Container(
           padding: const EdgeInsets.all(20),

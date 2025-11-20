@@ -1,4 +1,3 @@
-// lib/features/auth/pages/auth_page/auth_wm.dart
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,16 +23,13 @@ class AuthWidgetModel extends WidgetModel {
   @override
   void onLoad() {
     super.onLoad();
-    // Проверяем, может быть уже авторизован
     _checkAuthStatus();
   }
 
   Future<void> _checkAuthStatus() async {
     try {
-      // Проверяем наличие токена
       final token = (_api as dynamic)._token;
       if (token != null && (token as String).isNotEmpty) {
-        // Уже авторизован, переходим на игровой экран
         _navigator.goToGame();
       }
     } catch (e) {
@@ -43,69 +39,46 @@ class AuthWidgetModel extends WidgetModel {
 
   Future<void> authenticate() async {
     if (_isLoading.value == true) {
-      print('⚠️ authenticate() called but already loading, ignoring...');
-      _logger.d('⚠️ authenticate() called but already loading, ignoring...');
+      _logger.d('authenticate() called but already loading, ignoring...');
       return;
     }
-
-    print('🔍 authenticate() called - starting authentication process...');
-    // Use JS console.log for guaranteed visibility
-    try {
-      // @JS interop would require import, using window.console directly via JS
-      // For now, print should work, but let's also add a visual indicator
-    } catch (e) {
-      // Ignore
-    }
+    try {} catch (e) {}
     _logger.d('🔍 authenticate() called - starting authentication process...');
     _isLoading.add(true);
     _error.add(null);
 
     try {
-      print('📤 Calling _api.authenticate()...');
-      _logger.d('📤 Calling _api.authenticate()...');
+      _logger.d('Calling _api.authenticate()...');
       await _api.authenticate();
-      print('✅ Authentication successful - token received');
-      _logger.d('✅ Authentication successful - token received');
+      _logger.d('Authentication successful - token received');
 
-      // Небольшая задержка, чтобы токен точно сохранился
       await Future.delayed(const Duration(milliseconds: 200));
 
-      // Проверяем, что токен действительно сохранен через GetStorage напрямую
       try {
         final storage = GetStorage();
         final token = storage.read<String>('jwt_token');
         if (token != null && token.isNotEmpty) {
-          _logger.d('✅ Token verified in storage (length: ${token.length})');
-          print('✅ Token verified in storage (length: ${token.length})');
+          _logger.d('Token verified in storage (length: ${token.length})');
         } else {
-          _logger.w('⚠️ Token not found in storage after authentication!');
-          print('⚠️ Token not found in storage after authentication!');
-          // Проверяем через API тоже
+          _logger.w('Token not found in storage after authentication!');
           final apiToken = (_api as dynamic)._token;
           if (apiToken != null && apiToken.toString().isNotEmpty) {
-            _logger.w('⚠️ Token exists in API but not in direct storage access');
-            print('⚠️ Token exists in API but not in direct storage access');
+            _logger.w('Token exists in API but not in direct storage access');
           }
         }
       } catch (e) {
-        _logger.w('⚠️ Could not verify token: $e');
-        print('⚠️ Could not verify token: $e');
+        _logger.w('Could not verify token: $e');
       }
 
-      // Дополнительная задержка для гарантии синхронизации
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // Переход на игровой экран
-      _logger.d('🔄 Navigating to game screen...');
-      print('🔄 Navigating to game screen...');
+      _logger.d('Navigating to game screen...');
       _navigator.goToGame();
     } catch (e, stackTrace) {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
       _error.add(errorMsg);
-      _logger.e('❌ Authentication failed: $e');
-      _logger.e('   Stack trace: $stackTrace');
-      print('❌ AuthWidgetModel.authenticate() error: $e');
-      print('   Stack: $stackTrace');
+      _logger.e('Authentication failed: $e');
+      _logger.e('Stack trace: $stackTrace');
     } finally {
       _isLoading.add(false);
       _logger.d('🏁 authenticate() completed');

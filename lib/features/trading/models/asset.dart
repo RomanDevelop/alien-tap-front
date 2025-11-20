@@ -1,4 +1,4 @@
-// lib/features/trading/models/asset.dart
+
 
 class Asset {
   final String ticker;
@@ -7,7 +7,7 @@ class Asset {
   final double change24h;
   final double changePercent24h;
   final String? logoUrl;
-  final List<double>? sparkline; // Мини-график
+  final List<double>? sparkline; 
 
   Asset({
     required this.ticker,

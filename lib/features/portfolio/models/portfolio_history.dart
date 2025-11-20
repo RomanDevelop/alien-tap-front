@@ -1,8 +1,8 @@
-// lib/features/portfolio/models/portfolio_history.dart
+
 
 class PortfolioHistory {
   final String id;
-  final String type; // 'buy' or 'sell'
+  final String type; 
   final String ticker;
   final String name;
   final double amount;

@@ -1,8 +1,8 @@
-// lib/features/profile/pages/profile_page/profile_wm.dart
 import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'profile_i18n.dart';
 import 'navigation/profile_navigator.dart';
 import '../../repositories/profile_repository.dart';
@@ -25,12 +25,8 @@ class ProfileWidgetModel extends WidgetModel {
   final BehaviorSubject<bool> _isLoading = BehaviorSubject.seeded(false);
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
-  ProfileWidgetModel(
-    this._repository,
-    this._navigator,
-    this.i18n,
-    WidgetModelDependencies dependencies,
-  ) : super(dependencies);
+  ProfileWidgetModel(this._repository, this._navigator, this.i18n, WidgetModelDependencies dependencies)
+    : super(dependencies);
 
   @override
   void onLoad() {
@@ -93,18 +89,41 @@ class ProfileWidgetModel extends WidgetModel {
   Future<void> logout() async {
     try {
       _logger.d('Logging out from profile...');
-      // Очищаем токен через репозиторий
+
       await _repository.logout();
+
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      final storage = GetStorage();
+      for (int i = 0; i < 3; i++) {
+        final token = storage.read<String>('jwt_token');
+        if (token == null) {
+          _logger.d('Token verified as cleared (attempt ${i + 1})');
+          break;
+        } else {
+          _logger.w('Token still exists (attempt ${i + 1}), forcing removal');
+          storage.remove('jwt_token');
+          storage.remove('user_id');
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+      }
+
+      final finalToken = storage.read<String>('jwt_token');
+      if (finalToken != null) {
+        _logger.e('CRITICAL: Token still exists after all attempts!');
+        storage.remove('jwt_token');
+        storage.remove('user_id');
+        await Future.delayed(const Duration(milliseconds: 200));
+      }
+
       _logger.d('Logout successful, redirecting to auth');
-      // Переходим на экран авторизации
+
       _navigator.logout();
     } catch (e) {
       _logger.e('Logout failed', error: e);
-      // Даже если logout не удался, пытаемся перейти на экран авторизации
       _navigator.logout();
     }
   }
 
   void goBack() => _navigator.goBack();
 }
-
