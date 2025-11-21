@@ -26,7 +26,8 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(20),
+                      width: 200,
+                      height: 200,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
@@ -39,7 +40,14 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                           BoxShadow(color: NeonTheme.brandDarkBlue.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
                         ],
                       ),
-                      child: Image.asset('assets/images/alien-logo.png', width: 120, height: 120, fit: BoxFit.contain),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/alien-logo.png',
+                          width: 190,
+                          height: 190,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 40),
 
