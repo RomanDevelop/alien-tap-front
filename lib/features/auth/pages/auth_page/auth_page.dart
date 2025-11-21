@@ -1,8 +1,13 @@
+import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart' hide WidgetState;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
+import 'package:dio/dio.dart';
 import 'auth_wm.dart';
 
 class AuthPage extends CoreMwwmWidget<AuthWidgetModel> {
@@ -42,18 +47,58 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: Lottie.asset(
-                          'assets/animation/AstronautSmartphone.json',
-                          width: 190,
-                          height: 190,
-                          fit: BoxFit.contain,
-                          repeat: true,
-                          animate: true,
-                          errorBuilder: (context, error, stackTrace) {
-                            debugPrint('Lottie.asset error: $error');
-                            return _buildLottiePlaceholder();
-                          },
-                        ),
+                        child:
+                            kIsWeb
+                                ? FutureBuilder<Uint8List?>(
+                                  future: _loadLottieForWeb(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData && snapshot.data != null) {
+                                      return Lottie.memory(
+                                        snapshot.data!,
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.contain,
+                                        repeat: true,
+                                        animate: true,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('Lottie.memory error: $error');
+                                          return _buildLottiePlaceholder();
+                                        },
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      debugPrint('Error loading Lottie: ${snapshot.error}');
+                                      return Lottie.asset(
+                                        'assets/animation/AstronautSmartphone.json',
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.contain,
+                                        repeat: true,
+                                        animate: true,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('Lottie.asset error: $error');
+                                          return _buildLottiePlaceholder();
+                                        },
+                                      );
+                                    }
+                                    return const SizedBox(
+                                      width: 190,
+                                      height: 190,
+                                      child: Center(child: CircularProgressIndicator(color: Colors.white54)),
+                                    );
+                                  },
+                                )
+                                : Lottie.asset(
+                                  'assets/animation/AstronautSmartphone.json',
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                  animate: true,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Lottie.asset error: $error');
+                                    return _buildLottiePlaceholder();
+                                  },
+                                ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -187,6 +232,57 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
       child: Icon(Icons.animation, size: 80, color: Colors.white.withOpacity(0.5)),
     );
+  }
+
+  Future<Uint8List?> _loadLottieForWeb() async {
+    if (!kIsWeb) return null;
+
+    try {
+      final jsonString = await rootBundle.loadString('assets/animation/AstronautSmartphone.json');
+      final bytes = utf8.encode(jsonString);
+      debugPrint('Lottie loaded from rootBundle, size: ${bytes.length} bytes');
+      return Uint8List.fromList(bytes);
+    } catch (e) {
+      debugPrint('rootBundle failed: $e, trying HTTP...');
+
+      try {
+        final dio = Dio();
+        final baseUri = Uri.base;
+        final origin = baseUri.origin;
+
+        final paths = [
+          '$origin/assets/assets/animation/AstronautSmartphone.json',
+          '$origin/assets/animation/AstronautSmartphone.json',
+        ];
+
+        for (final url in paths) {
+          try {
+            debugPrint('Trying HTTP: $url');
+            final response = await dio.get<Uint8List>(
+              url,
+              options: Options(
+                responseType: ResponseType.bytes,
+                followRedirects: true,
+                validateStatus: (status) => status! < 500,
+                receiveTimeout: const Duration(seconds: 10),
+              ),
+            );
+
+            if (response.statusCode == 200 && response.data != null) {
+              debugPrint('Lottie loaded from HTTP: $url, size: ${response.data!.length} bytes');
+              return response.data;
+            }
+          } catch (e) {
+            debugPrint('HTTP failed for $url: $e');
+            continue;
+          }
+        }
+      } catch (e) {
+        debugPrint('All HTTP attempts failed: $e');
+      }
+    }
+
+    return null;
   }
 }
 
