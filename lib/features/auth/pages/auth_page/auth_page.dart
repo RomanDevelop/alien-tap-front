@@ -287,13 +287,13 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       final pathSegments = baseUri.pathSegments.where((s) => s.isNotEmpty).toList();
 
       if (pathSegments.isEmpty) {
-        return '$origin/assets/assets/animation/AstronautSmartphone.json';
+        return '$origin/assets/animation/AstronautSmartphone.json';
       }
 
       final basePath = '/' + pathSegments.join('/');
-      return '$origin$basePath/assets/assets/animation/AstronautSmartphone.json';
+      return '$origin$basePath/assets/animation/AstronautSmartphone.json';
     } catch (e) {
-      return '/assets/assets/animation/AstronautSmartphone.json';
+      return '/assets/animation/AstronautSmartphone.json';
     }
   }
 }

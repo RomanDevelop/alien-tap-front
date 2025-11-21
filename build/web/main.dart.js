@@ -45741,7 +45741,7 @@ break
 case 6:case 1:return A.D(q,r)
 case 2:return A.C(o.at(-1),r)}})
 return A.E($async$yI,r)},
-abf(){var s,r,q,p,o,n,m,l,k="/assets/assets/animation/AstronautSmartphone.json"
+abf(){var s,r,q,p,o,n,m,l,k="/assets/animation/AstronautSmartphone.json"
 try{s=A.aox()
 r=J.aRe(s)
 o=s.gt4()
