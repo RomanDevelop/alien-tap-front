@@ -36,7 +36,7 @@ class TapGameNavigator {
 
   void logout() {
     try {
-      _context.go('/auth');
+    _context.go('/auth');
     } catch (e) {
       try {
         _context.push('/auth');

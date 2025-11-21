@@ -31,8 +31,8 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      children: [
+        child: Column(
+          children: [
                         const SizedBox(height: 20),
                         
                         _buildTokenFund(context),
@@ -63,14 +63,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
 
   Widget _buildTopPanel(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.topRight,
-          colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
-        ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.topRight,
+                  colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
+                ),
         boxShadow: [BoxShadow(color: NeonTheme.brandBrightGreen.withOpacity(0.2), blurRadius: 10, spreadRadius: 1)],
-      ),
+              ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,26 +106,26 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
           ),
           Row(
             children: [
-              StreamBuilder<bool>(
-                stream: wm.isSavingStream,
-                initialData: false,
-                builder: (ctx, snap) {
-                  if (snap.data == true) {
-                    return Padding(
+                  StreamBuilder<bool>(
+                    stream: wm.isSavingStream,
+                    initialData: false,
+                    builder: (ctx, snap) {
+                      if (snap.data == true) {
+                        return Padding(
                       padding: const EdgeInsets.only(right: 12),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandBrightGreen),
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
               TextButton(
                 onPressed: wm.openWithdraw,
                 child: Text(
@@ -136,14 +136,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                   ),
                 ),
               ),
-              IconButton(
+                  IconButton(
                 icon: Icon(Icons.person),
                 tooltip: wm.i18n.profileButton,
                 onPressed: wm.openProfile,
                 color: NeonTheme.brandBrightGreen,
+                  ),
+                ],
               ),
-            ],
-          ),
         ],
       ),
     );
@@ -153,14 +153,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
     return StreamBuilder<Map<String, dynamic>>(
       stream: wm.tokenFundStream,
       initialData: {'total': 900000000.0, 'usdValue': 241430.0},
-      builder: (ctx, snap) {
+                        builder: (ctx, snap) {
         final fund = snap.data ?? {'total': 0.0, 'usdValue': 0.0};
         final total = fund['total'] as double;
         final usdValue = fund['usdValue'] as double;
         
-        return Container(
+                          return Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+                            decoration: BoxDecoration(
             color: NeonTheme.darkCard.withOpacity(0.6),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.3), width: 1),
@@ -169,9 +169,9 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Column(
+                            child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                              children: [
                     Text(
                       wm.i18n.tokenFund,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -179,7 +179,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                                Text(
                       '${(total / 1000000).toStringAsFixed(0)}M ALEN = \$${(usdValue / 1000).toStringAsFixed(0)}K',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: NeonTheme.lightText,
@@ -209,12 +209,12 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
                           child: Text('OK', style: TextStyle(color: NeonTheme.brandBrightGreen)),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
             ],
           ),
         );
@@ -224,24 +224,24 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
 
   Widget _buildTapButton(BuildContext context) {
     return GestureDetector(
-      onTap: wm.onTap,
-      child: Container(
+                        onTap: wm.onTap,
+                        child: Container(
         height: 220,
         width: 220,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
             colors: [
               NeonTheme.brandBrightGreen,
               NeonTheme.brandLightGreen,
             ],
             stops: [0.0, 1.0],
-          ),
-          boxShadow: [
-            ...NeonTheme.neonGlow,
+                            ),
+                            boxShadow: [
+                              ...NeonTheme.neonGlow,
             BoxShadow(
               color: NeonTheme.brandLightGreen.withOpacity(0.4),
               blurRadius: 40,
@@ -252,18 +252,18 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
               blurRadius: 60,
               spreadRadius: 12,
             ),
-          ],
-        ),
-        child: Text(
-          wm.i18n.tapButton,
-          style: TextStyle(
+                            ],
+                          ),
+                          child: Text(
+                            wm.i18n.tapButton,
+                            style: TextStyle(
             fontSize: 42,
-            fontWeight: FontWeight.bold,
-            color: NeonTheme.darkBackground,
+                              fontWeight: FontWeight.bold,
+                              color: NeonTheme.darkBackground,
             letterSpacing: 3,
-          ),
-        ),
-      ),
+                            ),
+                          ),
+                        ),
     );
   }
 
@@ -295,8 +295,8 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
             border: Border.all(color: NeonTheme.brandBrightGreen.withOpacity(0.5), width: 2),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
               Icon(Icons.touch_app, color: NeonTheme.brandBrightGreen, size: 24),
               const SizedBox(width: 12),
               Text(
@@ -364,27 +364,27 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                         wm.i18n.confirmTransfer,
                         style: TextStyle(color: NeonTheme.brandBrightGreen, fontWeight: FontWeight.bold),
                       ),
-                    ),
+                                ),
                   ],
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              foregroundColor: NeonTheme.darkBackground,
-              elevation: 0,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  foregroundColor: NeonTheme.darkBackground,
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                ),
             child: Text(
               '${wm.i18n.transferAmount} $tapped ALEN → ${wm.i18n.tradingButton}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
-              ),
-            ),
-          ),
+                              ),
+                            ),
+                          ),
         );
       },
     );
@@ -429,7 +429,7 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
+                          Expanded(
               child: _buildNavButton(
                 context,
                 icon: Icons.leaderboard,
@@ -452,14 +452,14 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
     required List<Color> gradient,
   }) {
     return Container(
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
           colors: gradient,
-        ),
-        borderRadius: BorderRadius.circular(16),
+                                ),
+                                borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: gradient[0].withOpacity(0.3),
@@ -467,24 +467,24 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
             spreadRadius: 1,
           ),
         ],
-      ),
-      child: ElevatedButton.icon(
+                              ),
+                              child: ElevatedButton.icon(
         onPressed: onPressed,
         icon: Icon(icon, size: 20),
-        label: Text(
+                                label: Text(
           label,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart' hide WidgetState;
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
@@ -43,28 +42,20 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child:
-                            kIsWeb
-                                ? SvgPicture.network(
-                                  _getWebAssetPath(),
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  placeholderBuilder: (context) => _buildPlaceholder(),
-                                )
-                                : SvgPicture.asset(
-                                  'assets/images/alien-logo.svg',
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  placeholderBuilder: (context) => _buildPlaceholder(),
-                                ),
+                        child: Lottie.asset(
+                          'assets/animation/Astronaut Smartphone.json',
+                          width: 190,
+                          height: 190,
+                          fit: BoxFit.contain,
+                          repeat: true,
+                          animate: true,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
 
-                    Text(
-                      wm.i18n.pageTitle,
+                    _TypewriterText(
+                      text: wm.i18n.pageTitle,
                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                         color: NeonTheme.brandLightGreen,
                         shadows: [Shadow(color: NeonTheme.brandLightGreen.withOpacity(0.8), blurRadius: 15)],
@@ -93,48 +84,51 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       initialData: false,
                       builder: (ctx, snap) {
                         final isLoading = snap.data ?? false;
-                        return Container(
-                          width: double.infinity,
-                          height: 60,
-                          decoration:
-                              isLoading
-                                  ? null
-                                  : BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [NeonTheme.brandLightGreen, NeonTheme.brandBrightGreen],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                          child: ElevatedButton.icon(
-                            onPressed: isLoading ? null : wm.authenticate,
-                            icon:
+                        return _PulsatingButton(
+                          isLoading: isLoading,
+                          child: Container(
+                            width: double.infinity,
+                            height: 60,
+                            decoration:
                                 isLoading
-                                    ? SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandLightGreen),
+                                    ? null
+                                    : BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [NeonTheme.brandLightGreen, NeonTheme.brandBrightGreen],
                                       ),
-                                    )
-                                    : const Icon(Icons.login, size: 24),
-                            label: Text(
-                              isLoading ? wm.i18n.authenticating : wm.i18n.authenticateButton,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                                color: Colors.black,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                            child: ElevatedButton.icon(
+                              onPressed: isLoading ? null : wm.authenticate,
+                              icon:
+                                  isLoading
+                                      ? SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(NeonTheme.brandLightGreen),
+                                        ),
+                                      )
+                                      : const Icon(Icons.login, size: 24),
+                              label: Text(
+                                isLoading ? wm.i18n.authenticating : wm.i18n.authenticateButton,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
-                              foregroundColor: isLoading ? NeonTheme.brandLightGreen : Colors.black,
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isLoading ? NeonTheme.darkCard : Colors.transparent,
+                                foregroundColor: isLoading ? NeonTheme.brandLightGreen : Colors.black,
+                                elevation: 0,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              ),
                             ),
                           ),
                         );
@@ -181,20 +175,142 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       ),
     );
   }
+}
 
-  String _getWebAssetPath() {
-    if (kIsWeb) {
-      return '/assets/images/alien-logo.svg';
-    }
-    return 'assets/images/alien-logo.svg';
+class _TypewriterText extends StatefulWidget {
+  final String text;
+  final TextStyle? style;
+  final TextAlign textAlign;
+
+  const _TypewriterText({required this.text, this.style, this.textAlign = TextAlign.center});
+
+  @override
+  State<_TypewriterText> createState() => _TypewriterTextState();
+}
+
+class _TypewriterTextState extends State<_TypewriterText> {
+  String _displayText = '';
+  int _currentIndex = 0;
+  bool _isDeleting = false;
+  bool _isDisposed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTyping();
   }
 
-  Widget _buildPlaceholder() {
-    return Container(
-      width: 190,
-      height: 190,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
-      child: Icon(Icons.image_not_supported, size: 80, color: Colors.white.withOpacity(0.5)),
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  void _startTyping() {
+    if (_isDisposed) return;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted && !_isDisposed) {
+        _type();
+      }
+    });
+  }
+
+  void _type() {
+    if (!mounted || _isDisposed) return;
+
+    if (!_isDeleting && _currentIndex < widget.text.length) {
+      if (!mounted || _isDisposed) return;
+      setState(() {
+        _displayText = widget.text.substring(0, _currentIndex + 1);
+        _currentIndex++;
+      });
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && !_isDisposed) {
+          _type();
+        }
+      });
+    } else if (!_isDeleting && _currentIndex >= widget.text.length) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted && !_isDisposed) {
+          setState(() {
+            _isDeleting = true;
+          });
+          _type();
+        }
+      });
+    } else if (_isDeleting && _currentIndex > 0) {
+      if (!mounted || _isDisposed) return;
+      setState(() {
+        _displayText = widget.text.substring(0, _currentIndex - 1);
+        _currentIndex--;
+      });
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted && !_isDisposed) {
+          _type();
+        }
+      });
+    } else if (_isDeleting && _currentIndex == 0) {
+      if (!mounted || _isDisposed) return;
+      setState(() {
+        _isDeleting = false;
+      });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted && !_isDisposed) {
+          _type();
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(_displayText, style: widget.style, textAlign: widget.textAlign);
+  }
+}
+
+class _PulsatingButton extends StatefulWidget {
+  final Widget child;
+  final bool isLoading;
+
+  const _PulsatingButton({required this.child, required this.isLoading});
+
+  @override
+  State<_PulsatingButton> createState() => _PulsatingButtonState();
+}
+
+class _PulsatingButtonState extends State<_PulsatingButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this)..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.03,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.isLoading) {
+      return widget.child;
+    }
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(scale: _scaleAnimation.value, child: widget.child);
+      },
+      child: widget.child,
     );
   }
 }
