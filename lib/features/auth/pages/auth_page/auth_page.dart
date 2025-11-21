@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
@@ -65,18 +66,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                       );
                                     } else if (snapshot.hasError) {
                                       debugPrint('Failed to load Lottie bytes: ${snapshot.error}');
-                                      return Lottie.asset(
-                                        'assets/animation/AstronautSmartphone.json',
-                                        width: 190,
-                                        height: 190,
-                                        fit: BoxFit.contain,
-                                        repeat: true,
-                                        animate: true,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          debugPrint('Lottie.asset error: $error');
-                                          return _buildLottiePlaceholder();
-                                        },
-                                      );
+                                      return _buildLottiePlaceholder();
                                     }
                                     return const SizedBox(
                                       width: 190,
@@ -245,18 +235,46 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
           responseType: ResponseType.bytes,
           followRedirects: true,
           validateStatus: (status) => status! < 500,
+          receiveTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 30),
         ),
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        debugPrint('Lottie loaded successfully, size: ${response.data!.length} bytes');
-        return response.data;
+        final data = response.data!;
+        debugPrint('Lottie loaded successfully, size: ${data.length} bytes');
+
+        if (data.isEmpty) {
+          debugPrint('Warning: Lottie file is empty');
+          return null;
+        }
+
+        if (data.length < 100) {
+          debugPrint('Warning: Lottie file too small (${data.length} bytes), likely corrupted');
+          return null;
+        }
+
+        try {
+          final jsonString = utf8.decode(data, allowMalformed: false);
+          final jsonData = json.decode(jsonString);
+          if (jsonData is! Map) {
+            debugPrint('Warning: Lottie JSON is not an object');
+            return null;
+          }
+          debugPrint('Lottie JSON is valid, keys: ${jsonData.keys.take(5).join(", ")}...');
+          return data;
+        } catch (e) {
+          debugPrint('Lottie JSON validation failed: $e');
+          debugPrint('First 200 chars: ${String.fromCharCodes(data.take(200))}');
+          return null;
+        }
       } else {
         debugPrint('Failed to load Lottie: status ${response.statusCode}');
         return null;
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Error loading Lottie bytes: $e');
+      debugPrint('Stack trace: $stackTrace');
       return null;
     }
   }
