@@ -54,7 +54,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                   animate: true,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Lottie.asset(
-                                      'assets/animation/Astronaut Smartphone.json',
+                                      'assets/animation/AstronautSmartphone.json',
                                       width: 190,
                                       height: 190,
                                       fit: BoxFit.contain,
@@ -64,7 +64,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                   },
                                 )
                                 : Lottie.asset(
-                                  'assets/animation/Astronaut Smartphone.json',
+                                  'assets/animation/AstronautSmartphone.json',
                                   width: 190,
                                   height: 190,
                                   fit: BoxFit.contain,
@@ -199,9 +199,9 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
 
   String _getLottieWebPath() {
     if (kIsWeb) {
-      return '/assets/assets/animation/Astronaut%20Smartphone.json';
+      return '/assets/assets/animation/AstronautSmartphone.json';
     }
-    return 'assets/animation/Astronaut Smartphone.json';
+    return 'assets/animation/AstronautSmartphone.json';
   }
 }
 

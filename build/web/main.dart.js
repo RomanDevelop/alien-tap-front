@@ -46011,10 +46011,10 @@ j=p.d
 q=j.w
 j=j.x
 return A.fB(o,A.aX(o,A.kj(!0,A.db(A.tl(new A.bR(B.cj,A.bj(A.b([l,B.ej,new A.Jw("Alien Token Protocol",k,B.bJ,o),B.aC,s,B.PW,A.ct(new A.aqi(p),!1,new A.aE(q,q.$ti.h("aE<1>")),t.y),B.c5,A.ct(new A.aqj(),o,new A.aE(j,j.$ti.h("aE<1>")),t.F)],r),B.z,B.c1,B.n),o)),o,o),B.ar,!0),B.l,o,m,o,o,o,o))},
-aby(){return"/assets/assets/animation/Astronaut%20Smartphone.json"}}
+aby(){return"/assets/assets/animation/AstronautSmartphone.json"}}
 A.aqh.prototype={
 $3(a,b,c){var s=null
-return new A.ox(new A.Lm("assets/animation/Astronaut Smartphone.json",s,s,s,s,!1),s,s,s,!0,!0,s,s,s,s,190,190,B.mC,s,s,s,s,s,s,s)},
+return new A.ox(new A.Lm("assets/animation/AstronautSmartphone.json",s,s,s,s,!1),s,s,s,!0,!0,s,s,s,s,190,190,B.mC,s,s,s,s,s,s,s)},
 $S:279}
 A.aqi.prototype={
 $2(a,b){var s,r,q,p,o,n,m=null,l=b.b===!0
