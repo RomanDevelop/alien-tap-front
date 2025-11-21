@@ -5,14 +5,14 @@ class NeonTheme {
   static const Color brandMediumBlue = Color(0xFF405E79);
   static const Color brandBrightGreen = Color(0xFF35C055);
   static const Color brandLightGreen = Color(0xFF6DDA86);
-
+  
   static const Color darkBackground = Color(0xFF0A0A0F);
   static const Color darkSurface = Color(0xFF203664);
   static const Color darkCard = Color(0xFF405E79);
-
+  
   static const Color lightText = Color(0xFFE0E0E0);
   static const Color mediumText = Color(0xFFB0B0B0);
-
+  
   static ThemeData get theme {
     final colorScheme = ColorScheme.dark(
       brightness: Brightness.dark,
@@ -35,7 +35,7 @@ class NeonTheme {
       colorScheme: colorScheme,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBackground,
-
+      
       
       appBarTheme: AppBarTheme(
         backgroundColor: brandDarkBlue, 
@@ -74,7 +74,7 @@ class NeonTheme {
         bodyMedium: TextStyle(fontSize: 14, color: mediumText),
         bodySmall: TextStyle(fontSize: 12, color: mediumText),
       ),
-
+      
       
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -87,24 +87,24 @@ class NeonTheme {
           textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
         ).copyWith(
           elevation: MaterialStateProperty.resolveWith<double>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.pressed)) {
-              return 4;
-            }
-            if (states.contains(MaterialState.disabled)) {
-              return 0;
-            }
-            return 8;
+              if (states.contains(MaterialState.pressed)) {
+                return 4;
+              }
+              if (states.contains(MaterialState.disabled)) {
+                return 0;
+              }
+              return 8;
           }),
         ),
       ),
-
+      
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: brandLightGreen, 
           textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.5),
         ),
       ),
-
+      
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: brandBrightGreen, 
@@ -114,7 +114,7 @@ class NeonTheme {
           textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
         ),
       ),
-
+      
       
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -139,7 +139,7 @@ class NeonTheme {
         hintStyle: TextStyle(color: mediumText.withOpacity(0.6)),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
-
+      
       
       cardTheme: CardThemeData(
         color: brandMediumBlue, 
@@ -147,7 +147,7 @@ class NeonTheme {
         shadowColor: brandBrightGreen.withOpacity(0.2), 
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-
+      
       
       dialogTheme: DialogThemeData(
         backgroundColor: brandDarkBlue, 
@@ -169,14 +169,14 @@ class NeonTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
-
+      
       
       dividerTheme: DividerThemeData(
         color: brandBrightGreen.withOpacity(0.3), 
         thickness: 1,
         space: 1,
       ),
-
+      
       
       listTileTheme: ListTileThemeData(
         tileColor: brandMediumBlue, 
@@ -192,21 +192,21 @@ class NeonTheme {
       ),
     );
   }
-
+  
   
   static BoxDecoration get backgroundGradient => BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        darkBackground, 
+        darkBackground,
         brandDarkBlue, 
         brandMediumBlue, 
       ],
       stops: [0.0, 0.5, 1.0],
     ),
   );
-
+  
   
   static BoxDecoration get buttonGradient => BoxDecoration(
     gradient: LinearGradient(
@@ -232,7 +232,7 @@ class NeonTheme {
       ),
     ],
   );
-
+  
   
   static BoxDecoration get cardGradient => BoxDecoration(
     gradient: LinearGradient(
@@ -241,7 +241,7 @@ class NeonTheme {
       colors: [
         brandMediumBlue, 
         brandDarkBlue, 
-        darkCard, 
+        darkCard,
       ],
       stops: [0.0, 0.5, 1.0],
     ),
@@ -259,7 +259,7 @@ class NeonTheme {
       ),
     ],
   );
-
+  
   
   static List<Shadow> get neonTextShadow => [
     Shadow(
@@ -306,7 +306,7 @@ class NeonTheme {
     BoxShadow(color: brandBrightGreen.withOpacity(0.5), blurRadius: 20, spreadRadius: 2),
     BoxShadow(color: brandLightGreen.withOpacity(0.3), blurRadius: 40, spreadRadius: 4),
   ];
-
+  
   
   static List<BoxShadow> get blueGlow => [
     BoxShadow(color: brandMediumBlue.withOpacity(0.4), blurRadius: 15, spreadRadius: 1),

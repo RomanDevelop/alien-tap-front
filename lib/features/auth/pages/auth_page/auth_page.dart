@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
@@ -44,40 +42,16 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: FutureBuilder<String>(
-                          future: DefaultAssetBundle.of(
-                            context,
-                          ).loadString('assets/animation/AstronautSmartphone.json'),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              try {
-                                final jsonString = snapshot.data!;
-                                final bytes = utf8.encode(jsonString);
-                                return Lottie.memory(
-                                  Uint8List.fromList(bytes),
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  repeat: true,
-                                  animate: true,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    debugPrint('Lottie.memory error: $error');
-                                    return _buildLottiePlaceholder();
-                                  },
-                                );
-                              } catch (e) {
-                                debugPrint('Error parsing Lottie: $e');
-                                return _buildLottiePlaceholder();
-                              }
-                            } else if (snapshot.hasError) {
-                              debugPrint('Error loading Lottie asset: ${snapshot.error}');
-                              return _buildLottiePlaceholder();
-                            }
-                            return const SizedBox(
-                              width: 190,
-                              height: 190,
-                              child: Center(child: CircularProgressIndicator(color: Colors.white54)),
-                            );
+                        child: Lottie.asset(
+                          'assets/animation/AstronautSmartphone.json',
+                          width: 190,
+                          height: 190,
+                          fit: BoxFit.contain,
+                          repeat: true,
+                          animate: true,
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint('Lottie.asset error: $error');
+                            return _buildLottiePlaceholder();
                           },
                         ),
                       ),
