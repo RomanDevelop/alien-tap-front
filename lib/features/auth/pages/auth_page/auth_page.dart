@@ -230,58 +230,60 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       width: 190,
       height: 190,
       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
-      child: Icon(Icons.animation, size: 80, color: Colors.white.withOpacity(0.5)),
+      child: Icon(Icons.money, size: 80, color: Colors.white.withOpacity(0.5)),
     );
   }
 
   Future<Uint8List?> _loadLottieForWeb() async {
     if (!kIsWeb) return null;
 
-    try {
-      final jsonString = await rootBundle.loadString('assets/animation/AstronautSmartphone.json');
-      final bytes = utf8.encode(jsonString);
-      debugPrint('Lottie loaded from rootBundle, size: ${bytes.length} bytes');
-      return Uint8List.fromList(bytes);
-    } catch (e) {
-      debugPrint('rootBundle failed: $e, trying HTTP...');
+    final dio = Dio();
+    final baseUri = Uri.base;
+    final origin = baseUri.origin;
 
+    final paths = [
+      '$origin/assets/assets/animation/AstronautSmartphone.json',
+      '$origin/assets/animation/AstronautSmartphone.json',
+    ];
+
+    for (final url in paths) {
       try {
-        final dio = Dio();
-        final baseUri = Uri.base;
-        final origin = baseUri.origin;
+        debugPrint('Trying to load Lottie from: $url');
+        final response = await dio.get<Uint8List>(
+          url,
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: true,
+            validateStatus: (status) => status! < 500,
+            receiveTimeout: const Duration(seconds: 15),
+          ),
+        );
 
-        final paths = [
-          '$origin/assets/assets/animation/AstronautSmartphone.json',
-          '$origin/assets/animation/AstronautSmartphone.json',
-        ];
-
-        for (final url in paths) {
-          try {
-            debugPrint('Trying HTTP: $url');
-            final response = await dio.get<Uint8List>(
-              url,
-              options: Options(
-                responseType: ResponseType.bytes,
-                followRedirects: true,
-                validateStatus: (status) => status! < 500,
-                receiveTimeout: const Duration(seconds: 10),
-              ),
-            );
-
-            if (response.statusCode == 200 && response.data != null) {
-              debugPrint('Lottie loaded from HTTP: $url, size: ${response.data!.length} bytes');
-              return response.data;
+        if (response.statusCode == 200 && response.data != null) {
+          final data = response.data!;
+          if (data.length > 100) {
+            try {
+              final jsonString = utf8.decode(data, allowMalformed: false);
+              final jsonData = json.decode(jsonString);
+              if (jsonData is Map) {
+                debugPrint('Lottie loaded successfully from $url, size: ${data.length} bytes');
+                return data;
+              }
+            } catch (e) {
+              debugPrint('Invalid JSON from $url: $e');
+              continue;
             }
-          } catch (e) {
-            debugPrint('HTTP failed for $url: $e');
-            continue;
           }
+        } else {
+          debugPrint('Failed to load from $url: status ${response.statusCode}');
         }
       } catch (e) {
-        debugPrint('All HTTP attempts failed: $e');
+        debugPrint('Error loading from $url: $e');
+        continue;
       }
     }
 
+    debugPrint('All paths failed to load Lottie');
     return null;
   }
 }

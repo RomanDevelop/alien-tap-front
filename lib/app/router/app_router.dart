@@ -34,18 +34,18 @@ class AppRouter {
       redirect: (context, state) {
         try {
           final matchedLocation = state.matchedLocation;
-
+          
           final isValidRoute =
               matchedLocation.startsWith('/') &&
-              !matchedLocation.contains('tgWebAppData') &&
-              !matchedLocation.contains('query_id') &&
-              !matchedLocation.contains('auth_date') &&
-              !matchedLocation.contains('hash=') &&
-              !matchedLocation.contains('signature=') &&
-              !matchedLocation.contains('&tgWebApp') &&
-              (matchedLocation == '/auth' ||
-                  matchedLocation == '/game' ||
-                  matchedLocation == '/leaderboard' ||
+                              !matchedLocation.contains('tgWebAppData') &&
+                              !matchedLocation.contains('query_id') &&
+                              !matchedLocation.contains('auth_date') &&
+                              !matchedLocation.contains('hash=') &&
+                              !matchedLocation.contains('signature=') &&
+                              !matchedLocation.contains('&tgWebApp') &&
+                              (matchedLocation == '/auth' || 
+                               matchedLocation == '/game' || 
+                               matchedLocation == '/leaderboard' || 
                   matchedLocation == '/claim' ||
                   matchedLocation == '/trading' ||
                   matchedLocation == '/portfolio' ||
@@ -60,7 +60,7 @@ class AppRouter {
               return '/auth';
             }
           }
-
+          
           final isAuthenticated = _checkAuth();
           final isAuthRoute = matchedLocation == '/auth';
 
