@@ -1,12 +1,8 @@
-import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter/material.dart' hide WidgetState;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
-import 'package:dio/dio.dart';
 import 'auth_wm.dart';
 
 class AuthPage extends CoreMwwmWidget<AuthWidgetModel> {
@@ -46,47 +42,18 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child:
-                            kIsWeb
-                                ? FutureBuilder<Uint8List?>(
-                                  future: _loadLottieBytes(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData && snapshot.data != null) {
-                                      return Lottie.memory(
-                                        snapshot.data!,
-                                        width: 190,
-                                        height: 190,
-                                        fit: BoxFit.contain,
-                                        repeat: true,
-                                        animate: true,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          debugPrint('Lottie.memory error: $error');
-                                          return _buildLottiePlaceholder();
-                                        },
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      debugPrint('Failed to load Lottie bytes: ${snapshot.error}');
-                                      return _buildLottiePlaceholder();
-                                    }
-                                    return const SizedBox(
-                                      width: 190,
-                                      height: 190,
-                                      child: Center(child: CircularProgressIndicator(color: Colors.white54)),
-                                    );
-                                  },
-                                )
-                                : Lottie.asset(
-                                  'assets/animation/AstronautSmartphone.json',
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  repeat: true,
-                                  animate: true,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    debugPrint('Lottie error: $error');
-                                    return _buildLottiePlaceholder();
-                                  },
-                                ),
+                        child: Lottie.asset(
+                          'assets/animation/AstronautSmartphone.json',
+                          width: 190,
+                          height: 190,
+                          fit: BoxFit.contain,
+                          repeat: true,
+                          animate: true,
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint('Lottie.asset error: $error');
+                            return _buildLottiePlaceholder();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -220,91 +187,6 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
       child: Icon(Icons.animation, size: 80, color: Colors.white.withOpacity(0.5)),
     );
-  }
-
-  Future<Uint8List?> _loadLottieBytes() async {
-    if (!kIsWeb) return null;
-
-    final paths = [
-      _getLottieNetworkUrl(),
-      _getLottieNetworkUrl().replaceAll('/assets/animation/', '/assets/assets/animation/'),
-      _getLottieNetworkUrl().replaceAll('/assets/assets/animation/', '/assets/animation/'),
-    ];
-
-    final dio = Dio();
-
-    for (final url in paths) {
-      try {
-        debugPrint('Trying to load Lottie from: $url');
-
-        final response = await dio.get<Uint8List>(
-          url,
-          options: Options(
-            responseType: ResponseType.bytes,
-            followRedirects: true,
-            validateStatus: (status) => status! < 500,
-            receiveTimeout: const Duration(seconds: 10),
-            sendTimeout: const Duration(seconds: 10),
-          ),
-        );
-
-        if (response.statusCode == 200 && response.data != null) {
-          final data = response.data!;
-          debugPrint('Lottie loaded successfully from $url, size: ${data.length} bytes');
-
-          if (data.isEmpty || data.length < 100) {
-            debugPrint('Warning: Lottie file too small (${data.length} bytes)');
-            continue;
-          }
-
-          try {
-            final jsonString = utf8.decode(data, allowMalformed: false);
-            final jsonData = json.decode(jsonString);
-            if (jsonData is! Map) {
-              debugPrint('Warning: Lottie JSON is not an object');
-              continue;
-            }
-            debugPrint('Lottie JSON is valid, keys: ${jsonData.keys.take(5).join(", ")}...');
-            return data;
-          } catch (e) {
-            debugPrint('Lottie JSON validation failed: $e');
-            continue;
-          }
-        } else {
-          debugPrint('Failed to load Lottie from $url: status ${response.statusCode}');
-        }
-      } catch (e) {
-        debugPrint('Error loading Lottie from $url: $e');
-        continue;
-      }
-    }
-
-    debugPrint('All paths failed to load Lottie');
-    return null;
-  }
-
-  String _getLottieNetworkUrl() {
-    if (!kIsWeb) return '';
-    try {
-      final baseUri = Uri.base;
-      final origin = baseUri.origin;
-      final pathSegments = baseUri.pathSegments.where((s) => s.isNotEmpty).toList();
-
-      final paths = [
-        if (pathSegments.isEmpty)
-          '$origin/assets/assets/animation/AstronautSmartphone.json'
-        else
-          '$origin/${pathSegments.join('/')}/assets/assets/animation/AstronautSmartphone.json',
-        if (pathSegments.isEmpty)
-          '$origin/assets/animation/AstronautSmartphone.json'
-        else
-          '$origin/${pathSegments.join('/')}/assets/animation/AstronautSmartphone.json',
-      ];
-
-      return paths.first;
-    } catch (e) {
-      return '/assets/assets/animation/AstronautSmartphone.json';
-    }
   }
 }
 
