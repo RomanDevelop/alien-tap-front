@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
@@ -44,32 +45,19 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       child: Center(
                         child:
                             kIsWeb
-                                ? Image.network(
+                                ? SvgPicture.network(
                                   _getWebAssetPath(),
                                   width: 190,
                                   height: 190,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    debugPrint('Error loading alien-logo.png (web): $error');
-                                    return Image.asset(
-                                      'assets/images/alien-logo.png',
-                                      width: 190,
-                                      height: 190,
-                                      fit: BoxFit.contain,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return _buildPlaceholder();
-                                      },
-                                    );
-                                  },
+                                  placeholderBuilder: (context) => _buildPlaceholder(),
                                 )
-                                : Image.asset(
-                                  'assets/images/alien-logo.png',
+                                : SvgPicture.asset(
+                                  'assets/images/alien-logo.svg',
                                   width: 190,
                                   height: 190,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return _buildPlaceholder();
-                                  },
+                                  placeholderBuilder: (context) => _buildPlaceholder(),
                                 ),
                       ),
                     ),
@@ -196,9 +184,9 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
 
   String _getWebAssetPath() {
     if (kIsWeb) {
-      return '/assets/images/alien-logo.png';
+      return '/assets/images/alien-logo.svg';
     }
-    return 'assets/images/alien-logo.png';
+    return 'assets/images/alien-logo.svg';
   }
 
   Widget _buildPlaceholder() {
