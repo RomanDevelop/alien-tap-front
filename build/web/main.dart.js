@@ -45689,30 +45689,30 @@ s=s.x
 return A.fz(n,A.aX(n,A.kj(!0,A.d9(A.tj(new A.bQ(B.cj,A.bj(A.b([k,B.ej,new A.Ji("Alien Token Protocol",j,B.bJ,n),B.aC,r,B.Q_,A.cq(new A.apE(o),!1,new A.aE(p,p.$ti.h("aE<1>")),t.y),B.c6,A.cq(new A.apF(),n,new A.aE(s,s.$ti.h("aE<1>")),t.F)],q),B.z,B.c2,B.n),n)),n,n),B.ar,!0),B.m,n,l,n,n,n,n))},
 Om(){var s=null,r=A.T(B.d.P(25.5),B.l.m()>>>16&255,B.l.m()>>>8&255,B.l.m()&255)
 return A.aX(s,A.dQ(B.Ga,A.T(B.d.P(127.5),B.l.m()>>>16&255,B.l.m()>>>8&255,B.l.m()&255),s,80),B.m,s,new A.bc(r,s,s,s,s,s,B.bW),190,s,s,190)},
-yI(){var s=0,r=A.F(t.nc),q,p=2,o=[],n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2
-var $async$yI=A.G(function(a4,a5){if(a4===1){o.push(a5)
-s=p}while(true)switch(s){case 0:b=A.aGY(null)
-a=A.aoA()
-a0=a.gwC(a)
-a1=[a0+"/assets/assets/animation/AstronautSmartphone.json",a0+"/assets/animation/AstronautSmartphone.json"]
-g=t.H3,f=t.f,e=0
-case 3:if(!(e<2)){s=5
-break}n=a1[e]
+yI(){var s=0,r=A.F(t.nc),q,p=2,o=[],n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1
+var $async$yI=A.G(function(a3,a4){if(a3===1){o.push(a4)
+s=p}while(true)switch(s){case 0:c=A.aGY(null)
+b=A.aoA()
+a=b.gwC(b)+"/assets/assets/animation/astro.json"
+a0=[a,a]
+a=t.H3,g=t.f,f=0
+case 3:if(!(f<2)){s=5
+break}n=a0[f]
 p=7
 A.jL().$1("Trying to load Lottie from: "+A.l(n))
 s=10
-return A.P(J.aRl(b,n,A.agT(!0,null,B.F5,B.lh,new A.apA()),g),$async$yI)
-case 10:m=a5
-if(m.c===200&&m.a!=null){d=m.a
-d.toString
-l=d
+return A.P(J.aRl(c,n,A.agT(!0,null,B.F5,B.lh,new A.apA()),a),$async$yI)
+case 10:m=a4
+if(m.c===200&&m.a!=null){e=m.a
+e.toString
+l=e
 if(J.c7(l)>100)try{k=new A.hD(!1).j3(l,0,null,!0)
 j=B.bh.hv(0,k)
-if(f.b(j)){A.jL().$1("Lottie loaded successfully from "+A.l(n)+", size: "+J.c7(l)+" bytes")
-d=l
-q=d
+if(g.b(j)){A.jL().$1("Lottie loaded successfully from "+A.l(n)+", size: "+J.c7(l)+" bytes")
+e=l
+q=e
 s=1
-break}}catch(a3){i=A.a6(a3)
+break}}catch(a2){i=A.a6(a2)
 A.jL().$1("Invalid JSON from "+A.l(n)+": "+A.l(i))
 s=4
 break}}else A.jL().$1("Failed to load from "+A.l(n)+": status "+A.l(m.c))
@@ -45720,8 +45720,8 @@ p=2
 s=9
 break
 case 7:p=6
-a2=o.pop()
-h=A.a6(a2)
+a1=o.pop()
+h=A.a6(a1)
 A.jL().$1("Error loading from "+A.l(n)+": "+A.l(h))
 s=4
 break
@@ -45729,7 +45729,7 @@ s=9
 break
 case 6:s=2
 break
-case 9:case 4:++e
+case 9:case 4:++f
 s=3
 break
 case 5:A.jL().$1("All paths failed to load Lottie")
@@ -45744,7 +45744,7 @@ $2(a,b){var s=null,r=b.b
 if(r!=null)return new A.vT(new A.P7(r,s,s,!1),s,s,s,!0,!0,s,s,s,s,190,190,B.mD,s,s,s,s,new A.apB(this.a),s,s)
 else{r=b.c
 if(r!=null){A.jL().$1("Error loading Lottie: "+A.l(r))
-return new A.vT(new A.L7("assets/animation/AstronautSmartphone.json",s,s,s,s,!1),s,s,s,!0,!0,s,s,s,s,190,190,B.mD,s,s,s,s,new A.apC(this.a),s,s)}}return B.PY},
+return new A.vT(new A.L7("assets/assets/animation/astro.json",s,s,s,s,!1),s,s,s,!0,!0,s,s,s,s,190,190,B.mD,s,s,s,s,new A.apC(this.a),s,s)}}return B.PY},
 $S:275}
 A.apB.prototype={
 $3(a,b,c){A.jL().$1("Lottie.memory error: "+A.l(b))

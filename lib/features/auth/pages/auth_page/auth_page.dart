@@ -68,7 +68,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                     } else if (snapshot.hasError) {
                                       debugPrint('Error loading Lottie: ${snapshot.error}');
                                       return Lottie.asset(
-                                        'assets/animation/AstronautSmartphone.json',
+                                        'assets/assets/animation/astro.json',
                                         width: 190,
                                         height: 190,
                                         fit: BoxFit.contain,
@@ -88,7 +88,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                                   },
                                 )
                                 : Lottie.asset(
-                                  'assets/animation/AstronautSmartphone.json',
+                                  'assets/assets/animation/astro.json',
                                   width: 190,
                                   height: 190,
                                   fit: BoxFit.contain,
@@ -241,10 +241,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
     final baseUri = Uri.base;
     final origin = baseUri.origin;
 
-    final paths = [
-      '$origin/assets/assets/animation/AstronautSmartphone.json',
-      '$origin/assets/animation/AstronautSmartphone.json',
-    ];
+    final paths = ['$origin/assets/assets/animation/astro.json', '$origin/assets/assets/animation/astro.json'];
 
     for (final url in paths) {
       try {
