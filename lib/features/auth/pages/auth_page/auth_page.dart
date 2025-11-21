@@ -224,59 +224,63 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
 
   Future<Uint8List?> _loadLottieBytes() async {
     if (!kIsWeb) return null;
-    try {
-      final dio = Dio();
-      final url = _getLottieNetworkUrl();
-      debugPrint('Loading Lottie from: $url');
 
-      final response = await dio.get<Uint8List>(
-        url,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: true,
-          validateStatus: (status) => status! < 500,
-          receiveTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 30),
-        ),
-      );
+    final paths = [
+      _getLottieNetworkUrl(),
+      _getLottieNetworkUrl().replaceAll('/assets/animation/', '/assets/assets/animation/'),
+      _getLottieNetworkUrl().replaceAll('/assets/assets/animation/', '/assets/animation/'),
+    ];
 
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data!;
-        debugPrint('Lottie loaded successfully, size: ${data.length} bytes');
+    final dio = Dio();
 
-        if (data.isEmpty) {
-          debugPrint('Warning: Lottie file is empty');
-          return null;
-        }
+    for (final url in paths) {
+      try {
+        debugPrint('Trying to load Lottie from: $url');
 
-        if (data.length < 100) {
-          debugPrint('Warning: Lottie file too small (${data.length} bytes), likely corrupted');
-          return null;
-        }
+        final response = await dio.get<Uint8List>(
+          url,
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: true,
+            validateStatus: (status) => status! < 500,
+            receiveTimeout: const Duration(seconds: 10),
+            sendTimeout: const Duration(seconds: 10),
+          ),
+        );
 
-        try {
-          final jsonString = utf8.decode(data, allowMalformed: false);
-          final jsonData = json.decode(jsonString);
-          if (jsonData is! Map) {
-            debugPrint('Warning: Lottie JSON is not an object');
-            return null;
+        if (response.statusCode == 200 && response.data != null) {
+          final data = response.data!;
+          debugPrint('Lottie loaded successfully from $url, size: ${data.length} bytes');
+
+          if (data.isEmpty || data.length < 100) {
+            debugPrint('Warning: Lottie file too small (${data.length} bytes)');
+            continue;
           }
-          debugPrint('Lottie JSON is valid, keys: ${jsonData.keys.take(5).join(", ")}...');
-          return data;
-        } catch (e) {
-          debugPrint('Lottie JSON validation failed: $e');
-          debugPrint('First 200 chars: ${String.fromCharCodes(data.take(200))}');
-          return null;
+
+          try {
+            final jsonString = utf8.decode(data, allowMalformed: false);
+            final jsonData = json.decode(jsonString);
+            if (jsonData is! Map) {
+              debugPrint('Warning: Lottie JSON is not an object');
+              continue;
+            }
+            debugPrint('Lottie JSON is valid, keys: ${jsonData.keys.take(5).join(", ")}...');
+            return data;
+          } catch (e) {
+            debugPrint('Lottie JSON validation failed: $e');
+            continue;
+          }
+        } else {
+          debugPrint('Failed to load Lottie from $url: status ${response.statusCode}');
         }
-      } else {
-        debugPrint('Failed to load Lottie: status ${response.statusCode}');
-        return null;
+      } catch (e) {
+        debugPrint('Error loading Lottie from $url: $e');
+        continue;
       }
-    } catch (e, stackTrace) {
-      debugPrint('Error loading Lottie bytes: $e');
-      debugPrint('Stack trace: $stackTrace');
-      return null;
     }
+
+    debugPrint('All paths failed to load Lottie');
+    return null;
   }
 
   String _getLottieNetworkUrl() {
@@ -286,14 +290,20 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       final origin = baseUri.origin;
       final pathSegments = baseUri.pathSegments.where((s) => s.isNotEmpty).toList();
 
-      if (pathSegments.isEmpty) {
-        return '$origin/assets/animation/AstronautSmartphone.json';
-      }
+      final paths = [
+        if (pathSegments.isEmpty)
+          '$origin/assets/assets/animation/AstronautSmartphone.json'
+        else
+          '$origin/${pathSegments.join('/')}/assets/assets/animation/AstronautSmartphone.json',
+        if (pathSegments.isEmpty)
+          '$origin/assets/animation/AstronautSmartphone.json'
+        else
+          '$origin/${pathSegments.join('/')}/assets/animation/AstronautSmartphone.json',
+      ];
 
-      final basePath = '/' + pathSegments.join('/');
-      return '$origin$basePath/assets/animation/AstronautSmartphone.json';
+      return paths.first;
     } catch (e) {
-      return '/assets/animation/AstronautSmartphone.json';
+      return '/assets/assets/animation/AstronautSmartphone.json';
     }
   }
 }
