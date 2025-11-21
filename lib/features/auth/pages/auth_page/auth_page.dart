@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide WidgetState;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
@@ -42,19 +43,43 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: Lottie.asset(
-                          'assets/animation/AstronautSmartphone.json',
-                          package: null,
-                          width: 190,
-                          height: 190,
-                          fit: BoxFit.contain,
-                          repeat: true,
-                          animate: true,
-                          errorBuilder: (context, error, stackTrace) {
-                            debugPrint('Lottie error: $error, stackTrace: $stackTrace');
-                            return _buildLottiePlaceholder();
-                          },
-                        ),
+                        child:
+                            kIsWeb
+                                ? Lottie.network(
+                                  _getLottieNetworkUrl(),
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                  animate: true,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Lottie.network error: $error');
+                                    return Lottie.asset(
+                                      'assets/animation/AstronautSmartphone.json',
+                                      width: 190,
+                                      height: 190,
+                                      fit: BoxFit.contain,
+                                      repeat: true,
+                                      animate: true,
+                                      errorBuilder: (context, error2, stackTrace2) {
+                                        debugPrint('Lottie.asset error: $error2');
+                                        return _buildLottiePlaceholder();
+                                      },
+                                    );
+                                  },
+                                )
+                                : Lottie.asset(
+                                  'assets/animation/AstronautSmartphone.json',
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                  animate: true,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Lottie error: $error');
+                                    return _buildLottiePlaceholder();
+                                  },
+                                ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -188,6 +213,24 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
       child: Icon(Icons.animation, size: 80, color: Colors.white.withOpacity(0.5)),
     );
+  }
+
+  String _getLottieNetworkUrl() {
+    if (!kIsWeb) return '';
+    try {
+      final baseUri = Uri.base;
+      final origin = baseUri.origin;
+      final pathSegments = baseUri.pathSegments.where((s) => s.isNotEmpty).toList();
+
+      if (pathSegments.isEmpty) {
+        return '$origin/assets/assets/animation/AstronautSmartphone.json';
+      }
+
+      final basePath = '/' + pathSegments.join('/');
+      return '$origin$basePath/assets/assets/animation/AstronautSmartphone.json';
+    } catch (e) {
+      return '/assets/assets/animation/AstronautSmartphone.json';
+    }
   }
 }
 
