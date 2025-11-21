@@ -199,6 +199,17 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
 
   String _getLottieWebPath() {
     if (kIsWeb) {
+      final baseUri = Uri.base;
+      final path = baseUri.path;
+      if (path.isEmpty || path == '/') {
+        return '/assets/assets/animation/AstronautSmartphone.json';
+      }
+      final basePath = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+      final lastSlash = basePath.lastIndexOf('/');
+      if (lastSlash > 0) {
+        final parentPath = basePath.substring(0, lastSlash);
+        return '$parentPath/assets/assets/animation/AstronautSmartphone.json';
+      }
       return '/assets/assets/animation/AstronautSmartphone.json';
     }
     return 'assets/animation/AstronautSmartphone.json';
