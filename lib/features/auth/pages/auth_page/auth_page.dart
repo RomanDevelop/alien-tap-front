@@ -42,83 +42,35 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: Builder(
-                          builder: (context) {
-                            final imageWidget = kIsWeb
+                        child:
+                            kIsWeb
                                 ? Image.network(
-                                    '/assets/images/alien-logo.png',
-                                    width: 190,
-                                    height: 190,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      debugPrint('Error loading alien-logo.png (network): $error');
-                                      return Image.asset(
-                                        'assets/images/alien-logo.png',
-                                        width: 190,
-                                        height: 190,
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          debugPrint('Error loading alien-logo.png (asset): $error');
-                                          return Container(
-                                            width: 190,
-                                            height: 190,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white.withOpacity(0.1),
-                                            ),
-                                            child: Icon(
-                                              Icons.image_not_supported,
-                                              size: 80,
-                                              color: Colors.white.withOpacity(0.5),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  )
+                                  _getWebAssetPath(),
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    debugPrint('Error loading alien-logo.png (web): $error');
+                                    return Image.asset(
+                                      'assets/images/alien-logo.png',
+                                      width: 190,
+                                      height: 190,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return _buildPlaceholder();
+                                      },
+                                    );
+                                  },
+                                )
                                 : Image.asset(
-                                    'assets/images/alien-logo.png',
-                                    width: 190,
-                                    height: 190,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      debugPrint('Error loading alien-logo.png: $error');
-                                      return Container(
-                                        width: 190,
-                                        height: 190,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.white.withOpacity(0.1),
-                                        ),
-                                        child: Icon(
-                                          Icons.image_not_supported,
-                                          size: 80,
-                                          color: Colors.white.withOpacity(0.5),
-                                        ),
-                                      );
-                                    },
-                                  );
-                            
-                            try {
-                              return imageWidget;
-                            } catch (e) {
-                              debugPrint('Exception loading alien-logo.png: $e');
-                              return Container(
-                                width: 190,
-                                height: 190,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withOpacity(0.1),
+                                  'assets/images/alien-logo.png',
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return _buildPlaceholder();
+                                  },
                                 ),
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 80,
-                                  color: Colors.white.withOpacity(0.5),
-                                ),
-                              );
-                            }
-                          },
-                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -239,6 +191,22 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
           ),
         ),
       ),
+    );
+  }
+
+  String _getWebAssetPath() {
+    if (kIsWeb) {
+      return '/assets/images/alien-logo.png';
+    }
+    return 'assets/images/alien-logo.png';
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      width: 190,
+      height: 190,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
+      child: Icon(Icons.image_not_supported, size: 80, color: Colors.white.withOpacity(0.5)),
     );
   }
 }
