@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide WidgetState;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
@@ -42,14 +43,34 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: Lottie.asset(
-                          'assets/animation/Astronaut Smartphone.json',
-                          width: 190,
-                          height: 190,
-                          fit: BoxFit.contain,
-                          repeat: true,
-                          animate: true,
-                        ),
+                        child:
+                            kIsWeb
+                                ? Lottie.network(
+                                  _getLottieWebPath(),
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                  animate: true,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Lottie.asset(
+                                      'assets/animation/Astronaut Smartphone.json',
+                                      width: 190,
+                                      height: 190,
+                                      fit: BoxFit.contain,
+                                      repeat: true,
+                                      animate: true,
+                                    );
+                                  },
+                                )
+                                : Lottie.asset(
+                                  'assets/animation/Astronaut Smartphone.json',
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                  animate: true,
+                                ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -174,6 +195,13 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
         ),
       ),
     );
+  }
+
+  String _getLottieWebPath() {
+    if (kIsWeb) {
+      return '/assets/assets/animation/Astronaut%20Smartphone.json';
+    }
+    return 'assets/animation/Astronaut Smartphone.json';
   }
 }
 
