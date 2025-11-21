@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide WidgetState;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
@@ -41,11 +42,82 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/alien-logo.png',
-                          width: 190,
-                          height: 190,
-                          fit: BoxFit.contain,
+                        child: Builder(
+                          builder: (context) {
+                            final imageWidget = kIsWeb
+                                ? Image.network(
+                                    '/assets/images/alien-logo.png',
+                                    width: 190,
+                                    height: 190,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      debugPrint('Error loading alien-logo.png (network): $error');
+                                      return Image.asset(
+                                        'assets/images/alien-logo.png',
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('Error loading alien-logo.png (asset): $error');
+                                          return Container(
+                                            width: 190,
+                                            height: 190,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white.withOpacity(0.1),
+                                            ),
+                                            child: Icon(
+                                              Icons.image_not_supported,
+                                              size: 80,
+                                              color: Colors.white.withOpacity(0.5),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    'assets/images/alien-logo.png',
+                                    width: 190,
+                                    height: 190,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      debugPrint('Error loading alien-logo.png: $error');
+                                      return Container(
+                                        width: 190,
+                                        height: 190,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white.withOpacity(0.1),
+                                        ),
+                                        child: Icon(
+                                          Icons.image_not_supported,
+                                          size: 80,
+                                          color: Colors.white.withOpacity(0.5),
+                                        ),
+                                      );
+                                    },
+                                  );
+                            
+                            try {
+                              return imageWidget;
+                            } catch (e) {
+                              debugPrint('Exception loading alien-logo.png: $e');
+                              return Container(
+                                width: 190,
+                                height: 190,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 80,
+                                  color: Colors.white.withOpacity(0.5),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
