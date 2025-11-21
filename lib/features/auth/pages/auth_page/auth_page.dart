@@ -47,58 +47,59 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                         ],
                       ),
                       child: Center(
-                        child:
-                            kIsWeb
-                                ? FutureBuilder<Uint8List?>(
-                                  future: _loadLottieForWeb(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData && snapshot.data != null) {
-                                      return Lottie.memory(
-                                        snapshot.data!,
-                                        width: 190,
-                                        height: 190,
-                                        fit: BoxFit.contain,
-                                        repeat: true,
-                                        animate: true,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          debugPrint('Lottie.memory error: $error');
-                                          return _buildLottiePlaceholder();
-                                        },
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      debugPrint('Error loading Lottie: ${snapshot.error}');
-                                      return Lottie.asset(
-                                        'assets/assets/animation/astro.json',
-                                        width: 190,
-                                        height: 190,
-                                        fit: BoxFit.contain,
-                                        repeat: true,
-                                        animate: true,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          debugPrint('Lottie.asset error: $error');
-                                          return _buildLottiePlaceholder();
-                                        },
-                                      );
-                                    }
-                                    return const SizedBox(
-                                      width: 190,
-                                      height: 190,
-                                      child: Center(child: CircularProgressIndicator(color: Colors.white54)),
-                                    );
-                                  },
-                                )
-                                : Lottie.asset(
-                                  'assets/assets/animation/astro.json',
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  repeat: true,
-                                  animate: true,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    debugPrint('Lottie.asset error: $error');
-                                    return _buildLottiePlaceholder();
-                                  },
-                                ),
+                        child: Lottie.asset('assets/assets/animation/astro.json'),
+                        // child:
+                        //     kIsWeb
+                        //         ? FutureBuilder<Uint8List?>(
+                        //           future: _loadLottieForWeb(),
+                        //           builder: (context, snapshot) {
+                        //             if (snapshot.hasData && snapshot.data != null) {
+                        //               return Lottie.memory(
+                        //                 snapshot.data!,
+                        //                 width: 190,
+                        //                 height: 190,
+                        //                 fit: BoxFit.contain,
+                        //                 repeat: true,
+                        //                 animate: true,
+                        //                 errorBuilder: (context, error, stackTrace) {
+                        //                   debugPrint('Lottie.memory error: $error');
+                        //                   return _buildLottiePlaceholder();
+                        //                 },
+                        //               );
+                        //             } else if (snapshot.hasError) {
+                        //               debugPrint('Error loading Lottie: ${snapshot.error}');
+                        //               return Lottie.asset(
+                        //                 'assets/assets/animation/astro.json',
+                        //                 width: 190,
+                        //                 height: 190,
+                        //                 fit: BoxFit.contain,
+                        //                 repeat: true,
+                        //                 animate: true,
+                        //                 errorBuilder: (context, error, stackTrace) {
+                        //                   debugPrint('Lottie.asset error: $error');
+                        //                   return _buildLottiePlaceholder();
+                        //                 },
+                        //               );
+                        //             }
+                        //             return const SizedBox(
+                        //               width: 190,
+                        //               height: 190,
+                        //               child: Center(child: CircularProgressIndicator(color: Colors.white54)),
+                        //             );
+                        //           },
+                        //         )
+                        //         : Lottie.asset(
+                        //           'assets/assets/animation/astro.json',
+                        //           width: 190,
+                        //           height: 190,
+                        //           fit: BoxFit.contain,
+                        //           repeat: true,
+                        //           animate: true,
+                        //           errorBuilder: (context, error, stackTrace) {
+                        //             debugPrint('Lottie.asset error: $error');
+                        //             return _buildLottiePlaceholder();
+                        //           },
+                        //         ),
                       ),
                     ),
                     const SizedBox(height: 40),
