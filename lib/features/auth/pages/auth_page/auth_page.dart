@@ -1,9 +1,11 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart' hide WidgetState;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
+import 'package:dio/dio.dart';
 import 'auth_wm.dart';
 
 class AuthPage extends CoreMwwmWidget<AuthWidgetModel> {
@@ -45,26 +47,41 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                       child: Center(
                         child:
                             kIsWeb
-                                ? Lottie.network(
-                                  _getLottieNetworkUrl(),
-                                  width: 190,
-                                  height: 190,
-                                  fit: BoxFit.contain,
-                                  repeat: true,
-                                  animate: true,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    debugPrint('Lottie.network error: $error');
-                                    return Lottie.asset(
-                                      'assets/animation/AstronautSmartphone.json',
+                                ? FutureBuilder<Uint8List?>(
+                                  future: _loadLottieBytes(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData && snapshot.data != null) {
+                                      return Lottie.memory(
+                                        snapshot.data!,
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.contain,
+                                        repeat: true,
+                                        animate: true,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('Lottie.memory error: $error');
+                                          return _buildLottiePlaceholder();
+                                        },
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      debugPrint('Failed to load Lottie bytes: ${snapshot.error}');
+                                      return Lottie.asset(
+                                        'assets/animation/AstronautSmartphone.json',
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.contain,
+                                        repeat: true,
+                                        animate: true,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('Lottie.asset error: $error');
+                                          return _buildLottiePlaceholder();
+                                        },
+                                      );
+                                    }
+                                    return const SizedBox(
                                       width: 190,
                                       height: 190,
-                                      fit: BoxFit.contain,
-                                      repeat: true,
-                                      animate: true,
-                                      errorBuilder: (context, error2, stackTrace2) {
-                                        debugPrint('Lottie.asset error: $error2');
-                                        return _buildLottiePlaceholder();
-                                      },
+                                      child: Center(child: CircularProgressIndicator(color: Colors.white54)),
                                     );
                                   },
                                 )
@@ -213,6 +230,35 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
       child: Icon(Icons.animation, size: 80, color: Colors.white.withOpacity(0.5)),
     );
+  }
+
+  Future<Uint8List?> _loadLottieBytes() async {
+    if (!kIsWeb) return null;
+    try {
+      final dio = Dio();
+      final url = _getLottieNetworkUrl();
+      debugPrint('Loading Lottie from: $url');
+
+      final response = await dio.get<Uint8List>(
+        url,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        debugPrint('Lottie loaded successfully, size: ${response.data!.length} bytes');
+        return response.data;
+      } else {
+        debugPrint('Failed to load Lottie: status ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error loading Lottie bytes: $e');
+      return null;
+    }
   }
 
   String _getLottieNetworkUrl() {
