@@ -194,14 +194,11 @@ class _PulsatingSphereState extends State<_PulsatingSphere> with SingleTickerPro
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  Color(0xFF4A9A5F), // Более темный зеленый (темнее brandLightGreen)
-                  Color(0xFF152340), // Более темный синий (темнее brandDarkBlue)
-                ],
+                colors: [NeonTheme.brandLightGreen, NeonTheme.brandDarkBlue],
               ),
               boxShadow: [
-                BoxShadow(color: Color(0xFF4A9A5F).withOpacity(0.35), blurRadius: 30, spreadRadius: 5),
-                BoxShadow(color: Color(0xFF152340).withOpacity(0.35), blurRadius: 30, spreadRadius: 5),
+                BoxShadow(color: NeonTheme.brandLightGreen.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
+                BoxShadow(color: NeonTheme.brandDarkBlue.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
               ],
             ),
           ),
