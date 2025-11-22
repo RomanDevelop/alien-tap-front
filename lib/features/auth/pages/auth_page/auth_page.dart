@@ -1,13 +1,7 @@
-import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter/material.dart' hide WidgetState;
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 import 'package:mwwm/mwwm.dart';
 import 'package:alien_tap/features/auth/pages/auth_page/di/auth_wm_builder.dart';
 import 'package:alien_tap/app/theme/neon_theme.dart';
-import 'package:dio/dio.dart';
 import 'auth_wm.dart';
 
 class AuthPage extends CoreMwwmWidget<AuthWidgetModel> {
@@ -31,77 +25,7 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [NeonTheme.brandLightGreen, NeonTheme.brandDarkBlue],
-                        ),
-                        boxShadow: [
-                          BoxShadow(color: NeonTheme.brandLightGreen.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
-                          BoxShadow(color: NeonTheme.brandDarkBlue.withOpacity(0.4), blurRadius: 30, spreadRadius: 5),
-                        ],
-                      ),
-                      child: Center(
-                        child: Lottie.asset('assets/assets/animation/astro.json'),
-                        // child:
-                        //     kIsWeb
-                        //         ? FutureBuilder<Uint8List?>(
-                        //           future: _loadLottieForWeb(),
-                        //           builder: (context, snapshot) {
-                        //             if (snapshot.hasData && snapshot.data != null) {
-                        //               return Lottie.memory(
-                        //                 snapshot.data!,
-                        //                 width: 190,
-                        //                 height: 190,
-                        //                 fit: BoxFit.contain,
-                        //                 repeat: true,
-                        //                 animate: true,
-                        //                 errorBuilder: (context, error, stackTrace) {
-                        //                   debugPrint('Lottie.memory error: $error');
-                        //                   return _buildLottiePlaceholder();
-                        //                 },
-                        //               );
-                        //             } else if (snapshot.hasError) {
-                        //               debugPrint('Error loading Lottie: ${snapshot.error}');
-                        //               return Lottie.asset(
-                        //                 'assets/assets/animation/astro.json',
-                        //                 width: 190,
-                        //                 height: 190,
-                        //                 fit: BoxFit.contain,
-                        //                 repeat: true,
-                        //                 animate: true,
-                        //                 errorBuilder: (context, error, stackTrace) {
-                        //                   debugPrint('Lottie.asset error: $error');
-                        //                   return _buildLottiePlaceholder();
-                        //                 },
-                        //               );
-                        //             }
-                        //             return const SizedBox(
-                        //               width: 190,
-                        //               height: 190,
-                        //               child: Center(child: CircularProgressIndicator(color: Colors.white54)),
-                        //             );
-                        //           },
-                        //         )
-                        //         : Lottie.asset(
-                        //           'assets/assets/animation/astro.json',
-                        //           width: 190,
-                        //           height: 190,
-                        //           fit: BoxFit.contain,
-                        //           repeat: true,
-                        //           animate: true,
-                        //           errorBuilder: (context, error, stackTrace) {
-                        //             debugPrint('Lottie.asset error: $error');
-                        //             return _buildLottiePlaceholder();
-                        //           },
-                        //         ),
-                      ),
-                    ),
+                    _PulsatingSphere(),
                     const SizedBox(height: 40),
 
                     _TypewriterText(
@@ -225,64 +149,65 @@ class _AuthPageState extends WidgetState<AuthPage, AuthWidgetModel> {
       ),
     );
   }
+}
 
-  Widget _buildLottiePlaceholder() {
-    return Container(
-      width: 190,
-      height: 190,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.1)),
-      child: Icon(Icons.money, size: 80, color: Colors.white.withOpacity(0.5)),
-    );
+class _PulsatingSphere extends StatefulWidget {
+  const _PulsatingSphere();
+
+  @override
+  State<_PulsatingSphere> createState() => _PulsatingSphereState();
+}
+
+class _PulsatingSphereState extends State<_PulsatingSphere> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this)..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.03,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
-  Future<Uint8List?> _loadLottieForWeb() async {
-    if (!kIsWeb) return null;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-    final dio = Dio();
-    final baseUri = Uri.base;
-    final origin = baseUri.origin;
-
-    final paths = ['$origin/assets/assets/animation/astro.json', '$origin/assets/assets/animation/astro.json'];
-
-    for (final url in paths) {
-      try {
-        debugPrint('Trying to load Lottie from: $url');
-        final response = await dio.get<Uint8List>(
-          url,
-          options: Options(
-            responseType: ResponseType.bytes,
-            followRedirects: true,
-            validateStatus: (status) => status! < 500,
-            receiveTimeout: const Duration(seconds: 15),
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xFF4A9A5F), // Более темный зеленый (темнее brandLightGreen)
+                  Color(0xFF152340), // Более темный синий (темнее brandDarkBlue)
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(color: Color(0xFF4A9A5F).withOpacity(0.35), blurRadius: 30, spreadRadius: 5),
+                BoxShadow(color: Color(0xFF152340).withOpacity(0.35), blurRadius: 30, spreadRadius: 5),
+              ],
+            ),
           ),
         );
-
-        if (response.statusCode == 200 && response.data != null) {
-          final data = response.data!;
-          if (data.length > 100) {
-            try {
-              final jsonString = utf8.decode(data, allowMalformed: false);
-              final jsonData = json.decode(jsonString);
-              if (jsonData is Map) {
-                debugPrint('Lottie loaded successfully from $url, size: ${data.length} bytes');
-                return data;
-              }
-            } catch (e) {
-              debugPrint('Invalid JSON from $url: $e');
-              continue;
-            }
-          }
-        } else {
-          debugPrint('Failed to load from $url: status ${response.statusCode}');
-        }
-      } catch (e) {
-        debugPrint('Error loading from $url: $e');
-        continue;
-      }
-    }
-
-    debugPrint('All paths failed to load Lottie');
-    return null;
+      },
+    );
   }
 }
 
