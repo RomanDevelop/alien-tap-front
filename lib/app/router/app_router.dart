@@ -35,6 +35,16 @@ class AppRouter {
       redirect: (context, state) {
         try {
           final matchedLocation = state.matchedLocation;
+          final validRoutes = const {
+            '/auth',
+            '/game',
+            '/leaderboard',
+            '/claim',
+            '/trading',
+            '/portfolio',
+            '/liquidity',
+            '/profile',
+          };
 
           final isValidRoute =
               matchedLocation.startsWith('/') &&
@@ -44,22 +54,10 @@ class AppRouter {
               !matchedLocation.contains('hash=') &&
               !matchedLocation.contains('signature=') &&
               !matchedLocation.contains('&tgWebApp') &&
-              (matchedLocation == '/auth' ||
-                  matchedLocation == '/game' ||
-                  matchedLocation == '/leaderboard' ||
-                  matchedLocation == '/claim' ||
-                  matchedLocation == '/trading' ||
-                  matchedLocation == '/portfolio' ||
-                  matchedLocation == '/liquidity' ||
-                  matchedLocation == '/profile');
+              validRoutes.contains(matchedLocation);
 
           if (!isValidRoute) {
-            final isAuthenticated = _checkAuth();
-            if (isAuthenticated) {
-              return '/game';
-            } else {
-              return '/auth';
-            }
+            return _checkAuth() ? '/game' : '/auth';
           }
 
           final isAuthenticated = _checkAuth();
@@ -79,23 +77,14 @@ class AppRouter {
         }
       },
       routes: [
-        GoRoute(
-          path: '/auth',
-          builder: (context, state) {
-            try {
-              return AuthPage();
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
-        ),
+        GoRoute(path: '/auth', builder: (context, state) => AuthPage()),
         GoRoute(
           path: '/game',
           builder: (context, state) {
             try {
               final repository = locator<TapRepository>();
               final gamePage = TapGamePage(repository: repository);
-              return MainNavigation(currentPath: '/game', child: gamePage);
+              return MainNavigation(key: const ValueKey('game'), currentPath: '/game', child: gamePage);
             } catch (e) {
               return Scaffold(
                 body: Center(
@@ -113,76 +102,74 @@ class AppRouter {
         ),
         GoRoute(
           path: '/leaderboard',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/leaderboard', child: LeaderboardPage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) => MainNavigation(
+                key: const ValueKey('leaderboard'),
+                currentPath: '/leaderboard',
+                child: LeaderboardPage(),
+              ),
         ),
         GoRoute(
           path: '/claim',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/claim', child: ClaimPage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) =>
+                  MainNavigation(key: const ValueKey('claim'), currentPath: '/claim', child: ClaimPage()),
         ),
         GoRoute(
           path: '/trading',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/trading', child: TradingPage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) =>
+                  MainNavigation(key: const ValueKey('trading'), currentPath: '/trading', child: TradingPage()),
         ),
         GoRoute(
           path: '/portfolio',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/portfolio', child: PortfolioPage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) =>
+                  MainNavigation(key: const ValueKey('portfolio'), currentPath: '/portfolio', child: PortfolioPage()),
         ),
         GoRoute(
           path: '/liquidity',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/liquidity', child: LiquidityPage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) =>
+                  MainNavigation(key: const ValueKey('liquidity'), currentPath: '/liquidity', child: LiquidityPage()),
         ),
         GoRoute(
           path: '/profile',
-          builder: (context, state) {
-            try {
-              return MainNavigation(currentPath: '/profile', child: ProfilePage());
-            } catch (e) {
-              return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
-            }
-          },
+          builder:
+              (context, state) =>
+                  MainNavigation(key: const ValueKey('profile'), currentPath: '/profile', child: ProfilePage()),
         ),
       ],
     );
   }
 
+  static bool? _cachedAuthState;
+  static DateTime? _authCacheTime;
+  static const _authCacheDuration = Duration(seconds: 1);
+
   static bool _checkAuth() {
     try {
+      final now = DateTime.now();
+      if (_cachedAuthState != null && _authCacheTime != null && now.difference(_authCacheTime!) < _authCacheDuration) {
+        return _cachedAuthState!;
+      }
+
       final storage = GetStorage();
       final token = storage.read<String>('jwt_token');
       final isAuth = token != null && token.isNotEmpty;
+
+      _cachedAuthState = isAuth;
+      _authCacheTime = now;
       return isAuth;
     } catch (e) {
+      _cachedAuthState = false;
+      _authCacheTime = DateTime.now();
       return false;
     }
+  }
+
+  static void invalidateAuthCache() {
+    _cachedAuthState = null;
+    _authCacheTime = null;
   }
 }

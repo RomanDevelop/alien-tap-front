@@ -29,13 +29,12 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
 
   @override
   Widget build(BuildContext context) {
-    // Обертываем child в Scaffold с drawer и bottomNavigationBar
-    // Если child уже имеет Scaffold, он будет заменен
     return Scaffold(
-      body: widget.child,
-      drawer: _buildDrawer(context),
+      key: PageStorageKey<String>(widget.currentPath),
+      body: RepaintBoundary(key: widget.key, child: widget.child),
+      drawer: RepaintBoundary(child: _buildDrawer(context)),
       bottomNavigationBar: _buildBottomNavBar(context),
-      extendBody: true, // Позволяет контенту расширяться под bottomNavigationBar
+      extendBody: true,
     );
   }
 
@@ -47,7 +46,7 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
           children: [
             Container(
               padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -56,11 +55,12 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
               ),
               child: Row(
                 children: [
-                  Icon(Icons.account_circle, size: 48, color: NeonTheme.brandBrightGreen),
+                  const Icon(Icons.account_circle, size: 48, color: NeonTheme.brandBrightGreen),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           'Alien Tap',
@@ -154,31 +154,33 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
       initialData: wm.selectedIndex,
       builder: (ctx, snap) {
         final selectedIndex = snap.data ?? 0;
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
+        return RepaintBoundary(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [NeonTheme.darkSurface, NeonTheme.darkCard],
+              ),
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, -2))],
             ),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, -2))],
-          ),
-          child: BottomNavigationBar(
-            currentIndex: selectedIndex,
-            onTap: wm.onTabTapped,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            selectedItemColor: NeonTheme.brandBrightGreen,
-            unselectedItemColor: NeonTheme.mediumText,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            unselectedLabelStyle: const TextStyle(fontSize: 11),
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.touch_app), label: wm.i18n.gameTab),
-              BottomNavigationBarItem(icon: Icon(Icons.trending_up), label: wm.i18n.tradingTab),
-              BottomNavigationBarItem(icon: Icon(Icons.wallet), label: wm.i18n.portfolioTab),
-              BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: wm.i18n.leaderboardTab),
-            ],
+            child: BottomNavigationBar(
+              currentIndex: selectedIndex,
+              onTap: wm.onTabTapped,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              selectedItemColor: NeonTheme.brandBrightGreen,
+              unselectedItemColor: NeonTheme.mediumText,
+              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              unselectedLabelStyle: const TextStyle(fontSize: 11),
+              items: [
+                BottomNavigationBarItem(icon: const Icon(Icons.touch_app), label: wm.i18n.gameTab),
+                BottomNavigationBarItem(icon: const Icon(Icons.trending_up), label: wm.i18n.tradingTab),
+                BottomNavigationBarItem(icon: const Icon(Icons.wallet), label: wm.i18n.portfolioTab),
+                BottomNavigationBarItem(icon: const Icon(Icons.leaderboard), label: wm.i18n.leaderboardTab),
+              ],
+            ),
           ),
         );
       },

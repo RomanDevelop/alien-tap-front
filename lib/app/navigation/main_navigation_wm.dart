@@ -3,6 +3,7 @@ import 'package:mwwm/mwwm.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:alien_tap/app/router/app_router.dart';
 import 'main_navigation_i18n.dart';
 
 class MainNavigationWidgetModel extends WidgetModel {
@@ -15,12 +16,12 @@ class MainNavigationWidgetModel extends WidgetModel {
 
   MainNavigationWidgetModel(this.context, this.i18n, WidgetModelDependencies dependencies) : super(dependencies);
 
+  static const List<String> _routes = ['/game', '/trading', '/portfolio', '/leaderboard'];
+
   void onTabTapped(int index) {
+    if (index == _selectedIndex.value || index >= _routes.length) return;
     _selectedIndex.add(index);
-    final routes = ['/game', '/trading', '/portfolio', '/leaderboard'];
-    if (index < routes.length) {
-      context.go(routes[index]);
-    }
+    context.go(_routes[index]);
   }
 
   void navigateToProfile() {
@@ -38,12 +39,12 @@ class MainNavigationWidgetModel extends WidgetModel {
   void logout() {
     final storage = GetStorage();
     storage.remove('jwt_token');
+    AppRouter.invalidateAuthCache();
     context.go('/auth');
   }
 
   void updateSelectedIndex(String currentPath) {
-    final routes = ['/game', '/trading', '/portfolio', '/leaderboard'];
-    final index = routes.indexOf(currentPath);
+    final index = _routes.indexOf(currentPath);
     if (index != -1 && index != _selectedIndex.value) {
       _selectedIndex.add(index);
     }
