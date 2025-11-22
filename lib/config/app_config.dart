@@ -23,12 +23,9 @@ class AppConfig {
 
   static bool get isDevelopment => !isProduction;
 
-  static const String? debugJwtToken =
-      kDebugMode
-          ? 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4NjRjNWJiZi00N2IyLTRiY2ItOWI2NS03MmY0OGM0ZTRjZGUiLCJleHAiOjE3NjM4OTQwOTUsImlhdCI6MTc2MzgwNzY5NX0.Z_Z_ssmgD_0wKBPFS1NyCgq7kC3hAjNTQt1RQbMsW_I'
-          : null;
+  static const String? debugJwtToken = kDebugMode ? '' : null;
 
-  static const String? debugUserId = kDebugMode ? '864c5bbf-47b2-4bcb-9b65-72f48c4e4cde' : null;
+  static const String? debugUserId = kDebugMode ? '' : null;
 
   static bool get isDebugMode => kDebugMode && !isProduction;
 
