@@ -28,19 +28,52 @@ class MainNavigationWidgetModel extends WidgetModel {
     context.go('/profile');
   }
 
-  void navigateToClaim() {
-    context.go('/claim');
+  void navigateToWallet() {
+    context.go('/wallet');
   }
 
-  void navigateToLiquidity() {
-    context.go('/liquidity');
+  void navigateToSettings() {
+    context.go('/settings');
   }
 
-  void logout() {
-    final storage = GetStorage();
-    storage.remove('jwt_token');
-    AppRouter.invalidateAuthCache();
-    context.go('/auth');
+  void navigateToNews() {
+    context.go('/news');
+  }
+
+  void navigateToSignals() {
+    context.go('/signals');
+  }
+
+  void navigateToCalendar() {
+    context.go('/calendar');
+  }
+
+  void navigateToSubscription() {
+    context.go('/subscription');
+  }
+
+  void navigateToEducation() {
+    context.go('/education');
+  }
+
+  void navigateToCrypto() {
+    context.go('/crypto');
+  }
+
+  void navigateToStocks() {
+    context.go('/stocks');
+  }
+
+  void navigateToForex() {
+    context.go('/forex');
+  }
+
+  void navigateToCommodities() {
+    context.go('/commodities');
+  }
+
+  void navigateToOptions() {
+    context.go('/options');
   }
 
   void updateSelectedIndex(String currentPath) {

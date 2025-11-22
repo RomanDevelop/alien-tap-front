@@ -53,32 +53,25 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
                   colors: [NeonTheme.brandDarkBlue, NeonTheme.brandMediumBlue],
                 ),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.account_circle, size: 48, color: NeonTheme.brandBrightGreen),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Alien Tap',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: NeonTheme.brandBrightGreen,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Игрок',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: NeonTheme.mediumText),
-                        ),
-                      ],
-                    ),
+                  Text(
+                    wm.i18n.appName,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleLarge?.copyWith(color: NeonTheme.brandBrightGreen, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'v${wm.i18n.appVersion}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: NeonTheme.mediumText),
                   ),
                 ],
               ),
             ),
+            const Divider(color: NeonTheme.brandMediumBlue),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -95,31 +88,112 @@ class _MainNavigationState extends WidgetState<MainNavigation, MainNavigationWid
                   _buildDrawerItem(
                     context,
                     icon: Icons.account_balance_wallet,
-                    title: wm.i18n.claimMenu,
+                    title: wm.i18n.walletMenu,
                     onTap: () {
                       Navigator.of(context).pop();
-                      wm.navigateToClaim();
+                      wm.navigateToWallet();
                     },
                   ),
                   _buildDrawerItem(
                     context,
-                    icon: Icons.water_drop,
-                    title: wm.i18n.liquidityMenu,
+                    icon: Icons.settings,
+                    title: wm.i18n.settingsMenu,
                     onTap: () {
                       Navigator.of(context).pop();
-                      wm.navigateToLiquidity();
+                      wm.navigateToSettings();
                     },
                   ),
                   const Divider(color: NeonTheme.brandMediumBlue),
                   _buildDrawerItem(
                     context,
-                    icon: Icons.logout,
-                    title: wm.i18n.logoutMenu,
+                    icon: Icons.newspaper,
+                    title: wm.i18n.newsMenu,
                     onTap: () {
                       Navigator.of(context).pop();
-                      wm.logout();
+                      wm.navigateToNews();
                     },
-                    isDestructive: true,
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.trending_up,
+                    title: wm.i18n.signalsMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToSignals();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.calendar_today,
+                    title: wm.i18n.calendarMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToCalendar();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.card_membership,
+                    title: wm.i18n.subscriptionMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToSubscription();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.school,
+                    title: wm.i18n.educationMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToEducation();
+                    },
+                  ),
+                  const Divider(color: NeonTheme.brandMediumBlue),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.currency_bitcoin,
+                    title: wm.i18n.cryptoMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToCrypto();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.show_chart,
+                    title: wm.i18n.stocksMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToStocks();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.currency_exchange,
+                    title: wm.i18n.forexMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToForex();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.inventory,
+                    title: wm.i18n.commoditiesMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToCommodities();
+                    },
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.analytics,
+                    title: wm.i18n.optionsMenu,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      wm.navigateToOptions();
+                    },
                   ),
                 ],
               ),

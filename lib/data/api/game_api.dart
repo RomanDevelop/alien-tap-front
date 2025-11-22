@@ -154,6 +154,33 @@ class GameApi {
   Future<void> initialize() async {
     await GetStorage.init();
 
+    if (kDebugMode && AppConfig.debugJwtToken != null) {
+      final existingToken = _token;
+      if (existingToken == null || existingToken.isEmpty) {
+        _token = AppConfig.debugJwtToken;
+        if (AppConfig.debugUserId != null) {
+          _storage.write('user_id', AppConfig.debugUserId);
+        }
+        try {
+          jsConsoleLog('🔧 DEBUG MODE ENABLED: Using pre-configured JWT token');
+          jsConsoleLog('   - Token length: ${AppConfig.debugJwtToken!.length}');
+          jsConsoleLog('   - User ID: ${AppConfig.debugUserId}');
+        } catch (e) {}
+        if (kDebugMode) {
+          _logger.d('🔧 DEBUG MODE ENABLED: Using pre-configured JWT token');
+          _logger.d('   - Token length: ${AppConfig.debugJwtToken!.length}');
+          _logger.d('   - User ID: ${AppConfig.debugUserId}');
+        }
+      } else {
+        try {
+          jsConsoleLog('🔧 DEBUG MODE ENABLED: Using existing token from storage');
+        } catch (e) {}
+        if (kDebugMode) {
+          _logger.d('🔧 DEBUG MODE ENABLED: Using existing token from storage');
+        }
+      }
+    }
+
     if (AppConfig.isProduction) {
       if (!_isRunningInTelegram()) {
         throw Exception('Application must be run inside Telegram WebApp. Telegram initData is not available.');
@@ -222,6 +249,31 @@ class GameApi {
     } catch (e) {}
     if (kDebugMode) {
       _logger.d('🔍 Starting authentication...');
+    }
+
+    if (kDebugMode && AppConfig.debugJwtToken != null) {
+      final existingToken = _token;
+      if (existingToken == null || existingToken.isEmpty) {
+        _token = AppConfig.debugJwtToken;
+        if (AppConfig.debugUserId != null) {
+          _storage.write('user_id', AppConfig.debugUserId);
+        }
+        try {
+          jsConsoleLog('🔧 DEBUG MODE: Using pre-configured JWT token for authentication');
+        } catch (e) {}
+        if (kDebugMode) {
+          _logger.d('🔧 DEBUG MODE: Using pre-configured JWT token for authentication');
+        }
+        return AppConfig.debugJwtToken!;
+      } else {
+        try {
+          jsConsoleLog('🔧 DEBUG MODE: Token already exists, using existing token');
+        } catch (e) {}
+        if (kDebugMode) {
+          _logger.d('🔧 DEBUG MODE: Token already exists, using existing token');
+        }
+        return existingToken;
+      }
     }
 
     if (AppConfig.isProduction) {
@@ -448,6 +500,5 @@ class GameApi {
     _token = null;
     _storage.remove('jwt_token');
     _storage.remove('user_id');
-
   }
 }

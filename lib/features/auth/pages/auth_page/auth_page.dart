@@ -156,7 +156,7 @@ class _PulsatingSphere extends StatefulWidget {
 
   @override
   State<_PulsatingSphere> createState() => _PulsatingSphereState();
-}
+  }
 
 class _PulsatingSphereState extends State<_PulsatingSphere> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
