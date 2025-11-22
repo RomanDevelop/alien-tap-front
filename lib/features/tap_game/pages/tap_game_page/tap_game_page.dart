@@ -45,9 +45,6 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
                         const SizedBox(height: 40),
                         
                         _buildTransferButton(context),
-                        const SizedBox(height: 30),
-                        
-                        _buildNavigationButtons(context),
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -390,103 +387,4 @@ class _TapGamePageState extends WidgetState<TapGamePage, TapGameWidgetModel> {
     );
   }
 
-  Widget _buildNavigationButtons(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildNavButton(
-                context,
-                icon: Icons.trending_up,
-                label: wm.i18n.tradingButton,
-                onPressed: wm.openTrading,
-                gradient: [NeonTheme.brandBrightGreen, NeonTheme.brandMediumBlue],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildNavButton(
-                context,
-                icon: Icons.wallet,
-                label: wm.i18n.portfolioButton,
-                onPressed: wm.openPortfolio,
-                gradient: [NeonTheme.brandDarkBlue, NeonTheme.brandLightGreen],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildNavButton(
-                context,
-                icon: Icons.water_drop,
-                label: wm.i18n.liquidityButton,
-                onPressed: wm.openLiquidity,
-                gradient: [NeonTheme.brandLightGreen, NeonTheme.brandDarkBlue],
-              ),
-            ),
-            const SizedBox(width: 12),
-                          Expanded(
-              child: _buildNavButton(
-                context,
-                icon: Icons.leaderboard,
-                label: wm.i18n.leaderboardButton,
-                onPressed: wm.openLeaderboard,
-                gradient: [NeonTheme.brandBrightGreen, NeonTheme.brandBrightGreen],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNavButton(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-    required List<Color> gradient,
-  }) {
-    return Container(
-                              height: 56,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-          colors: gradient,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: gradient[0].withOpacity(0.3),
-            blurRadius: 15,
-            spreadRadius: 1,
-          ),
-        ],
-                              ),
-                              child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 20),
-                                label: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-      ),
-    );
-  }
 }

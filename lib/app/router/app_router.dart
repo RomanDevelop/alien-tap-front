@@ -11,6 +11,7 @@ import 'package:alien_tap/features/liquidity/pages/liquidity_page/liquidity_page
 import 'package:alien_tap/features/profile/pages/profile_page/profile_page.dart';
 import 'package:alien_tap/features/tap_game/repositories/tap_repository.dart';
 import 'package:alien_tap/app/di/app_scope.dart';
+import 'package:alien_tap/app/navigation/main_navigation.dart';
 
 class AppRouter {
   static GoRouter createRouter() {
@@ -34,18 +35,18 @@ class AppRouter {
       redirect: (context, state) {
         try {
           final matchedLocation = state.matchedLocation;
-          
+
           final isValidRoute =
               matchedLocation.startsWith('/') &&
-                              !matchedLocation.contains('tgWebAppData') &&
-                              !matchedLocation.contains('query_id') &&
-                              !matchedLocation.contains('auth_date') &&
-                              !matchedLocation.contains('hash=') &&
-                              !matchedLocation.contains('signature=') &&
-                              !matchedLocation.contains('&tgWebApp') &&
-                              (matchedLocation == '/auth' || 
-                               matchedLocation == '/game' || 
-                               matchedLocation == '/leaderboard' || 
+              !matchedLocation.contains('tgWebAppData') &&
+              !matchedLocation.contains('query_id') &&
+              !matchedLocation.contains('auth_date') &&
+              !matchedLocation.contains('hash=') &&
+              !matchedLocation.contains('signature=') &&
+              !matchedLocation.contains('&tgWebApp') &&
+              (matchedLocation == '/auth' ||
+                  matchedLocation == '/game' ||
+                  matchedLocation == '/leaderboard' ||
                   matchedLocation == '/claim' ||
                   matchedLocation == '/trading' ||
                   matchedLocation == '/portfolio' ||
@@ -60,7 +61,7 @@ class AppRouter {
               return '/auth';
             }
           }
-          
+
           final isAuthenticated = _checkAuth();
           final isAuthRoute = matchedLocation == '/auth';
 
@@ -93,7 +94,8 @@ class AppRouter {
           builder: (context, state) {
             try {
               final repository = locator<TapRepository>();
-              return TapGamePage(repository: repository);
+              final gamePage = TapGamePage(repository: repository);
+              return MainNavigation(currentPath: '/game', child: gamePage);
             } catch (e) {
               return Scaffold(
                 body: Center(
@@ -113,7 +115,7 @@ class AppRouter {
           path: '/leaderboard',
           builder: (context, state) {
             try {
-              return LeaderboardPage();
+              return MainNavigation(currentPath: '/leaderboard', child: LeaderboardPage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
@@ -123,7 +125,7 @@ class AppRouter {
           path: '/claim',
           builder: (context, state) {
             try {
-              return ClaimPage();
+              return MainNavigation(currentPath: '/claim', child: ClaimPage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
@@ -133,7 +135,7 @@ class AppRouter {
           path: '/trading',
           builder: (context, state) {
             try {
-              return TradingPage();
+              return MainNavigation(currentPath: '/trading', child: TradingPage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
@@ -143,7 +145,7 @@ class AppRouter {
           path: '/portfolio',
           builder: (context, state) {
             try {
-              return PortfolioPage();
+              return MainNavigation(currentPath: '/portfolio', child: PortfolioPage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
@@ -153,7 +155,7 @@ class AppRouter {
           path: '/liquidity',
           builder: (context, state) {
             try {
-              return LiquidityPage();
+              return MainNavigation(currentPath: '/liquidity', child: LiquidityPage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
@@ -163,7 +165,7 @@ class AppRouter {
           path: '/profile',
           builder: (context, state) {
             try {
-              return ProfilePage();
+              return MainNavigation(currentPath: '/profile', child: ProfilePage());
             } catch (e) {
               return Scaffold(body: Center(child: Text('Ошибка загрузки: $e')));
             }
